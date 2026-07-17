@@ -1126,7 +1126,7 @@
     top: 0;
     z-index: 20;
   }
-  .panel-body {
+  #screenAdmin .panel-body {
     flex: 0 0 auto;
     overflow: visible;
     padding: 0 14px 24px;
@@ -1379,8 +1379,8 @@
   }
   .search-box input {
     flex: 1;
-    background: var(--tg-secondary);
-    border: 1px solid color-mix(in srgb, var(--tg-hint) 20%, transparent);
+    background: var(--tg-card);
+    border: 1px solid transparent;
     border-radius: 12px;
     padding: 12px 14px;
     color: var(--tg-text);
@@ -1388,8 +1388,51 @@
     font-family: inherit;
     outline: none;
   }
-  .search-box input:focus { border-color: var(--tier); }
+  .search-box input:focus { border-color: color-mix(in srgb, var(--tier) 45%, transparent); }
   .search-results { display: flex; flex-direction: column; gap: 8px; }
+  .verified-badge {
+    display: inline-flex;
+    width: 15px; height: 15px;
+    vertical-align: -2px;
+    margin-left: 3px;
+    color: var(--tier);
+    flex-shrink: 0;
+  }
+  .verified-badge svg { width: 100%; height: 100%; display: block; }
+
+  .profile-carousel-wrap.static-clan .profile-slide[data-slide="clan"],
+  .profile-carousel-wrap.static-clan .profile-dots { display: none; }
+  .profile-carousel-wrap.static-clan .profile-carousel { overflow: hidden; }
+
+  .clan-static-icon { padding: 0; overflow: hidden; background: var(--tg-secondary); }
+  .clan-static-icon.empty { background: var(--tier-soft); color: var(--tier); }
+  .clan-static-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+  .clan-static-icon span { font-size: 18px; font-weight: 700; color: var(--tier); }
+
+  .appearance-section { margin: 0 0 22px; }
+  .appearance-title {
+    font-size: 12px; font-weight: 600; color: var(--tg-hint);
+    text-transform: uppercase; letter-spacing: .04em; margin-bottom: 10px;
+  }
+  .accent-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+  .accent-swatch {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 3px solid transparent; cursor: pointer; padding: 0; position: relative;
+  }
+  .accent-swatch.on { border-color: var(--tg-text); }
+  .accent-swatch.on::after {
+    content: ''; position: absolute; inset: 6px; border-radius: 50%;
+    border: 2px solid rgba(0,0,0,.35);
+  }
+  .shade-options { display: flex; flex-direction: column; gap: 10px; }
+  .shade-opt {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--tg-card); border: 2px solid transparent; border-radius: 14px;
+    padding: 12px 14px; color: var(--tg-text); font-size: 14px; font-weight: 600;
+    font-family: inherit; cursor: pointer; width: 100%; text-align: left;
+  }
+  .shade-opt.on { border-color: var(--tier); }
+  .shade-dot { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; }
 
   .rank-row .avatar {
     border-radius: 50%;
@@ -1752,7 +1795,7 @@
   .clan-member-info { flex: 1; min-width: 0; }
   .clan-member-name { font-size: 14px; font-weight: 600; }
   .clan-member-role { font-size: 11px; color: var(--tg-hint); margin-top: 1px; }
-  .clan-member-score { font-size: 13px; font-weight: 600; color: var(--tg-text); }
+  .clan-member-score { font-size: 13px; font-weight: 600; color: var(--tg-text); flex-shrink: 0; }
   .clan-empty-actions {
     padding: 8px 14px 20px;
     display: flex;
@@ -1932,7 +1975,7 @@
 
     <!-- PROFILE -->
     <div class="screen" id="screenProfile">
-      <div class="profile-carousel-wrap">
+      <div class="profile-carousel-wrap" id="profileCarouselWrap">
         <button type="button" class="profile-search-fab" id="profileSearchBtn" title="Поиск">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
         </button>
@@ -1988,13 +2031,21 @@
             </div>
             <div class="profile-card-chevron">›</div>
           </button>
-          <button type="button" class="profile-card profile-withdraw" id="profileWithdrawBtn">
+          <button type="button" class="profile-card" id="profileClanStaticCard" style="display:none">
+            <div class="profile-card-icon clan-static-icon" id="profileClanStaticIcon"></div>
+            <div class="profile-card-text">
+              <div class="profile-card-title" id="profileClanStaticTitle">Клан</div>
+              <div class="profile-card-sub" id="profileClanStaticSub">Создать клан</div>
+            </div>
+            <div class="profile-card-chevron">›</div>
+          </button>
+          <button type="button" class="profile-card profile-withdraw" id="profileSettingsBtn">
             <div class="profile-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 19h14"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </div>
             <div class="profile-card-text">
-              <div class="profile-card-title">Вывести филькоины</div>
-              <div class="profile-card-sub">Обмен монет</div>
+              <div class="profile-card-title">Настройки</div>
+              <div class="profile-card-sub">Вывод монет, оформление</div>
             </div>
             <div class="profile-card-chevron">›</div>
           </button>
@@ -2023,6 +2074,47 @@
         </div>
         <div class="search-results" id="searchResults"></div>
       </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="screen" id="screenSettings">
+      <div class="panel-header">
+        <div class="panel-title">Настройки</div>
+        <button class="close-btn" id="settingsClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <div class="clan-simple" style="padding:4px 0 0">
+          <button type="button" class="profile-card" id="settingsWithdrawBtn">
+            <div class="profile-card-icon" style="background:color-mix(in srgb,#57cf9d 18%,var(--tg-card));color:#57cf9d">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 19h14"/></svg>
+            </div>
+            <div class="profile-card-text">
+              <div class="profile-card-title">Вывести</div>
+              <div class="profile-card-sub">Обмен филькоинов</div>
+            </div>
+            <div class="profile-card-chevron">›</div>
+          </button>
+          <button type="button" class="profile-card" id="settingsAppearanceBtn">
+            <div class="profile-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="19" cy="17" r="2.5"/><circle cx="6" cy="12" r="2.5"/><path d="M13.5 9 6 12l13 5"/></svg>
+            </div>
+            <div class="profile-card-text">
+              <div class="profile-card-title">Оформление</div>
+              <div class="profile-card-sub">Тема, цвет, клан в профиле</div>
+            </div>
+            <div class="profile-card-chevron">›</div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPEARANCE -->
+    <div class="screen" id="screenAppearance">
+      <div class="panel-header">
+        <div class="panel-title">Оформление</div>
+        <button class="close-btn" id="appearanceClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="panel-body" id="appearanceBody"></div>
     </div>
 
     <!-- CLAN -->
@@ -2162,20 +2254,20 @@
     return 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + a + ')';
   }
   function applyTheme() {
-    if (!tg) return;
-    const tp = tg.themeParams || {};
+    const tp = (tg && tg.themeParams) || {};
     const root = document.documentElement.style;
-    const scheme = (tg.colorScheme || '').toLowerCase();
+    const scheme = ((tg && tg.colorScheme) || '').toLowerCase();
     const light = scheme === 'light' || (scheme !== 'dark' && isLight(tp.bg_color || '#000000'));
 
-    const bg = light ? '#f3f2f7' : '#000000';
-    const card = light ? '#ffffff' : '#1c1c1e';
-    const secondary = light ? '#ebeaf0' : '#2c2c2e';
+    const st = (typeof state !== 'undefined') ? state : null;
+    const bg = light ? '#f3f2f7' : (st && st.bgShade === 'dark' ? '#181818' : '#000000');
+    const card = light ? '#ffffff' : (st && st.bgShade === 'dark' ? '#232323' : '#1c1c1e');
+    const secondary = light ? '#ebeaf0' : (st && st.bgShade === 'dark' ? '#232323' : '#2c2c2e');
     const text = light ? '#000000' : (tp.text_color || '#ffffff');
     const hint = light ? '#8e8e93' : (tp.hint_color || '#8e8e93');
 
     // акцент Telegram: accent_text_color → button_color → fallback
-    const accent = tp.accent_text_color || tp.button_color || tp.link_color || '#ff6fa5';
+    const accent = (st && st.accentColor) || tp.accent_text_color || tp.button_color || tp.link_color || '#ff6fa5';
     const button = tp.button_color || accent;
     const buttonText = tp.button_text_color || '#ffffff';
 
@@ -2238,6 +2330,71 @@
 
   /* Ваш Telegram ID — кнопка админки видна только ему */
   const ADMIN_TG_ID = 8983864818;
+  const VERIFIED_BADGE_SVG = '<span class="verified-badge" title="Создатель"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.5l2.6 1.6 3.05-.3 1.13 2.85 2.72 1.5-.5 3.05 1.86 2.4-1.86 2.4.5 3.05-2.72 1.5-1.13 2.85-3.05-.3L12 22.5l-2.6-1.6-3.05.3-1.13-2.85-2.72-1.5.5-3.05L1.14 12l1.86-2.4-.5-3.05 2.72-1.5L6.35 2.2l3.05.3L12 1.5z"/><path d="M9.2 12.3l1.9 1.9 3.7-3.9" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+  function isCreatorId(uid) { return uid !== null && uid !== undefined && String(uid).trim() !== '' && Number(uid) === ADMIN_TG_ID; }
+  function nameBadge(uid) { return isCreatorId(uid) ? VERIFIED_BADGE_SVG : ''; }
+  function escapeHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+
+  const ACCENT_COLORS = ['#ff6fa5','#7c9eff','#57cf9d','#f0bd3e','#b18cff','#ff9d5c','#5cc8ff','#ff5c5c'];
+  function renderAppearanceScreen() {
+    const wrap = $('appearanceBody');
+    if (!wrap) return;
+    const accent = state.accentColor || '#ff6fa5';
+    const swatches = ACCENT_COLORS.map(c =>
+      '<button type="button" class="accent-swatch' + (c.toLowerCase() === accent.toLowerCase() ? ' on' : '') + '" data-color="' + c + '" style="background:' + c + '"></button>'
+    ).join('');
+    wrap.innerHTML =
+      '<div class="appearance-section">' +
+        '<div class="appearance-title">Цвет темы</div>' +
+        '<div class="accent-grid" id="accentGrid">' + swatches + '</div>' +
+      '</div>' +
+      '<div class="appearance-section">' +
+        '<div class="appearance-title">Оттенок фона</div>' +
+        '<div class="shade-options" id="shadeOptions">' +
+          '<button type="button" class="shade-opt' + (state.bgShade !== 'dark' ? ' on' : '') + '" data-shade="black">' +
+            '<span class="shade-dot" style="background:#000000"></span>Чёрный' +
+          '</button>' +
+          '<button type="button" class="shade-opt' + (state.bgShade === 'dark' ? ' on' : '') + '" data-shade="dark">' +
+            '<span class="shade-dot" style="background:#181818;border:1px solid #333"></span>Тёмно-серый' +
+          '</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="appearance-section">' +
+        '<div class="profile-card" style="cursor:default">' +
+          '<div class="profile-card-text" style="flex:1">' +
+            '<div class="profile-card-title">Свайп клана в профиле</div>' +
+            '<div class="profile-card-sub">Как раньше — клан листается свайпом</div>' +
+          '</div>' +
+          '<label class="ios-switch">' +
+            '<input type="checkbox" id="clanSwipeSwitch"' + (state.clanSwipeMode ? ' checked' : '') + '>' +
+            '<span class="slider"></span>' +
+          '</label>' +
+        '</div>' +
+      '</div>';
+    wrap.querySelectorAll('.accent-swatch').forEach(el => {
+      el.onclick = () => {
+        state.accentColor = el.dataset.color;
+        saveState();
+        applyTheme();
+        renderAppearanceScreen();
+      };
+    });
+    wrap.querySelectorAll('.shade-opt').forEach(el => {
+      el.onclick = () => {
+        state.bgShade = el.dataset.shade;
+        saveState();
+        applyTheme();
+        renderAppearanceScreen();
+      };
+    });
+    const sw = $('clanSwipeSwitch');
+    if (sw) sw.addEventListener('change', () => {
+      state.clanSwipeMode = !!sw.checked;
+      saveState();
+      applyClanSwipeMode();
+      renderProfile();
+    });
+  }
   const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) || {};
   const myId = String(user.id || ('guest_' + Math.random().toString(36).slice(2, 9)));
   const myName = [user.first_name, user.last_name].filter(Boolean).join(' ') || user.username || 'Игрок';
@@ -2291,7 +2448,7 @@
   function allSkins() { return customSkins; }
 
   function allClans() { return customClans; }
-  function getClan(id) { return customClans.find(c => c.id === id) || null; }
+  function getClan(id) { if (id === null || id === undefined) return null; return customClans.find(c => String(c.id) === String(id)) || null; }
   function myClan() { return state.clanId ? getClan(state.clanId) : null; }
   function clanAvatarHtml(clan, cls) {
     cls = cls || 'clan-avatar-sm';
@@ -2479,7 +2636,10 @@
     lastSeen: Date.now(),
     pigSkin: null,
     passivePerSec: 0,
-    tapBonusFlat: 0
+    tapBonusFlat: 0,
+    accentColor: null,
+    bgShade: 'black',
+    clanSwipeMode: false
   };
 
   function loadState() {
@@ -2728,6 +2888,8 @@
     profile: $('screenProfile'),
     user: $('screenUser'),
     search: $('screenSearch'),
+    settings: $('screenSettings'),
+    appearance: $('screenAppearance'),
     clan: $('screenClan'),
     admin: $('screenAdmin')
   };
@@ -2743,12 +2905,12 @@
     $('topbar').style.display = (name === 'tap') ? '' : 'none';
     // nav highlights main tabs; rating/ach keep profile active
     let navActive = name;
-    if (name === 'rating' || name === 'ach' || name === 'user' || name === 'search' || name === 'clan') navActive = 'profile';
+    if (name === 'rating' || name === 'ach' || name === 'user' || name === 'search' || name === 'clan' || name === 'settings' || name === 'appearance') navActive = 'profile';
     if (name === 'admin') navActive = null;
     document.querySelectorAll('.nav-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.screen === navActive);
     });
-    const isSub = ['rating','ach','user','search','clan','admin'].includes(name);
+    const isSub = ['rating','ach','user','search','clan','admin','settings','appearance'].includes(name);
     const appEl = document.getElementById('app');
     if (name === 'profile') {
       const idx = ($('profileCarousel') && $('profileCarousel')._lastIdx) || 0;
@@ -2765,6 +2927,7 @@
     if (name === 'profile') renderProfile();
     if (name === 'search') renderSearch('');
     if (name === 'clan') renderClanScreen();
+    if (name === 'appearance') renderAppearanceScreen();
     if (name === 'admin') renderAdmin();
   }
 
@@ -2786,7 +2949,7 @@
     const av = $('profileAvatar');
     const nm = $('profileName');
     const idEl = $('profileId');
-    if (nm) nm.textContent = myName || 'Игрок';
+    if (nm) nm.innerHTML = escapeHtml(myName || 'Игрок') + nameBadge(myId);
     if (idEl) idEl.textContent = myId ? ('ID ' + myId) : '';
     if (av) {
       const photo = user && user.photo_url;
@@ -2822,6 +2985,31 @@
       };
     }
 
+    // static clan card (non-swipe mode)
+    const scCard = $('profileClanStaticCard');
+    if (scCard) {
+      const icon = $('profileClanStaticIcon');
+      const title = $('profileClanStaticTitle');
+      const sub = $('profileClanStaticSub');
+      if (c) {
+        if (icon) {
+          icon.classList.remove('empty');
+          icon.innerHTML = c.avatar ? '<img src="' + c.avatar + '" alt="">' : '<span>' + (c.name || '?').charAt(0).toUpperCase() + '</span>';
+        }
+        if (title) title.textContent = c.name || 'Клан';
+        if (sub) sub.textContent = (c.members || []).length + ' уч. · казна ' + fmt(c.bank || 0);
+        scCard.onclick = () => openClanView(c.id, 'profile');
+      } else {
+        if (icon) {
+          icon.classList.add('empty');
+          icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+        }
+        if (title) title.textContent = 'Создать клан';
+        if (sub) sub.textContent = 'Или вступи через поиск';
+        scCard.onclick = () => { clanWizardStep = 1; clanWizardImg = null; clanWizardCreated = null; showScreen('clan'); };
+      }
+    }
+
     // skins
     const grid = $('mySkinsGrid');
     if (grid) {
@@ -2850,6 +3038,7 @@
       }
     }
     loadNavAvatar();
+    applyClanSwipeMode();
     bindProfileCarousel();
     const car = $('profileCarousel');
     if (car && car._lastIdx === 1) renderProfileClanPanel();
@@ -3103,6 +3292,19 @@
     if (idx === 1) renderProfileClanPanel();
   }
 
+  function applyClanSwipeMode() {
+    const wrap = $('profileCarouselWrap');
+    if (wrap) wrap.classList.toggle('static-clan', !state.clanSwipeMode);
+    const card = $('profileClanStaticCard');
+    if (card) card.style.display = state.clanSwipeMode ? 'none' : '';
+    const car = $('profileCarousel');
+    if (car && !state.clanSwipeMode && car._lastIdx === 1) {
+      car.scrollLeft = 0;
+      car._lastIdx = 0;
+      setProfileSlide(0);
+    }
+  }
+
   function bindProfileCarousel() {
     const car = $('profileCarousel');
     const dots = $('profileDots');
@@ -3271,7 +3473,7 @@
         : '<div class="avatar">' + init + '</div>';
       const clan = p.clanId ? getClan(p.clanId) : null;
       row.innerHTML = av +
-        '<div class="rank-info"><div class="rank-name">' + (p.name || 'Игрок') + '</div>' +
+        '<div class="rank-info"><div class="rank-name">' + (p.name || 'Игрок') + nameBadge(p.id) + '</div>' +
         '<div class="rank-sub">' + (clan ? clan.name : 'Без клана') + '</div></div>' +
         '<div class="rank-score">' + fmt(p.score || 0) + '</div>';
       row.addEventListener('click', () => openUserProfile(p));
@@ -3429,7 +3631,7 @@
         const m = resolveMember(mid);
         const role = String(c.ownerId) === String(mid) ? 'Лидер' : 'Участник';
         return '<div class="clan-member-row" style="padding:10px 0">' + clanMemberAv(mid, 'clan-member-av') +
-          '<div class="clan-member-info"><div class="clan-member-name">' + m.name + (String(mid)===String(myId)?' · вы':'') + '</div>' +
+          '<div class="clan-member-info"><div class="clan-member-name">' + m.name + nameBadge(mid) + (String(mid)===String(myId)?' · вы':'') + '</div>' +
           '<div class="clan-member-role">' + role + '</div></div>' +
           '<div class="clan-member-score">' + fmt(m.score) + '</div></div>';
       }).join('');
@@ -3454,7 +3656,7 @@
       return;
     }
 
-    const isMember = state.clanId === c.id;
+    const isMember = String(state.clanId) === String(c.id);
     const isOwner = String(c.ownerId) === String(myId);
     body.innerHTML = clanHeroHtml(c, { isOwner: isOwner && isMember }) + clanActionsHtml(c, { isMember: isMember, isOwner: isOwner });
     applyClanCoverGradient(c.avatar);
@@ -3550,7 +3752,7 @@
     body.innerHTML =
       '<div class="up-head">' +
         '<div class="up-avatar">' + photo + '</div>' +
-        '<div class="up-name">' + (p.name || 'Игрок') + '</div>' +
+        '<div class="up-name">' + (p.name || 'Игрок') + nameBadge(p.id) + '</div>' +
         '<div class="up-score">' + fmt(p.score || 0) + ' очков</div>' +
         clanBadge +
       '</div>' +
@@ -3643,10 +3845,15 @@
   if ($('profileRatingBtn')) $('profileRatingBtn').addEventListener('click', () => showScreen('rating'));
   if ($('profileAchsBtn')) $('profileAchsBtn').addEventListener('click', () => showScreen('ach'));
   if ($('profileSearchBtn')) $('profileSearchBtn').addEventListener('click', () => showScreen('search'));
-  if ($('profileWithdrawBtn')) $('profileWithdrawBtn').addEventListener('click', () => {
+  function doWithdraw() {
     if (tg && tg.showAlert) tg.showAlert('Вывод филькоинов скоро будет доступен 🐷');
     else alert('Вывод филькоинов скоро будет доступен 🐷');
-  });
+  }
+  if ($('profileSettingsBtn')) $('profileSettingsBtn').addEventListener('click', () => showScreen('settings'));
+  if ($('settingsClose')) $('settingsClose').addEventListener('click', () => showScreen('profile'));
+  if ($('settingsWithdrawBtn')) $('settingsWithdrawBtn').addEventListener('click', doWithdraw);
+  if ($('settingsAppearanceBtn')) $('settingsAppearanceBtn').addEventListener('click', () => showScreen('appearance'));
+  if ($('appearanceClose')) $('appearanceClose').addEventListener('click', () => showScreen('settings'));
   if ($('publicSwitch')) {
     $('publicSwitch').addEventListener('change', () => {
       state.publicProfile = !!$('publicSwitch').checked;
@@ -3710,7 +3917,7 @@
       row.innerHTML =
         (med ? '<div class="rank-medal">' + med + '</div>' : '<div class="rank-num">' + (i + 1) + '</div>') +
         avHtml +
-        '<div class="rank-info"><div class="rank-name">' + (p.name || 'Игрок') + '</div><div class="rank-sub">' + (isMe ? 'Это вы' : 'Нажмите, чтобы открыть') + '</div></div>' +
+        '<div class="rank-info"><div class="rank-name">' + (p.name || 'Игрок') + nameBadge(p.id) + '</div><div class="rank-sub">' + (isMe ? 'Это вы' : 'Нажмите, чтобы открыть') + '</div></div>' +
         '<div class="rank-score">' + fmt(p.score) + '</div>';
       row.addEventListener('click', () => {
         if (isMe) showScreen('profile');
@@ -4166,6 +4373,7 @@
     const pigEl = $('pigPhoto');
     if (pigEl && !pigEl.dataset.defaultSrc) pigEl.dataset.defaultSrc = pigEl.src;
     await loadState();
+    applyTheme();
     loadLocalCustom(); // local backup
     loadNavAvatar();
     await fetchShared(); // server is source of truth when available
