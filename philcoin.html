@@ -2239,6 +2239,7 @@
   }
 
   /* ===== THEME ===== */
+  var state; // forward declaration (no TDZ) — real object is assigned further down; lets applyTheme() run safely at parse time
   function hexToRgb(hex) {
     if (!hex || typeof hex !== 'string') return null;
     let h = hex.trim().replace('#','');
@@ -2259,7 +2260,7 @@
     const scheme = ((tg && tg.colorScheme) || '').toLowerCase();
     const light = scheme === 'light' || (scheme !== 'dark' && isLight(tp.bg_color || '#000000'));
 
-    const st = (typeof state !== 'undefined') ? state : null;
+    const st = state || null;
     const bg = light ? '#f3f2f7' : (st && st.bgShade === 'dark' ? '#181818' : '#000000');
     const card = light ? '#ffffff' : (st && st.bgShade === 'dark' ? '#232323' : '#1c1c1e');
     const secondary = light ? '#ebeaf0' : (st && st.bgShade === 'dark' ? '#232323' : '#2c2c2e');
@@ -2623,7 +2624,7 @@
 
   /* ===== STATE ===== */
   const STORAGE_KEY = 'philcoin_v3';
-  let state = {
+  state = {
     totalEarned: 0,
     balance: 0,
     taps: 0,
