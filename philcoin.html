@@ -3134,35 +3134,15 @@
       };
     }
 
-    // static clan card (non-swipe mode)
-    const scCard = $('profileClanStaticCard');
-    if (scCard) {
-      const icon = $('profileClanStaticIcon');
-      const title = $('profileClanStaticTitle');
-      const sub = $('profileClanStaticSub');
-      if (c) {
-        if (icon) {
-          icon.classList.remove('empty');
-          icon.innerHTML = c.avatar ? '<img src="' + c.avatar + '" alt="">' : '<span>' + (c.name || '?').charAt(0).toUpperCase() + '</span>';
-        }
-        if (title) title.textContent = c.name || 'Клан';
-        if (sub) sub.textContent = (c.members || []).length + ' уч. · казна ' + fmt(c.bank || 0);
-        scCard.onclick = () => openClanView(c.id, 'profile');
-      } else {
-        if (icon) {
-          icon.classList.add('empty');
-          icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
-        }
-        if (title) title.textContent = 'Создать клан';
-        if (sub) sub.textContent = 'Или вступи через поиск';
-        scCard.onclick = () => { clanWizardStep = 1; clanWizardImg = null; clanWizardCreated = null; showScreen('clan'); };
-      }
-    }
-
-    // NEW: clan pill under own name (in "me" slide)
+    // Clan pill under name — only when swipe mode is OFF (to avoid duplication with swipe)
     const pill = $('profileClanPill');
+    const useSwipeClan = !!state.clanSwipeMode;
+
     if (pill) {
-      if (c) {
+      if (useSwipeClan) {
+        pill.style.display = 'none';
+        pill.onclick = null;
+      } else if (c) {
         const memberCount = (c.members || []).length;
         pill.innerHTML = `
           <div class="clan-ico">
@@ -3176,7 +3156,7 @@
         pill.style.display = 'inline-flex';
         pill.onclick = () => openClanView(c.id, 'profile');
       } else {
-        // no clan → show "create clan" pill
+        // no clan → "create clan" pill
         pill.innerHTML = `
           <div class="clan-ico" style="background: var(--tier-soft); color: var(--tier);">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
@@ -3193,6 +3173,12 @@
           showScreen('clan');
         };
       }
+    }
+
+    // Hide old duplicate clan card from the list (we now use the pill instead)
+    const scCard = $('profileClanStaticCard');
+    if (scCard) {
+      scCard.style.display = 'none';
     }
 
     // skins
