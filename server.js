@@ -1,49 +1,210 @@
 /**
- * Филькоин — один сервис на Railway, который делает две вещи:
- *  1) Отдаёт philcoin.html как веб-страницу (это и есть Telegram Mini App).
- *  2) Опрашивает Telegram и на /start шлёт кнопку с открытием этой страницы.
+ * Филькоин — Telegram Mini App + бот + общее API-хранилище.
  *
- * Ничего устанавливать не нужно — используется только встроенный в
- * Node.js модуль http и глобальный fetch (Node 18+, Railway это умеет
- * из коробки).
+ * API (всё на том же домене):
+ *   GET  /api/shared              — достижения, товары, рейтинг, forceBalances
+ *   PUT  /api/shared              — полная запись (админ: achievements + market)
+ *   POST /api/score               — обновить свой счёт в рейтинге {id,name,score}
+ *   POST /api/force-balance       — админ: принудительный баланс {id,balance}
  *
- * ЕДИНСТВЕННОЕ, что может понадобиться сделать руками — см. "APP_URL" ниже.
+ * Данные лежат в data.json рядом с сервером.
  */
 
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { URL } = require('url');
 
 const BOT_TOKEN = '8669803367:AAHv05kMGaL9oHTSm4nXEXq1qjOyEiRcNqM';
-const API = `https://api.telegram.org/bot${BOT_TOKEN}`;
+const TG_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
-/* Railway сам подставляет публичный домен сервиса в переменную окружения
-   RAILWAY_PUBLIC_DOMAIN, как только вы нажмёте "Generate Domain" в
-   настройках сервиса (Settings → Networking). Если по какой-то причине
-   он не появится — задайте переменную APP_URL вручную в Railway
-   (Variables → + New Variable → APP_URL = https://ваш-домен.up.railway.app). */
 const APP_URL = process.env.APP_URL
   || (process.env.RAILWAY_PUBLIC_DOMAIN ? 'https://' + process.env.RAILWAY_PUBLIC_DOMAIN : null);
 
-/* ---------- 1) веб-сервер, отдающий Mini App ---------- */
+const DATA_PATH = path.join(__dirname, 'data.json');
 const HTML_PATH = path.join(__dirname, 'philcoin.html');
 const htmlBuffer = fs.readFileSync(HTML_PATH);
 
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(htmlBuffer);
+function defaultShared() {
+  return {
+    achievements: [],
+    market: [],
+    leaderboard: [],
+    forceBalances: {}
+  };
+}
+
+let shared = defaultShared();
+
+function loadData() {
+  try {
+    if (fs.existsSync(DATA_PATH)) {
+      const raw = fs.readFileSync(DATA_PATH, 'utf8');
+      const parsed = JSON.parse(raw);
+      shared = {
+        achievements: Array.isArray(parsed.achievements) ? parsed.achievements : [],
+        market: Array.isArray(parsed.market) ? parsed.market : [],
+        leaderboard: Array.isArray(parsed.leaderboard) ? parsed.leaderboard : [],
+        forceBalances: (parsed.forceBalances && typeof parsed.forceBalances === 'object')
+          ? parsed.forceBalances : {}
+      };
+      console.log('data.json загружен:', {
+        ach: shared.achievements.length,
+        market: shared.market.length,
+        lb: shared.leaderboard.length
+      });
+    }
+  } catch (e) {
+    console.error('Ошибка чтения data.json:', e.message);
+    shared = defaultShared();
+  }
+}
+
+let saveTimer = null;
+function saveData() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try {
+      fs.writeFileSync(DATA_PATH, JSON.stringify(shared, null, 2), 'utf8');
+    } catch (e) {
+      console.error('Ошибка записи data.json:', e.message);
+    }
+  }, 200);
+}
+
+loadData();
+
+function sendJson(res, code, obj) {
+  const body = JSON.stringify(obj);
+  res.writeHead(code, {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET,PUT,POST,OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Cache-Control': 'no-store'
+  });
+  res.end(body);
+}
+
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on('data', c => chunks.push(c));
+    req.on('end', () => {
+      try {
+        const raw = Buffer.concat(chunks).toString('utf8') || '{}';
+        resolve(JSON.parse(raw));
+      } catch (e) {
+        reject(e);
+      }
+    });
+    req.on('error', reject);
+  });
+}
+
+const server = http.createServer(async (req, res) => {
+  const url = new URL(req.url || '/', 'http://localhost');
+  const pathname = url.pathname;
+
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204, {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET,PUT,POST,OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    });
+    res.end();
+    return;
+  }
+
+  try {
+    if (pathname === '/api/shared' && req.method === 'GET') {
+      sendJson(res, 200, shared);
+      return;
+    }
+
+    if (pathname === '/api/shared' && req.method === 'PUT') {
+      const body = await readBody(req);
+      if (Array.isArray(body.achievements)) shared.achievements = body.achievements;
+      if (Array.isArray(body.market)) shared.market = body.market;
+      if (Array.isArray(body.leaderboard)) shared.leaderboard = body.leaderboard;
+      if (body.forceBalances && typeof body.forceBalances === 'object') {
+        shared.forceBalances = body.forceBalances;
+      }
+      saveData();
+      sendJson(res, 200, { ok: true, shared });
+      return;
+    }
+
+    if (pathname === '/api/score' && req.method === 'POST') {
+      const body = await readBody(req);
+      const id = String(body.id || '');
+      const name = String(body.name || 'Игрок');
+      const score = Math.max(0, Math.floor(Number(body.score) || 0));
+      if (!id) {
+        sendJson(res, 400, { ok: false, error: 'id required' });
+        return;
+      }
+      if (!Array.isArray(shared.leaderboard)) shared.leaderboard = [];
+      const idx = shared.leaderboard.findIndex(u => String(u.id) === id);
+      const entry = { id, name, score, updated: Date.now() };
+      if (idx >= 0) shared.leaderboard[idx] = entry;
+      else shared.leaderboard.push(entry);
+      shared.leaderboard.sort((a, b) => b.score - a.score);
+      shared.leaderboard = shared.leaderboard.slice(0, 100);
+      saveData();
+      sendJson(res, 200, { ok: true, leaderboard: shared.leaderboard });
+      return;
+    }
+
+    if (pathname === '/api/force-balance' && req.method === 'POST') {
+      const body = await readBody(req);
+      const id = String(body.id || '');
+      const balance = Math.max(0, Math.floor(Number(body.balance) || 0));
+      if (!id) {
+        sendJson(res, 400, { ok: false, error: 'id required' });
+        return;
+      }
+      if (!shared.forceBalances || typeof shared.forceBalances !== 'object') {
+        shared.forceBalances = {};
+      }
+      shared.forceBalances[id] = balance;
+      if (!Array.isArray(shared.leaderboard)) shared.leaderboard = [];
+      const idx = shared.leaderboard.findIndex(u => String(u.id) === id);
+      if (idx >= 0) {
+        shared.leaderboard[idx].score = balance;
+        shared.leaderboard[idx].updated = Date.now();
+      }
+      saveData();
+      sendJson(res, 200, { ok: true, forceBalances: shared.forceBalances });
+      return;
+    }
+
+    if (pathname === '/' || pathname === '/index.html' || pathname === '/philcoin.html') {
+      res.writeHead(200, {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-cache'
+      });
+      res.end(htmlBuffer);
+      return;
+    }
+
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('Not found');
+  } catch (e) {
+    console.error('request error:', e);
+    sendJson(res, 500, { ok: false, error: e.message });
+  }
 });
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log('Веб-сервер запущен на порту', PORT);
-  console.log('APP_URL:', APP_URL || '(ещё не определён — см. комментарий в server.js)');
+  console.log('Веб-сервер + API на порту', PORT);
+  console.log('APP_URL:', APP_URL || '(ещё не определён)');
 });
 
-/* ---------- 2) бот: одна кнопка "Открыть Филькоин" ---------- */
 async function sendWelcome(chatId) {
   if (!APP_URL) {
-    await fetch(`${API}/sendMessage`, {
+    await fetch(`${TG_API}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -53,7 +214,7 @@ async function sendWelcome(chatId) {
     });
     return;
   }
-  await fetch(`${API}/sendMessage`, {
+  await fetch(`${TG_API}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -69,10 +230,9 @@ async function sendWelcome(chatId) {
 }
 
 async function poll(offset) {
-  const res = await fetch(`${API}/getUpdates?timeout=30&offset=${offset}`);
+  const res = await fetch(`${TG_API}/getUpdates?timeout=30&offset=${offset}`);
   const data = await res.json();
   let nextOffset = offset;
-
   if (data.ok) {
     for (const update of data.result) {
       nextOffset = update.update_id + 1;

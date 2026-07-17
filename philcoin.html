@@ -815,162 +815,64 @@
     tg.onEvent('viewportChanged', updateSafeArea);
   }
 
-  /* ===== SYNC CONFIG ===== */
-  const SYNC_BIN_ID  = '6a59f4fef5f4af5e299b9be0';
-  const SYNC_API_KEY = '$2a$10$EkfG3bkxLhAc0Fa7FDJ5nejaL5sw2dCPKQbpjSd.ik.UUt6mRRiIG';
-  const SYNC_ENABLED = SYNC_BIN_ID.indexOf('ВАШ_') !== 0 && SYNC_API_KEY.indexOf('ВАШ_') !== 0;
-  const ADMIN_TG_ID = 8983864818;
+  /* ===== SYNC — через свой Railway API (без jsonbin) ===== */
+  const SYNC_ENABLED = true; // всегда через /api на том же домене
 
+  /* Ваш Telegram ID — кнопка админки видна только ему */
+  const ADMIN_TG_ID = 8983864818;
   const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) || {};
-  const myId = String(user.id || 'guest_' + Math.random().toString(36).slice(2,9));
+  const myId = String(user.id || ('guest_' + Math.random().toString(36).slice(2, 9)));
   const myName = [user.first_name, user.last_name].filter(Boolean).join(' ') || user.username || 'Игрок';
   const isAdmin = Number(user.id) === ADMIN_TG_ID;
 
-  /* ===== STATE ===== */
-  const STORAGE_KEY = 'philcoin_v3';
-  let state = {
-    totalEarned: 0,
-    balance: 0,
-    taps: 0,
-    owned: {},
-    lastSeen: Date.now(),
-    pigSkin: null // dataURL from achievement
-  };
-
-  function loadState() {
-    return new Promise(resolve => {
-      if (tg && tg.CloudStorage) {
-        tg.CloudStorage.getItem(STORAGE_KEY, (err, val) => {
-          if (!err && val) {
-            try { Object.assign(state, JSON.parse(val)); } catch(e){}
-          }
-          resolve();
-        });
-      } else {
-        try {
-          const v = localStorage.getItem(STORAGE_KEY);
-          if (v) Object.assign(state, JSON.parse(v));
-        } catch(e){}
-        resolve();
-      }
-    });
-  }
-  let saveTimer = null;
-  function saveState() {
-    state.lastSeen = Date.now();
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => {
-      const json = JSON.stringify(state);
-      if (tg && tg.CloudStorage) tg.CloudStorage.setItem(STORAGE_KEY, json);
-      else try { localStorage.setItem(STORAGE_KEY, json); } catch(e){}
-    }, 600);
-  }
-
-  /* ===== LEVELS (harder progression) ===== */
-  function totalForLevel(n) {
-    // ~ level 10 ≈ 25k, level 20 ≈ 120k, level 30 ≈ 300k, level 50 ≈ 1M
-    return Math.round(180 * Math.pow(n, 2.25));
-  }
-  function levelFromTotal(t) {
-    let L = 1;
-    while (totalForLevel(L + 1) <= t) L++;
-    return L;
-  }
-  function tapPower(L) {
-    return 1 + Math.floor((L - 1) / 7);
-  }
-
-  /* ===== SHARED DATA (achievements, market, leaderboard) ===== */
   let customAchievements = [];
   let customMarket = [];
-  let leaderboard = []; // {id, name, score, updated}
+  let leaderboard = [];
+  let forceBalances = {};
+  let syncLock = false;
+  let lastPushedScore = -1;
+  let pushTimer = null;
 
   function allAchievements() { return customAchievements; }
   function allMarket() { return customMarket; }
 
   async function fetchShared() {
-    if (!SYNC_ENABLED) return;
     try {
-      const res = await fetch(`https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}/latest`, {
-        headers: { 'X-Master-Key': SYNC_API_KEY }
-      });
+      const res = await fetch('/api/shared', { cache: 'no-store' });
       if (!res.ok) return;
-      const data = await res.json();
-      const rec = data.record || {};
-      // only overwrite local if server has data (protect against empty race)
-      if (Array.isArray(rec.achievements) && (rec.achievements.length || !customAchievements.length))
-        customAchievements = rec.achievements;
-      if (Array.isArray(rec.market) && (rec.market.length || !customMarket.length))
-        customMarket = rec.market;
+      const rec = await res.json();
+      if (Array.isArray(rec.achievements)) customAchievements = rec.achievements;
+      if (Array.isArray(rec.market)) customMarket = rec.market;
       if (Array.isArray(rec.leaderboard)) leaderboard = rec.leaderboard;
       if (rec.forceBalances && typeof rec.forceBalances === 'object') {
         forceBalances = rec.forceBalances;
         applyForceBalance();
       }
-    } catch(e) { console.warn('sync fetch', e); }
+    } catch (e) {
+      console.warn('fetchShared', e);
+    }
   }
 
-  let pushTimer = null;
-  let lastPushedScore = -1;
-  let syncLock = false;
-  let forceBalances = {}; // { userId: number } — admin can force a player's balance
-
   function pushLeaderboard(force) {
-    if (!SYNC_ENABLED) return;
     const score = Math.floor(state.totalEarned);
     if (!force && Math.abs(score - lastPushedScore) < 10 && lastPushedScore >= 0) return;
     clearTimeout(pushTimer);
     pushTimer = setTimeout(async () => {
-      if (syncLock) return;
-      syncLock = true;
       try {
-        const res = await fetch(`https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}/latest`, {
-          headers: { 'X-Master-Key': SYNC_API_KEY }
+        const res = await fetch('/api/score', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: myId, name: myName, score })
         });
-        if (!res.ok) return;
-        const data = await res.json();
-        const rec = data.record || { achievements: [], market: [], leaderboard: [], forceBalances: {} };
-
-        // CRITICAL: never wipe market/achievements written by admin
-        // Prefer the longer/richer array if race happened
-        if (Array.isArray(rec.achievements) && rec.achievements.length >= customAchievements.length) {
-          customAchievements = rec.achievements;
-        } else if (customAchievements.length) {
-          rec.achievements = customAchievements;
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.leaderboard)) leaderboard = data.leaderboard;
+          lastPushedScore = score;
         }
-        if (Array.isArray(rec.market) && rec.market.length >= customMarket.length) {
-          customMarket = rec.market;
-        } else if (customMarket.length) {
-          rec.market = customMarket;
-        }
-        if (!Array.isArray(rec.leaderboard)) rec.leaderboard = [];
-        if (rec.forceBalances && typeof rec.forceBalances === 'object') {
-          forceBalances = rec.forceBalances;
-        }
-
-        const idx = rec.leaderboard.findIndex(u => String(u.id) === myId);
-        const entry = { id: myId, name: myName, score: Math.floor(state.totalEarned), updated: Date.now() };
-        if (idx >= 0) rec.leaderboard[idx] = entry;
-        else rec.leaderboard.push(entry);
-        rec.leaderboard.sort((a,b) => b.score - a.score);
-        rec.leaderboard = rec.leaderboard.slice(0, 100);
-        leaderboard = rec.leaderboard;
-        lastPushedScore = entry.score;
-
-        // apply forced balance if admin set one for me
-        applyForceBalance();
-
-        await fetch(`https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Master-Key': SYNC_API_KEY
-          },
-          body: JSON.stringify(rec)
-        });
-      } catch(e) { console.warn('lb push', e); }
-      finally { syncLock = false; }
-    }, force ? 300 : 4000);
+      } catch (e) {
+        console.warn('pushLeaderboard', e);
+      }
+    }, force ? 200 : 3000);
   }
 
   function applyForceBalance() {
@@ -978,10 +880,8 @@
     if (fb === undefined || fb === null) return;
     const val = Number(fb);
     if (isNaN(val) || val < 0) return;
-    // only apply if different, then clear the force flag by writing back
     if (Math.floor(state.balance) !== Math.floor(val)) {
       state.balance = val;
-      // also adjust totalEarned so level doesn't break weirdly
       if (state.totalEarned < val) state.totalEarned = val;
       saveState();
       render();
@@ -989,80 +889,57 @@
   }
 
   async function persistCustomData() {
-    if (!SYNC_ENABLED) {
-      try {
-        localStorage.setItem('philcoin_custom', JSON.stringify({ achievements: customAchievements, market: customMarket }));
-      } catch(e){}
-      return;
-    }
     if (syncLock) {
-      // retry shortly
-      setTimeout(persistCustomData, 800);
+      setTimeout(persistCustomData, 500);
       return;
     }
     syncLock = true;
     try {
-      const res = await fetch(`https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}/latest`, {
-        headers: { 'X-Master-Key': SYNC_API_KEY }
+      // also keep local backup
+      try {
+        localStorage.setItem('philcoin_custom', JSON.stringify({
+          achievements: customAchievements,
+          market: customMarket
+        }));
+      } catch (e) {}
+
+      const res = await fetch('/api/shared', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          achievements: customAchievements,
+          market: customMarket
+        })
       });
-      let rec = { achievements: [], market: [], leaderboard: [], forceBalances: {} };
       if (res.ok) {
         const data = await res.json();
-        rec = data.record || rec;
+        if (data.shared) {
+          if (Array.isArray(data.shared.achievements)) customAchievements = data.shared.achievements;
+          if (Array.isArray(data.shared.market)) customMarket = data.shared.market;
+          if (Array.isArray(data.shared.leaderboard)) leaderboard = data.shared.leaderboard;
+        }
       }
-      // admin writes market + achievements
-      rec.achievements = customAchievements;
-      rec.market = customMarket;
-      // keep leaderboard & forceBalances from server
-      if (!Array.isArray(rec.leaderboard)) rec.leaderboard = leaderboard;
-      else leaderboard = rec.leaderboard;
-      if (!rec.forceBalances || typeof rec.forceBalances !== 'object') rec.forceBalances = forceBalances;
-      else forceBalances = rec.forceBalances;
-
-      await fetch(`https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Master-Key': SYNC_API_KEY
-        },
-        body: JSON.stringify(rec)
-      });
-    } catch(e) { console.warn('persist', e); }
-    finally { syncLock = false; }
+    } catch (e) {
+      console.warn('persistCustomData', e);
+    } finally {
+      syncLock = false;
+    }
   }
 
-  async function persistForceBalances() {
-    if (!SYNC_ENABLED) return;
-    if (syncLock) { setTimeout(persistForceBalances, 800); return; }
-    syncLock = true;
+  async function forceBalanceOnServer(id, balance) {
     try {
-      const res = await fetch(`https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}/latest`, {
-        headers: { 'X-Master-Key': SYNC_API_KEY }
+      const res = await fetch('/api/force-balance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, balance })
       });
-      let rec = { achievements: [], market: [], leaderboard: [], forceBalances: {} };
       if (res.ok) {
         const data = await res.json();
-        rec = data.record || rec;
+        if (data.forceBalances) forceBalances = data.forceBalances;
       }
-      // preserve market/ach from server (or local if richer)
-      if (Array.isArray(rec.achievements) && rec.achievements.length) customAchievements = rec.achievements;
-      else rec.achievements = customAchievements;
-      if (Array.isArray(rec.market) && rec.market.length) customMarket = rec.market;
-      else rec.market = customMarket;
-      if (Array.isArray(rec.leaderboard)) leaderboard = rec.leaderboard;
-      else rec.leaderboard = leaderboard;
-      rec.forceBalances = forceBalances;
-
-      await fetch(`https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Master-Key': SYNC_API_KEY
-        },
-        body: JSON.stringify(rec)
-      });
-    } catch(e) { console.warn('force persist', e); }
-    finally { syncLock = false; }
+    } catch (e) {
+      console.warn('forceBalance', e);
+    }
   }
 
   function loadLocalCustom() {
@@ -1070,10 +947,10 @@
       const v = localStorage.getItem('philcoin_custom');
       if (v) {
         const o = JSON.parse(v);
-        if (Array.isArray(o.achievements)) customAchievements = o.achievements;
-        if (Array.isArray(o.market)) customMarket = o.market;
+        if (Array.isArray(o.achievements) && o.achievements.length) customAchievements = o.achievements;
+        if (Array.isArray(o.market) && o.market.length) customMarket = o.market;
       }
-    } catch(e){}
+    } catch (e) {}
   }
 
   /* ===== HELPERS ===== */
@@ -1507,10 +1384,8 @@
 
   function renderAdmin() {
     const badge = $('adminSyncBadge');
-    badge.className = 'admin-sync ' + (SYNC_ENABLED ? 'on' : 'off');
-    badge.textContent = SYNC_ENABLED
-      ? 'Синхронизация включена — видно всем'
-      : 'Синхронизация выключена — только на этом устройстве';
+    badge.className = 'admin-sync on';
+    badge.textContent = 'Синхронизация через сервер — видно всем игрокам';
 
     // users
     const uList = $('usersList');
@@ -1541,14 +1416,12 @@
           const num = parseInt(val, 10);
           if (isNaN(num) || num < 0) return;
           forceBalances[id] = num;
-          // also update displayed leaderboard score
           const idx = leaderboard.findIndex(x => String(x.id) === id);
           if (idx >= 0) {
             leaderboard[idx].score = num;
             leaderboard[idx].updated = Date.now();
           }
-          await persistForceBalances();
-          // if it's me, apply immediately
+          await forceBalanceOnServer(id, num);
           if (String(id) === myId) applyForceBalance();
           renderAdmin();
         });
@@ -1563,7 +1436,7 @@
             leaderboard[idx].score = 0;
             leaderboard[idx].updated = Date.now();
           }
-          await persistForceBalances();
+          await forceBalanceOnServer(id, 0);
           if (String(id) === myId) applyForceBalance();
           renderAdmin();
         });
