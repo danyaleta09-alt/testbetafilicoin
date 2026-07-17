@@ -1411,28 +1411,27 @@
     z-index: 99999;
     background: var(--tg-card);
     color: var(--tg-text);
-    border: 1px solid color-mix(in srgb, var(--tg-hint) 20%, transparent);
+    border: none;
     border-radius: 14px;
-    padding: 11px 15px;
+    padding: 10px 14px;
     font-size: 14px;
-    line-height: 1.4;
-    box-shadow: 0 8px 30px rgba(0,0,0,.35);
-    max-width: 280px;
+    line-height: 1.35;
+    width: fit-content;
+    max-width: 260px;
     pointer-events: auto;
-    animation: supporterPop .18s cubic-bezier(.2,.8,.2,1) forwards;
+    animation: supporterPop .25s ease forwards;
+    box-shadow: none;
   }
   .supporter-tooltip .arrow {
     position: absolute;
     top: -5px;
     left: 50%;
     transform: translateX(-50%) rotate(45deg);
-    width: 12px;
-    height: 12px;
+    width: 11px;
+    height: 11px;
     background: var(--tg-card);
-    border: 1px solid color-mix(in srgb, var(--tg-hint) 20%, transparent);
-    border-bottom: none;
-    border-right: none;
-    box-shadow: -2px -2px 4px rgba(0,0,0,.15);
+    border: none;
+    box-shadow: none;
   }
   @keyframes supporterPop {
     from { opacity: 0; transform: translateY(6px) scale(.96); }
@@ -1549,6 +1548,55 @@
   .profile-slide.is-center .profile-slide-name,
   .profile-slide.is-center .profile-slide-sub {
     opacity: 1;
+  }
+
+  /* Clan pill under own name in profile */
+  .clan-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    padding: 4px 12px 4px 6px;
+    background: var(--tg-secondary);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--tg-text);
+    cursor: pointer;
+    transition: transform .1s ease, background .2s ease;
+    max-width: 220px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .clan-pill:active {
+    transform: scale(0.97);
+    background: color-mix(in srgb, var(--tg-secondary) 70%, var(--tier) 8%);
+  }
+  .clan-pill .clan-ico {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--tg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--tier);
+    overflow: hidden;
+  }
+  .clan-pill .clan-ico img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .clan-pill .clan-txt {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .clan-pill .clan-meta {
+    font-size: 11px;
+    opacity: .6;
+    margin-left: 4px;
+    font-weight: 500;
   }
 
   /* unified clan hero with cover (full screen only) */
@@ -2023,6 +2071,7 @@
             <div class="profile-slide-avatar" id="profileAvatar">?</div>
             <div class="profile-slide-name" id="profileName">Игрок</div>
             <div class="profile-slide-sub" id="profileId"></div>
+            <div id="profileClanPill" class="clan-pill" style="display:none"></div>
           </div>
           <div class="profile-slide" data-slide="clan">
             <div class="profile-slide-avatar clan-sq" id="profileClanAvatar">
@@ -2377,6 +2426,9 @@
   /* ===== Supporter tooltip (click on pig badge) ===== */
   let currentTooltip = null;
   function showSupporterTooltip(badgeEl, username) {
+    // only show in Profile screen
+    if (!badgeEl.closest('#screenProfile')) return;
+
     if (currentTooltip) currentTooltip.remove();
     if (!username) username = 'Игрок';
 
@@ -2395,19 +2447,17 @@
     let left = rect.left + rect.width / 2 - tipRect.width / 2;
     let top = rect.bottom + 10;
 
-    // keep inside viewport
     if (left < 12) left = 12;
     if (left + tipRect.width > window.innerWidth - 12) {
       left = window.innerWidth - tipRect.width - 12;
     }
     if (top + tipRect.height > window.innerHeight - 20) {
-      top = rect.top - tipRect.height - 10; // show above if no space below
+      top = rect.top - tipRect.height - 10;
     }
 
     tip.style.left = left + 'px';
     tip.style.top = top + 'px';
 
-    // move arrow if tooltip is above
     const arrow = tip.querySelector('.arrow');
     if (top < rect.top) {
       arrow.style.top = 'auto';
@@ -2415,34 +2465,25 @@
       arrow.style.transform = 'translateX(-50%) rotate(225deg)';
     }
 
-    // auto close
+    // auto close after exactly 2 seconds + smooth fade out
     const close = () => {
-      if (tip.parentNode) tip.parentNode.removeChild(tip);
-      if (currentTooltip === tip) currentTooltip = null;
-      document.removeEventListener('click', onDocClick, true);
-      document.removeEventListener('scroll', close, true);
+      if (!tip.parentNode) return;
+      tip.style.transition = 'opacity .2s ease';
+      tip.style.opacity = '0';
+      setTimeout(() => {
+        if (tip.parentNode) tip.parentNode.removeChild(tip);
+        if (currentTooltip === tip) currentTooltip = null;
+      }, 200);
     };
-    const onDocClick = (ev) => {
-      if (!tip.contains(ev.target)) close();
-    };
-    setTimeout(() => {
-      document.addEventListener('click', onDocClick, true);
-      document.addEventListener('scroll', close, { once: true, capture: true });
-    }, 50);
 
-    // also close on Escape
-    const onEsc = (e) => {
-      if (e.key === 'Escape') { close(); document.removeEventListener('keydown', onEsc); }
-    };
-    document.addEventListener('keydown', onEsc, { once: true });
+    setTimeout(close, 2000);
   }
 
-  // Global click handler for verified pig badge
+  // Global click handler — only for profile verified badge
   document.addEventListener('click', (e) => {
     const badge = e.target.closest('.verified-badge');
-    if (!badge) return;
+    if (!badge || !badge.closest('#screenProfile')) return;
 
-    // try to extract username from the same container
     let username = 'Игрок';
     const parent = badge.parentElement;
     if (parent) {
@@ -3115,6 +3156,42 @@
         if (title) title.textContent = 'Создать клан';
         if (sub) sub.textContent = 'Или вступи через поиск';
         scCard.onclick = () => { clanWizardStep = 1; clanWizardImg = null; clanWizardCreated = null; showScreen('clan'); };
+      }
+    }
+
+    // NEW: clan pill under own name (in "me" slide)
+    const pill = $('profileClanPill');
+    if (pill) {
+      if (c) {
+        const memberCount = (c.members || []).length;
+        pill.innerHTML = `
+          <div class="clan-ico">
+            ${c.avatar ? `<img src="${c.avatar}" alt="">` : `<span>${(c.name || '?').charAt(0).toUpperCase()}</span>`}
+          </div>
+          <div class="clan-txt">
+            ${escapeHtml(c.name || 'Клан')}
+            <span class="clan-meta">· ${memberCount} уч.</span>
+          </div>
+        `;
+        pill.style.display = 'inline-flex';
+        pill.onclick = () => openClanView(c.id, 'profile');
+      } else {
+        // no clan → show "create clan" pill
+        pill.innerHTML = `
+          <div class="clan-ico" style="background: var(--tier-soft); color: var(--tier);">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+          </div>
+          <div class="clan-txt">Создать клан</div>
+        `;
+        pill.style.display = 'inline-flex';
+        pill.onclick = () => {
+          clanWizardStep = 1;
+          clanWizardImg = null;
+          clanWizardCreated = null;
+          showScreen('clan');
+        };
       }
     }
 
