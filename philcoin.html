@@ -1988,13 +1988,13 @@
             </div>
             <div class="profile-card-chevron">›</div>
           </button>
-          <button type="button" class="profile-card profile-withdraw" id="profileWithdrawBtn">
+          <button type="button" class="profile-card" id="profileSettingsBtn">
             <div class="profile-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 19h14"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </div>
             <div class="profile-card-text">
-              <div class="profile-card-title">Вывести филькоины</div>
-              <div class="profile-card-sub">Обмен монет</div>
+              <div class="profile-card-title">Настройки</div>
+              <div class="profile-card-sub">Вывод, оформление</div>
             </div>
             <div class="profile-card-chevron">›</div>
           </button>
@@ -2023,7 +2023,39 @@
         </div>
         <div class="search-results" id="searchResults"></div>
       </div>
+    
+    <!-- SETTINGS -->
+    <div class="screen" id="screenSettings">
+      <div class="panel-header">
+        <div class="panel-title">Настройки</div>
+        <button class="close-btn" id="settingsClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <div class="profile-cards">
+          <button type="button" class="profile-card" id="settingsWithdrawBtn">
+            <div class="profile-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 19h14"/></svg>
+            </div>
+            <div class="profile-card-text">
+              <div class="profile-card-title">Вывести филькоины</div>
+              <div class="profile-card-sub">Обмен монет</div>
+            </div>
+            <div class="profile-card-chevron">›</div>
+          </button>
+          <button type="button" class="profile-card" id="settingsAppearanceBtn">
+            <div class="profile-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </div>
+            <div class="profile-card-text">
+              <div class="profile-card-title">Оформление</div>
+              <div class="profile-card-sub">Цвета и тема</div>
+            </div>
+            <div class="profile-card-chevron">›</div>
+          </button>
+        </div>
+      </div>
     </div>
+</div>
 
     <!-- CLAN -->
     <div class="screen" id="screenClan">
@@ -2729,7 +2761,8 @@
     user: $('screenUser'),
     search: $('screenSearch'),
     clan: $('screenClan'),
-    admin: $('screenAdmin')
+    admin: $('screenAdmin'),
+    settings: $('screenSettings')
   };
   let clanWizardStep = 0; // 0 view, 1 intro, 2 form, 3 done
   let clanWizardImg = null;
@@ -2748,7 +2781,7 @@
     document.querySelectorAll('.nav-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.screen === navActive);
     });
-    const isSub = ['rating','ach','user','search','clan','admin'].includes(name);
+    const isSub = ['rating','ach','user','search','clan','admin','settings'].includes(name);
     const appEl = document.getElementById('app');
     if (name === 'profile') {
       const idx = ($('profileCarousel') && $('profileCarousel')._lastIdx) || 0;
@@ -2766,6 +2799,7 @@
     if (name === 'search') renderSearch('');
     if (name === 'clan') renderClanScreen();
     if (name === 'admin') renderAdmin();
+    if (name === 'settings') renderSettings();
   }
 
   function loadNavAvatar() {
@@ -3639,14 +3673,13 @@
     }
   });
   if ($('adminClose')) $('adminClose').addEventListener('click', () => showScreen('tap'));
+  if ($('settingsClose')) $('settingsClose').addEventListener('click', () => showScreen('profile'));
 
   if ($('profileRatingBtn')) $('profileRatingBtn').addEventListener('click', () => showScreen('rating'));
   if ($('profileAchsBtn')) $('profileAchsBtn').addEventListener('click', () => showScreen('ach'));
   if ($('profileSearchBtn')) $('profileSearchBtn').addEventListener('click', () => showScreen('search'));
-  if ($('profileWithdrawBtn')) $('profileWithdrawBtn').addEventListener('click', () => {
-    if (tg && tg.showAlert) tg.showAlert('Вывод филькоинов скоро будет доступен 🐷');
-    else alert('Вывод филькоинов скоро будет доступен 🐷');
-  });
+  if ($('profileSettingsBtn')) $('profileSettingsBtn').addEventListener('click', () => showScreen('settings'));
+  // old withdraw removed, now in settings
   if ($('publicSwitch')) {
     $('publicSwitch').addEventListener('change', () => {
       state.publicProfile = !!$('publicSwitch').checked;
@@ -4194,6 +4227,67 @@
     }
   })();
 })();
+
+  function renderSettings() {
+    // Attach listeners for settings buttons
+    const withdrawBtn = $('settingsWithdrawBtn');
+    if (withdrawBtn) {
+      withdrawBtn.onclick = () => {
+        if (tg && tg.showAlert) tg.showAlert('Вывод филькоинов скоро будет доступен 🐷');
+        else alert('Вывод филькоинов скоро будет доступен 🐷');
+      };
+    }
+    const appearanceBtn = $('settingsAppearanceBtn');
+    if (appearanceBtn) {
+      appearanceBtn.onclick = () => {
+        showAppearanceScreen();
+      };
+    }
+  }
+
+  function showAppearanceScreen() {
+    const body = document.createElement('div');
+    body.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:100;';
+    body.innerHTML = `
+      <div style="background:var(--tg-card);border-radius:16px;padding:20px;max-width:320px;width:90%;">
+        <h3 style="margin:0 0 16px;font-size:18px;">Оформление (тёмная тема)</h3>
+        
+        <div style="margin-bottom:12px;">
+          <button class="submit-btn" id="themeDefault" style="margin-bottom:8px;width:100%;">Стандартная тёмная</button>
+          <button class="submit-btn" id="themeMinimal" style="margin-bottom:8px;width:100%;background:#181818;color:#fff;">Тёмная минималистичная (#181818)</button>
+          <button class="submit-btn" id="themeWarm" style="width:100%;">Тёплая тёмная</button>
+        </div>
+        
+        <button class="submit-btn" id="closeAppearance" style="background:var(--tg-secondary);color:var(--tg-text);">Закрыть</button>
+      </div>
+    `;
+    
+    document.body.appendChild(body);
+    
+    $('themeDefault').onclick = () => {
+      document.documentElement.style.setProperty('--tg-bg', '#000000');
+      document.documentElement.style.setProperty('--tg-card', '#1c1c1e');
+      document.documentElement.style.setProperty('--tg-secondary', '#2c2c2e');
+      body.remove();
+    };
+    
+    $('themeMinimal').onclick = () => {
+      document.documentElement.style.setProperty('--tg-bg', '#181818');
+      document.documentElement.style.setProperty('--tg-card', '#252525');
+      document.documentElement.style.setProperty('--tg-secondary', '#303030');
+      body.remove();
+    };
+    
+    $('themeWarm').onclick = () => {
+      document.documentElement.style.setProperty('--tg-bg', '#1a1815');
+      document.documentElement.style.setProperty('--tg-card', '#2a2722');
+      document.documentElement.style.setProperty('--tg-secondary', '#353025');
+      body.remove();
+    };
+    
+    $('closeAppearance').onclick = () => body.remove();
+  }
+
 </script>
 </body>
 </html>
