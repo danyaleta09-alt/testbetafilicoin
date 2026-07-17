@@ -383,22 +383,41 @@
   .market-effects { font-size: 11px; color: var(--tier); margin-top: 4px; font-weight: 500; }
   .buy-btn {
     flex-shrink: 0;
-    padding: 8px 14px;
-    border-radius: 10px;
+    min-width: 88px;
+    padding: 10px 14px;
+    border-radius: 12px;
     border: none;
-    background: var(--tier);
-    color: #fff;
+    background: var(--tg-secondary);
+    color: var(--tg-hint);
     font-family: 'Fredoka', sans-serif;
     font-weight: 600;
     font-size: 13px;
     cursor: pointer;
+    text-align: center;
+    line-height: 1.25;
   }
-  .buy-btn:disabled, .buy-btn.owned {
+  .buy-btn.can {
+    background: var(--tier);
+    color: #fff;
+  }
+  .buy-btn:disabled, .buy-btn.maxed {
     background: var(--tg-secondary);
     color: var(--tg-hint);
     cursor: default;
   }
-  .buy-btn:active:not(:disabled) { transform: scale(.96); }
+  .buy-btn:active.can { transform: scale(.96); }
+  .buy-btn .buy-price-line {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.9;
+    margin-top: 2px;
+  }
+  .market-level {
+    font-size: 11px;
+    color: var(--tg-hint);
+    margin-top: 4px;
+  }
   .buy-price { font-size: 12px; color: var(--tg-hint); text-align: center; margin-top: 4px; }
 
   /* ADMIN */
@@ -564,10 +583,12 @@
     right: 0;
     bottom: 0;
     height: calc(var(--nav-h) + var(--safe-bottom));
+    padding: 0 10px;
     padding-bottom: var(--safe-bottom);
     display: flex;
     align-items: center;
     justify-content: space-around;
+    gap: 8px;
     background: transparent;
     z-index: 40;
   }
@@ -577,18 +598,28 @@
     flex-direction: column;
     align-items: center;
     gap: 3px;
-    background: none;
-    border: none;
+    background: var(--tg-card);
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent;
     color: var(--tg-hint);
     font-size: 11px;
     font-weight: 500;
-    padding: 8px 4px;
+    padding: 10px 6px;
     cursor: pointer;
     font-family: inherit;
+    border-radius: 16px;
   }
-  .nav-btn svg { width: 24px; height: 24px; }
-  .nav-btn.active { color: var(--tier); }
-  .nav-btn:active { opacity: .75; }
+  .nav-btn svg { width: 22px; height: 22px; }
+  .nav-btn.active {
+    color: var(--tier);
+    background: var(--tier-soft);
+  }
+  .nav-btn:active {
+    opacity: 1;
+    filter: none;
+  }
 
   .screens { padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 8px); }
   .panel-body { padding-bottom: 16px; }
@@ -624,6 +655,7 @@
   .splash-text {
     margin-top: 28px;
     max-width: 85%;
+    min-height: 1.45em;
     text-align: center;
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 13.5px;
@@ -631,23 +663,82 @@
     letter-spacing: 0.02em;
     color: var(--tg-hint, #8e8e93);
     line-height: 1.45;
+  }
+  .splash-age {
+    margin-top: 22px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 2px solid var(--tg-hint, #8e8e93);
+    color: var(--tg-hint, #8e8e93);
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     opacity: 0;
-    animation: splashTextIn 1s ease .35s both;
+    animation: splashIn .5s ease .2s both;
   }
   @keyframes splashIn {
     from { opacity: 0; transform: scale(0.92); }
     to { opacity: 1; transform: scale(1); }
   }
-  @keyframes splashTextIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
+
+  /* custom select */
+  .cselect {
+    position: relative;
+    width: 100%;
+  }
+  .cselect-btn {
+    width: 100%;
+    background: var(--tg-secondary);
+    border: 1px solid color-mix(in srgb, var(--tg-hint) 25%, transparent);
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: var(--tg-text);
+    font-size: 14px;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .cselect-btn::after {
+    content: '▾';
+    color: var(--tg-hint);
+    font-size: 12px;
+  }
+  .cselect-list {
+    display: none;
+    position: absolute;
+    left: 0; right: 0;
+    top: calc(100% + 4px);
+    background: var(--tg-card);
+    border-radius: 12px;
+    overflow: hidden;
+    z-index: 50;
+    border: 1px solid color-mix(in srgb, var(--tg-hint) 20%, transparent);
+  }
+  .cselect.open .cselect-list { display: block; }
+  .cselect-item {
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--tg-text);
+    cursor: pointer;
+  }
+  .cselect-item:active, .cselect-item.selected {
+    background: var(--tier-soft);
+    color: var(--tier);
   }
 </style>
 </head>
 <body>
 <div class="splash" id="splash">
   <img class="splash-logo" src="/logo.png" alt="">
-  <div class="splash-text">любое совпадение с реальностью случайно</div>
+  <div class="splash-text" id="splashText"></div>
+  <div class="splash-age">16+</div>
 </div>
 <div class="app" id="app">
   <div class="safe-top" id="safeTop"></div>
@@ -747,6 +838,7 @@
               <div class="field"><label>Доход / сек</label><input type="number" id="mfIncome" placeholder="1"></div>
             </div>
             <div class="field"><label>Бонус к тапу</label><input type="number" id="mfTapBonus" placeholder="0"></div>
+            <div class="field"><label>Макс. уровень прокачки</label><input type="number" id="mfMaxLevel" placeholder="5" value="5"></div>
             <div class="field"><label>Картинка PNG (необяз.)</label>
               <div class="img-row">
                 <div class="img-preview" id="mfImgPreview">нет</div>
@@ -765,12 +857,15 @@
             <div class="field"><label>Описание</label><textarea id="afDesc" placeholder="Что нужно сделать"></textarea></div>
             <div class="field-row">
               <div class="field"><label>Условие</label>
-                <select id="afMetric">
-                  <option value="taps">Число тапов</option>
-                  <option value="totalEarned">Заработано монет</option>
-                  <option value="level">Уровень</option>
-                  <option value="balance">Баланс монет</option>
-                </select>
+                <div class="cselect" id="afMetricSelect" data-value="taps">
+                  <button type="button" class="cselect-btn" id="afMetricBtn">Число тапов</button>
+                  <div class="cselect-list">
+                    <div class="cselect-item selected" data-value="taps">Число тапов</div>
+                    <div class="cselect-item" data-value="totalEarned">Заработано монет</div>
+                    <div class="cselect-item" data-value="level">Уровень</div>
+                    <div class="cselect-item" data-value="balance">Баланс монет</div>
+                  </div>
+                </div>
               </div>
               <div class="field"><label>Цель (число)</label><input type="number" id="afTarget" placeholder="1000"></div>
             </div>
@@ -1079,9 +1174,14 @@
     }, 500);
   }
 
-  /* ===== LEVELS ===== */
+  /* ===== LEVELS (сложно; тап растёт редко) =====
+     XP до след. уровня растёт быстро.
+     Примерно: ур.2 ~900, ур.5 ~12k, ур.10 ~120k, ур.20 ~1.2M, ур.30 ~5M
+     Сила тапа: +1 каждые 6 уровней (1–6:+1, 7–12:+2, ...)
+  */
   function totalForLevel(n) {
-    return Math.round(180 * Math.pow(n, 2.25));
+    if (n <= 1) return 0;
+    return Math.round(120 * Math.pow(n, 2.85));
   }
   function levelFromTotal(t) {
     let L = 1;
@@ -1089,7 +1189,7 @@
     return L;
   }
   function tapPower(L) {
-    return 1 + Math.floor((L - 1) / 7);
+    return 1 + Math.floor((Math.max(1, L) - 1) / 6);
   }
 
   /* ===== OFFLINE + PASSIVE ===== */
@@ -1168,24 +1268,44 @@
     $('progNow').textContent = fmt(state.totalEarned - base);
     $('progNext').textContent = fmt(nxt - base);
 
-    // soft tier color by level ranges
-    let col = '#ff6fa5';
-    if (L >= 40) col = '#f0bd3e';
-    else if (L >= 25) col = '#b9c2cd';
-    else if (L >= 12) col = '#c98a4e';
-    document.documentElement.style.setProperty('--tier', col);
-    document.documentElement.style.setProperty('--tier-soft', col + '2e');
-    $('levelDot').style.background = col;
+    // accent color fixed (не меняется от уровня)
+    $('levelDot').style.background = 'var(--tier)';
 
     updatePigSkin();
   }
 
+  function ownedLevel(itemId) {
+    const v = state.owned[itemId];
+    if (!v) return 0;
+    if (typeof v === 'number') return v;
+    if (v === true) return 1;
+    return 0;
+  }
+  function itemMaxLevel(item) {
+    return Math.max(1, parseInt(item.maxLevel, 10) || 5);
+  }
+  function upgradeCost(item, fromLevel) {
+    // fromLevel 0 = first buy at item.price
+    // each next level much more expensive
+    const base = Math.max(1, item.price || 1);
+    if (fromLevel <= 0) return base;
+    return Math.round(base * Math.pow(3.2, fromLevel));
+  }
+  function itemIncome(item, level) {
+    if (level <= 0) return 0;
+    return (item.income || 0) * level;
+  }
+  function itemTapBonus(item, level) {
+    if (level <= 0) return 0;
+    return (item.tapBonus || 0) * level;
+  }
   function recomputePassive() {
     let income = 0, tapBonus = 0;
     allMarket().forEach(item => {
-      if (state.owned[item.id]) {
-        income += (item.income || 0);
-        tapBonus += (item.tapBonus || 0);
+      const lv = ownedLevel(item.id);
+      if (lv > 0) {
+        income += itemIncome(item, lv);
+        tapBonus += itemTapBonus(item, lv);
       }
     });
     state.passivePerSec = income;
@@ -1362,34 +1482,52 @@
       return;
     }
     list.forEach(item => {
-      const owned = !!state.owned[item.id];
-      const can = !owned && state.balance >= item.price;
+      const lv = ownedLevel(item.id);
+      const maxLv = itemMaxLevel(item);
+      const nextCost = upgradeCost(item, lv);
+      const can = lv < maxLv && state.balance >= nextCost;
       const card = document.createElement('div');
       card.className = 'market-card';
       const media = item.image ? '<img src="' + item.image + '">' : iconSvg(item.icon || 'gift');
       const effects = [];
-      if (item.income > 0) effects.push('+' + item.income + '/сек');
-      if (item.tapBonus > 0) effects.push('+' + item.tapBonus + ' к тапу');
+      const curInc = itemIncome(item, Math.max(lv, 1));
+      const curTap = itemTapBonus(item, Math.max(lv, 1));
+      if ((item.income || 0) > 0) effects.push('+' + (lv > 0 ? itemIncome(item, lv) : item.income) + '/сек');
+      if ((item.tapBonus || 0) > 0) effects.push('+' + (lv > 0 ? itemTapBonus(item, lv) : item.tapBonus) + ' к тапу');
+
+      let btnHtml;
+      if (lv >= maxLv) {
+        btnHtml = '<button class="buy-btn maxed" disabled>Макс. ур. ' + maxLv + '</button>';
+      } else if (lv === 0) {
+        btnHtml = '<button class="buy-btn' + (can ? ' can' : '') + '" data-id="' + item.id + '"' + (can ? '' : ' disabled') + '>' +
+          'Купить<span class="buy-price-line">' + fmt(nextCost) + '</span></button>';
+      } else {
+        btnHtml = '<button class="buy-btn' + (can ? ' can' : '') + '" data-id="' + item.id + '"' + (can ? '' : ' disabled') + '>' +
+          'Прокачать<span class="buy-price-line">' + fmt(nextCost) + '</span></button>';
+      }
+
       card.innerHTML =
         '<div class="market-media">' + media + '</div>' +
         '<div class="market-info">' +
           '<div class="market-name">' + item.name + '</div>' +
           '<div class="market-desc">' + (item.desc || '') + '</div>' +
           (effects.length ? '<div class="market-effects">' + effects.join(' · ') + '</div>' : '') +
+          (lv > 0 ? '<div class="market-level">Уровень ' + lv + ' / ' + maxLv + '</div>' : '') +
         '</div>' +
-        '<div style="text-align:center">' +
-          (owned
-            ? '<button class="buy-btn owned" disabled>Куплено</button>'
-            : '<button class="buy-btn" data-id="' + item.id + '"' + (can ? '' : ' disabled') + '>' + fmt(item.price) + '</button>') +
-        '</div>';
+        '<div style="text-align:center">' + btnHtml + '</div>';
       wrap.appendChild(card);
     });
-    wrap.querySelectorAll('.buy-btn:not(:disabled)').forEach(btn => {
+    wrap.querySelectorAll('.buy-btn.can').forEach(btn => {
       btn.addEventListener('click', () => {
         const item = allMarket().find(i => i.id === btn.dataset.id);
-        if (!item || state.owned[item.id] || state.balance < item.price) return;
-        state.balance -= item.price;
-        state.owned[item.id] = true;
+        if (!item) return;
+        const lv = ownedLevel(item.id);
+        const maxLv = itemMaxLevel(item);
+        if (lv >= maxLv) return;
+        const cost = upgradeCost(item, lv);
+        if (state.balance < cost) return;
+        state.balance -= cost;
+        state.owned[item.id] = lv + 1;
         recomputePassive();
         saveState();
         render();
@@ -1410,6 +1548,28 @@
       $(map[tab.dataset.tab]).classList.add('active');
     });
   });
+
+  /* custom select for achievement metric */
+  (function initCSelect() {
+    const root = document.getElementById('afMetricSelect');
+    if (!root) return;
+    const btn = document.getElementById('afMetricBtn');
+    const list = root.querySelector('.cselect-list');
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      root.classList.toggle('open');
+    });
+    list.querySelectorAll('.cselect-item').forEach(item => {
+      item.addEventListener('click', () => {
+        root.dataset.value = item.dataset.value;
+        btn.textContent = item.textContent;
+        list.querySelectorAll('.cselect-item').forEach(x => x.classList.remove('selected'));
+        item.classList.add('selected');
+        root.classList.remove('open');
+      });
+    });
+    document.addEventListener('click', () => root.classList.remove('open'));
+  })();
 
   let afImage = null, mfImage = null;
 
@@ -1481,7 +1641,7 @@
   $('afSubmit').addEventListener('click', () => {
     const name = $('afName').value.trim();
     const desc = $('afDesc').value.trim();
-    const metric = $('afMetric').value;
+    const metric = ($('afMetricSelect') && $('afMetricSelect').dataset.value) || 'taps';
     const target = parseInt($('afTarget').value, 10) || 0;
     if (!name || target <= 0) { alert('Заполните название и цель'); return; }
     customAchievements.push({
@@ -1508,15 +1668,17 @@
     const income = parseInt($('mfIncome').value, 10) || 0;
     const tapBonus = parseInt($('mfTapBonus').value, 10) || 0;
     if (!name || price <= 0) { alert('Заполните название и цену'); return; }
+    const maxLevel = Math.max(1, parseInt(($('mfMaxLevel') && $('mfMaxLevel').value) || '5', 10) || 5);
     customMarket.push({
       id: 'm' + Date.now(),
       name, desc: desc || '—',
-      price, income, tapBonus,
+      price, income, tapBonus, maxLevel,
       image: mfImage,
       icon: 'gift'
     });
     $('mfName').value = ''; $('mfDesc').value = ''; $('mfPrice').value = '';
     $('mfIncome').value = ''; $('mfTapBonus').value = '';
+    if ($('mfMaxLevel')) $('mfMaxLevel').value = '5';
     mfImage = null; $('mfImgPreview').innerHTML = 'нет';
     persistCustomData();
     renderAdmin();
@@ -1525,7 +1687,7 @@
   function renderAdmin() {
     const badge = $('adminSyncBadge');
     badge.className = 'admin-sync on';
-    badge.textContent = 'Синхронизация через сервер — видно всем игрокам';
+    badge.textContent = 'Товары и достижения с этой панели видят все игроки';
 
     // users
     const uList = $('usersList');
@@ -1643,15 +1805,23 @@
     // push score every 2 min while app is open
     setInterval(() => pushLeaderboard(false), 120000);
 
-    // hide splash
+    // splash: typewriter then hide
     const splash = document.getElementById('splash');
+    const splashTextEl = document.getElementById('splashText');
+    const phrase = 'любое совпадение с реальностью случайно';
+    async function typeSplash() {
+      if (!splashTextEl) return;
+      splashTextEl.textContent = '';
+      for (let i = 0; i < phrase.length; i++) {
+        splashTextEl.textContent += phrase[i];
+        await new Promise(r => setTimeout(r, 38));
+      }
+      await new Promise(r => setTimeout(r, 700));
+    }
+    await typeSplash();
     if (splash) {
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          splash.classList.add('hide');
-          setTimeout(() => splash.remove(), 600);
-        }, 400);
-      });
+      splash.classList.add('hide');
+      setTimeout(() => splash.remove(), 600);
     }
   })();
 })();
