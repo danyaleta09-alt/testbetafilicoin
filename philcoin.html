@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=overlays-content">
 <title>Филькоин</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +38,20 @@
     color: var(--tg-text);
     overscroll-behavior: none;
   }
-  body { position: fixed; inset: 0; }
+  html, body {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  #app {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
 
   .app {
     position: relative;
@@ -51,20 +64,20 @@
 
   /* ========== SAFE TOP SPACER ========== */
   .safe-top {
-    height: var(--safe-top);
+    height: 0;
     flex-shrink: 0;
-    background: transparent;
+    overflow: hidden;
   }
 
   /* ========== TOPBAR ========== */
   .topbar {
     flex-shrink: 0;
-    height: var(--header-h);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 14px;
+    padding: calc(var(--safe-top) + 6px) 14px 8px;
     z-index: 30;
+    background: transparent;
   }
   .level-pill {
     display: flex;
@@ -109,9 +122,16 @@
     inset: 0;
     display: none;
     flex-direction: column;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
   .screen.active { display: flex; }
+  /* tap stays non-scroll centered */
+  #screenTap {
+    overflow: hidden;
+  }
 
   /* TAP SCREEN */
   #screenTap {
@@ -591,6 +611,8 @@
     gap: 8px;
     background: transparent;
     z-index: 40;
+    /* не прыгает с клавиатурой — клавиатура поверх */
+    transform: translateZ(0);
   }
   .nav-btn {
     flex: 1;
@@ -621,8 +643,11 @@
     filter: none;
   }
 
-  .screens { padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 24px); }
-  .panel-body { padding-bottom: 16px; }
+  .screens { padding-bottom: 0; }
+  .screen:not(#screenTap) {
+    padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 28px);
+  }
+  .panel-body { padding-bottom: 8px; }
 
   /* hide navbar on admin to avoid keyboard issues */
   .app.admin-open .navbar { display: none; }
@@ -1062,15 +1087,16 @@
   .top-fade {
     position: fixed;
     top: 0; left: 0; right: 0;
-    height: calc(var(--safe-top) + 36px);
+    height: calc(var(--safe-top) + 48px);
     background: linear-gradient(
       to bottom,
-      color-mix(in srgb, var(--tg-bg) 72%, transparent) 0%,
-      color-mix(in srgb, var(--tg-bg) 28%, transparent) 50%,
+      color-mix(in srgb, var(--tg-bg) 92%, transparent) 0%,
+      color-mix(in srgb, var(--tg-bg) 55%, transparent) 40%,
+      color-mix(in srgb, var(--tg-bg) 18%, transparent) 75%,
       transparent 100%
     );
     pointer-events: none;
-    z-index: 40;
+    z-index: 25;
   }
 
   .panel-header {
@@ -1078,17 +1104,16 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 14px 10px;
+    padding: calc(var(--safe-top) + 8px) 14px 12px;
     background: transparent !important;
-    position: relative;
-    z-index: 5;
+    position: sticky;
+    top: 0;
+    z-index: 20;
   }
   .panel-body {
-    flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    flex: 0 0 auto;
+    overflow: visible;
     padding: 0 14px 24px;
-    overscroll-behavior: contain;
   }
 
   /* admin tabs — light translucent, no solid cut */
@@ -1176,7 +1201,7 @@
   #screenUser .panel-header,
   #screenSearch .panel-header,
   #screenClan .panel-header {
-    padding-top: 8px;
+    padding-top: calc(var(--safe-top) + 8px);
   }
   /* content can scroll under soft fade */
   .safe-top {
@@ -1335,7 +1360,7 @@
     padding-bottom: 12px;
   }
   #screenProfile .profile-head {
-    padding-top: 12px;
+    padding-top: calc(var(--safe-top) + 12px);
   }
 </style>
 </head>
@@ -1621,15 +1646,7 @@
     tg.ready();
     tg.expand();
     try { tg.disableVerticalSwipes && tg.disableVerticalSwipes(); } catch(e){}
-    // keyboard: don't shift whole app under TG chrome
-    if (window.visualViewport) {
-      const vv = window.visualViewport;
-      const onVv = () => {
-        document.documentElement.style.setProperty('--vv-offset', Math.max(0, window.innerHeight - vv.height - vv.offsetTop) + 'px');
-      };
-      vv.addEventListener('resize', onVv);
-      vv.addEventListener('scroll', onVv);
-    }
+
   }
 
   /* ===== THEME ===== */
@@ -1680,17 +1697,16 @@
     if (tg) {
       const sa = tg.safeAreaInset || {};
       const csa = tg.contentSafeAreaInset || {};
-      // один источник — contentSafeArea предпочтительнее
       top = (csa.top > 0 ? csa.top : (sa.top || 0));
       bottom = (csa.bottom > 0 ? csa.bottom : (sa.bottom || 0));
-      // место под кнопку «Закрыть» Telegram
-      if (top < 48) top = 54;
-      if (top > 72) top = 72;
+      // обязательно ниже кнопки «Закрыть»
+      if (top < 64) top = 68;
+      if (top > 88) top = 88;
     } else {
-      top = 20;
+      top = 24;
     }
     if (bottom < 8) bottom = 10;
-    if (bottom > 40) bottom = 40;
+    if (bottom > 34) bottom = 34;
     document.documentElement.style.setProperty('--safe-top', top + 'px');
     document.documentElement.style.setProperty('--safe-bottom', bottom + 'px');
   }
@@ -1698,7 +1714,7 @@
   if (tg) {
     tg.onEvent('safeAreaChanged', updateSafeArea);
     tg.onEvent('contentSafeAreaChanged', updateSafeArea);
-    tg.onEvent('viewportChanged', updateSafeArea);
+    // viewportChanged срабатывает и на клавиатуру — не трогаем layout
   }
 
   /* ===== SYNC — через свой Railway API (без jsonbin) ===== */
