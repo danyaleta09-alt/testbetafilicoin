@@ -498,8 +498,8 @@
   }
   .field input, .field select, .field textarea {
     width: 100%;
-    background: var(--tg-secondary);
-    border: 1px solid color-mix(in srgb, var(--tg-hint) 25%, transparent);
+    background: var(--tg-card);
+    border: 1px solid transparent;
     border-radius: 10px;
     padding: 10px 12px;
     color: var(--tg-text);
@@ -1379,8 +1379,8 @@
   }
   .search-box input {
     flex: 1;
-    background: var(--tg-secondary);
-    border: 1px solid color-mix(in srgb, var(--tg-hint) 20%, transparent);
+    background: var(--tg-card);
+    border: 1px solid transparent;
     border-radius: 12px;
     padding: 12px 14px;
     color: var(--tg-text);
@@ -1631,6 +1631,96 @@
   }
   .profile-search-fab svg { width: 20px; height: 20px; }
   .profile-search-fab:active { opacity: .8; }
+
+  /* ===== CLAN SWIPE TOGGLE (settings-controlled) ===== */
+  .profile-clan-plate-wrap { display: none; text-align: center; padding-top: 2px; }
+  .profile-clan-plate { margin-top: 0; }
+  .profile-clan-plate-av {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: var(--tier-soft);
+    color: var(--tier);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .profile-clan-plate-av svg { width: 14px; height: 14px; }
+  .no-clan-swipe #profileClanSlide,
+  .no-clan-swipe #profileDots { display: none; }
+  .no-clan-swipe .profile-clan-plate-wrap { display: block; }
+  .no-clan-swipe .profile-carousel { overflow: visible; }
+  .no-clan-swipe .profile-carousel::before,
+  .no-clan-swipe .profile-carousel::after { content: none; }
+  .no-clan-swipe .profile-slide[data-slide="me"] {
+    flex: 1 1 auto;
+  }
+  .no-clan-swipe .profile-slide[data-slide="me"] .profile-slide-avatar,
+  .no-clan-swipe .profile-slide[data-slide="me"] .profile-slide-name,
+  .no-clan-swipe .profile-slide[data-slide="me"] .profile-slide-sub {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* ===== APPEARANCE (theme picker) ===== */
+  .appearance-section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--tg-hint);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 4px 0 10px;
+  }
+  .theme-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .theme-opt {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 10px;
+    background: var(--tg-card);
+    border: 1.5px solid transparent;
+    border-radius: 16px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .theme-opt.active { border-color: var(--tier); }
+  .theme-opt-swatch {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 6px;
+    box-sizing: border-box;
+  }
+  .theme-opt-swatch span {
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    display: block;
+  }
+  .theme-opt-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--tg-text);
+  }
+  .theme-opt-check {
+    position: absolute;
+    top: 8px; right: 8px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--tier);
+    color: #fff;
+    font-size: 11px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .theme-opt.active .theme-opt-check { display: flex; }
 
   /* clan create wizard */
   .clan-wizard { padding: 8px 0 20px; }
@@ -1942,7 +2032,7 @@
             <div class="profile-slide-name" id="profileName">Игрок</div>
             <div class="profile-slide-sub" id="profileId"></div>
           </div>
-          <div class="profile-slide" data-slide="clan">
+          <div class="profile-slide" data-slide="clan" id="profileClanSlide">
             <div class="profile-slide-avatar clan-sq" id="profileClanAvatar">
               <svg class="plus-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
             </div>
@@ -1951,6 +2041,15 @@
           </div>
         </div>
         <div class="profile-dots" id="profileDots"><span class="on"></span><span></span></div>
+        <div class="profile-clan-plate-wrap" id="profileClanPlateWrap">
+          <button type="button" class="clan-badge profile-clan-plate" id="profileClanPlate">
+            <span id="profileClanPlateAv"></span>
+            <span class="clan-badge-text">
+              <span class="clan-badge-label" id="profileClanPlateLabel">Клан</span>
+              <span class="clan-badge-name" id="profileClanPlateName">Создать клан</span>
+            </span>
+          </button>
+        </div>
       </div>
       <!-- ME PANEL -->
       <div id="profileMePanel">
@@ -1990,11 +2089,11 @@
           </button>
           <button type="button" class="profile-card" id="profileSettingsBtn">
             <div class="profile-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </div>
             <div class="profile-card-text">
               <div class="profile-card-title">Настройки</div>
-              <div class="profile-card-sub">Вывод, оформление</div>
+              <div class="profile-card-sub">Вывод монет, оформление</div>
             </div>
             <div class="profile-card-chevron">›</div>
           </button>
@@ -2023,18 +2122,10 @@
         </div>
         <div class="search-results" id="searchResults"></div>
       </div>
-    
-    <!-- SETTINGS -->
-        <!-- SETTINGS -->
-    <div class="screen" id="screenSettings">
-      <div class="panel-header">
-        <div class="panel-title">Настройки</div>
-        <button class="close-btn" id="settingsClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-      </div>
-      <div class="panel-body" id="settingsBody"></div>
     </div>
 
-<div class="screen" id="screenClan">
+    <!-- CLAN -->
+    <div class="screen" id="screenClan">
       <div class="panel-header">
         <div class="panel-title">Клан</div>
         <button class="close-btn" id="clanClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
@@ -2049,6 +2140,66 @@
         <button class="close-btn" id="userClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
       </div>
       <div class="user-profile-body" id="userProfileBody"></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="screen" id="screenSettings">
+      <div class="panel-header">
+        <div class="panel-title">Настройки</div>
+        <button class="close-btn" id="settingsClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <div class="profile-cards">
+          <button type="button" class="profile-card profile-withdraw" id="settingsWithdrawBtn">
+            <div class="profile-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 19h14"/></svg>
+            </div>
+            <div class="profile-card-text">
+              <div class="profile-card-title">Вывести филькоины</div>
+              <div class="profile-card-sub">Обмен монет</div>
+            </div>
+            <div class="profile-card-chevron">›</div>
+          </button>
+          <button type="button" class="profile-card" id="settingsAppearanceBtn">
+            <div class="profile-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.5-.7 1.5-1.5 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.8.7-1.5 1.5-1.5H16c3.3 0 6-2.7 6-6 0-4.4-4-8-10-8z"/></svg>
+            </div>
+            <div class="profile-card-text">
+              <div class="profile-card-title">Оформление</div>
+              <div class="profile-card-sub">Тема и цвета</div>
+            </div>
+            <div class="profile-card-chevron">›</div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPEARANCE -->
+    <div class="screen" id="screenAppearance">
+      <div class="panel-header">
+        <div class="panel-title">Оформление</div>
+        <button class="close-btn" id="appearanceClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <div class="appearance-section-title">Тема</div>
+        <div class="theme-grid" id="themeGrid"></div>
+        <div class="appearance-section-title">Профиль</div>
+        <div class="profile-cards">
+          <div class="profile-card" id="clanSwipeRow" style="cursor:default">
+            <div class="profile-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+            <div class="profile-card-text">
+              <div class="profile-card-title">Свайп клана</div>
+              <div class="profile-card-sub">Переключение профиля свайпом</div>
+            </div>
+            <label class="ios-switch">
+              <input type="checkbox" id="clanSwipeSwitch">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ADMIN -->
@@ -2487,7 +2638,9 @@
     lastSeen: Date.now(),
     pigSkin: null,
     passivePerSec: 0,
-    tapBonusFlat: 0
+    tapBonusFlat: 0,
+    themeVariant: 'black',
+    clanSwipeEnabled: false
   };
 
   function loadState() {
@@ -2507,6 +2660,19 @@
         resolve();
       }
     });
+  }
+
+  /* ===== THEME (appearance) ===== */
+  const THEMES = {
+    black: { name: 'Чёрный', bg: '#000000', card: '#1c1c1e', secondary: '#1c1c1e' },
+    graphite: { name: 'Графит', bg: '#181818', card: '#242428', secondary: '#242428' }
+  };
+  function applyTheme() {
+    const t = THEMES[state.themeVariant] || THEMES.black;
+    const root = document.documentElement.style;
+    root.setProperty('--tg-bg', t.bg);
+    root.setProperty('--tg-card', t.card);
+    root.setProperty('--tg-secondary', t.secondary);
   }
 
   let saveTimer = null;
@@ -2737,8 +2903,9 @@
     user: $('screenUser'),
     search: $('screenSearch'),
     clan: $('screenClan'),
-    admin: $('screenAdmin'),
-    settings: $('screenSettings')
+    settings: $('screenSettings'),
+    appearance: $('screenAppearance'),
+    admin: $('screenAdmin')
   };
   let clanWizardStep = 0; // 0 view, 1 intro, 2 form, 3 done
   let clanWizardImg = null;
@@ -2752,12 +2919,12 @@
     $('topbar').style.display = (name === 'tap') ? '' : 'none';
     // nav highlights main tabs; rating/ach keep profile active
     let navActive = name;
-    if (name === 'rating' || name === 'ach' || name === 'user' || name === 'search' || name === 'clan') navActive = 'profile';
+    if (name === 'rating' || name === 'ach' || name === 'user' || name === 'search' || name === 'clan' || name === 'settings' || name === 'appearance') navActive = 'profile';
     if (name === 'admin') navActive = null;
     document.querySelectorAll('.nav-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.screen === navActive);
     });
-    const isSub = ['rating','ach','user','search','clan','admin','settings'].includes(name);
+    const isSub = ['rating','ach','user','search','clan','settings','appearance','admin'].includes(name);
     const appEl = document.getElementById('app');
     if (name === 'profile') {
       const idx = ($('profileCarousel') && $('profileCarousel')._lastIdx) || 0;
@@ -2774,8 +2941,8 @@
     if (name === 'profile') renderProfile();
     if (name === 'search') renderSearch('');
     if (name === 'clan') renderClanScreen();
+    if (name === 'appearance') renderAppearanceScreen();
     if (name === 'admin') renderAdmin();
-    if (name === 'settings') renderSettings();
   }
 
   function loadNavAvatar() {
@@ -2830,6 +2997,32 @@
         clanWizardCreated = null;
         showScreen('clan');
       };
+    }
+
+    // static clan plate (shown instead of the swipe slide when clan swipe is off)
+    const appEl = document.getElementById('app');
+    if (appEl) appEl.classList.toggle('no-clan-swipe', !state.clanSwipeEnabled);
+    const plateAv = $('profileClanPlateAv');
+    const plateLbl = $('profileClanPlateLabel');
+    const plateNm = $('profileClanPlateName');
+    const plateBtn = $('profileClanPlate');
+    if (plateBtn) {
+      if (c) {
+        if (plateAv) plateAv.innerHTML = clanAvatarHtml(c, 'clan-avatar-sm');
+        if (plateLbl) plateLbl.textContent = 'Состоит в клане';
+        if (plateNm) plateNm.textContent = c.name || 'Клан';
+        plateBtn.onclick = () => { clanWizardStep = 0; showScreen('clan'); };
+      } else {
+        if (plateAv) plateAv.innerHTML = '<span class="profile-clan-plate-av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>';
+        if (plateLbl) plateLbl.textContent = 'Клан';
+        if (plateNm) plateNm.textContent = 'Создать клан';
+        plateBtn.onclick = () => {
+          clanWizardStep = 1;
+          clanWizardImg = null;
+          clanWizardCreated = null;
+          showScreen('clan');
+        };
+      }
     }
 
     // skins
@@ -2981,7 +3174,7 @@
     const members = c.members || [];
     let html =
       '<div class="clan-simple">' +
-        '<button type="button" class="profile-card" id="clanMembersCardFull">' +
+        '<button type="button" class="profile-card" id="clanMembersCard">' +
           '<div class="profile-card-text" style="flex:1">' +
             '<div class="profile-card-title">Участники</div>' +
             '<div style="margin-top:8px">' + clanStackHtml(members) + '</div>' +
@@ -3037,7 +3230,7 @@
       renderClanScreen();
     };
 
-    const mc = $('clanMembersCardFull');
+    const mc = $('clanMembersCard');
     if (mc) mc.onclick = (e) => {
       e.preventDefault(); e.stopPropagation();
       state._membersClanId = c.id;
@@ -3117,6 +3310,11 @@
     const car = $('profileCarousel');
     const dots = $('profileDots');
     if (!car) return;
+    if (!state.clanSwipeEnabled) {
+      if (car._lastIdx !== 0) { car._lastIdx = 0; setProfileSlide(0); }
+      else setProfileSlide(0);
+      return;
+    }
     const slides = () => Array.from(car.querySelectorAll('.profile-slide'));
     const update = () => {
       const mid = car.scrollLeft + car.clientWidth / 2;
@@ -3150,6 +3348,38 @@
       setProfileSlide(0);
     }
     update();
+  }
+
+  function renderAppearanceScreen() {
+    const grid = $('themeGrid');
+    if (grid) {
+      grid.innerHTML = Object.keys(THEMES).map(key => {
+        const t = THEMES[key];
+        const active = (state.themeVariant || 'black') === key;
+        return '<button type="button" class="theme-opt' + (active ? ' active' : '') + '" data-theme="' + key + '">' +
+          '<div class="theme-opt-swatch" style="background:' + t.bg + '"><span style="background:' + t.card + '"></span></div>' +
+          '<div class="theme-opt-name">' + t.name + '</div>' +
+          '<div class="theme-opt-check">✓</div>' +
+        '</button>';
+      }).join('');
+      grid.querySelectorAll('.theme-opt').forEach(btn => {
+        btn.onclick = () => {
+          state.themeVariant = btn.dataset.theme;
+          saveState();
+          applyTheme();
+          renderAppearanceScreen();
+        };
+      });
+    }
+    const sw = $('clanSwipeSwitch');
+    if (sw) {
+      sw.checked = !!state.clanSwipeEnabled;
+      sw.onchange = () => {
+        state.clanSwipeEnabled = !!sw.checked;
+        saveState();
+        renderProfile();
+      };
+    }
   }
 
   function renderProfileClanPanel() {
@@ -3205,7 +3435,7 @@
           '<div class="profile-card-text"><div class="profile-card-title">Открыть клан</div><div class="profile-card-sub">' + (c.members||[]).length + ' уч. · казна ' + fmt(c.bank||0) + '</div></div>' +
           '<div class="profile-card-chevron">›</div>' +
         '</button>' +
-        '<button type="button" class="profile-card" id="clanMembersCard">' +
+        '<button type="button" class="profile-card" id="profileClanMembersCard">' +
           '<div class="profile-card-text" style="flex:1">' +
             '<div class="profile-card-title">Участники</div>' +
             '<div style="margin-top:8px">' + clanStackHtml(c.members || []) + '</div>' +
@@ -3215,7 +3445,7 @@
       '</div>';
     const openBtn = $('clanOpenFull');
     if (openBtn) openBtn.onclick = () => openClanView(c.id, 'profile');
-    const mc = $('clanMembersCardFull');
+    const mc = $('profileClanMembersCard');
     if (mc) mc.onclick = () => {
       state._clanFrom = 'profile';
       state._membersClanId = c.id;
@@ -3443,7 +3673,7 @@
           '<div class="clan-member-role">' + role + '</div></div>' +
           '<div class="clan-member-score">' + fmt(m.score) + '</div></div>';
       }).join('');
-      body.innerHTML = '<div class="clan-members-block" style="margin:0">' +
+      body.innerHTML = '<div class="clan-members-block" style="margin-top:0">' +
         '<div class="clan-members-title">' + members.length + ' человек</div>' + rows + '</div>';
       return;
     }
@@ -3636,26 +3866,35 @@
     if (from === 'search') showScreen('search');
     else {
       showScreen('profile');
-      setTimeout(() => {
-        const car = $('profileCarousel');
-        if (car) {
-          const slides = car.querySelectorAll('.profile-slide');
-          if (slides[1]) car.scrollTo({ left: slides[1].offsetLeft - car.clientWidth * 0.29, behavior: 'auto' });
-          car._lastIdx = 1;
-          setProfileSlide(1);
-        }
+      if (state.clanSwipeEnabled) {
+        setTimeout(() => {
+          const car = $('profileCarousel');
+          if (car) {
+            const slides = car.querySelectorAll('.profile-slide');
+            if (slides[1]) car.scrollTo({ left: slides[1].offsetLeft - car.clientWidth * 0.29, behavior: 'auto' });
+            car._lastIdx = 1;
+            setProfileSlide(1);
+          }
+          renderProfile();
+        }, 30);
+      } else {
         renderProfile();
-      }, 30);
+      }
     }
   });
   if ($('adminClose')) $('adminClose').addEventListener('click', () => showScreen('tap'));
-  if ($('settingsClose')) $('settingsClose').addEventListener('click', () => showScreen('profile'));
 
   if ($('profileRatingBtn')) $('profileRatingBtn').addEventListener('click', () => showScreen('rating'));
   if ($('profileAchsBtn')) $('profileAchsBtn').addEventListener('click', () => showScreen('ach'));
   if ($('profileSearchBtn')) $('profileSearchBtn').addEventListener('click', () => showScreen('search'));
   if ($('profileSettingsBtn')) $('profileSettingsBtn').addEventListener('click', () => showScreen('settings'));
-  // old withdraw removed, now in settings
+  if ($('settingsClose')) $('settingsClose').addEventListener('click', () => showScreen('profile'));
+  if ($('settingsWithdrawBtn')) $('settingsWithdrawBtn').addEventListener('click', () => {
+    if (tg && tg.showAlert) tg.showAlert('Вывод филькоинов скоро будет доступен 🐷');
+    else alert('Вывод филькоинов скоро будет доступен 🐷');
+  });
+  if ($('settingsAppearanceBtn')) $('settingsAppearanceBtn').addEventListener('click', () => showScreen('appearance'));
+  if ($('appearanceClose')) $('appearanceClose').addEventListener('click', () => showScreen('settings'));
   if ($('publicSwitch')) {
     $('publicSwitch').addEventListener('change', () => {
       state.publicProfile = !!$('publicSwitch').checked;
@@ -4175,6 +4414,7 @@
     const pigEl = $('pigPhoto');
     if (pigEl && !pigEl.dataset.defaultSrc) pigEl.dataset.defaultSrc = pigEl.src;
     await loadState();
+    applyTheme();
     loadLocalCustom(); // local backup
     loadNavAvatar();
     await fetchShared(); // server is source of truth when available
@@ -4203,152 +4443,6 @@
     }
   })();
 })();
-
-
-  function renderSettings() {
-    const screen = $('screenSettings');
-    if (!screen) return;
-    
-    const body = $('settingsBody');
-    if (!body) return;
-    
-    body.innerHTML = `
-      <div style="padding: 12px 0;">
-        <button type="button" class="profile-card" id="settingsWithdrawBtn" style="margin-bottom: 10px; width: 100%;">
-          <div class="profile-card-icon" style="background: #34c75922; color: #34c759;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 19h14"/></svg>
-          </div>
-          <div class="profile-card-text" style="flex:1; text-align:left; padding-left:12px;">
-            <div class="profile-card-title">Вывести филькоины</div>
-            <div class="profile-card-sub">Обмен монет</div>
-          </div>
-          <div class="profile-card-chevron">›</div>
-        </button>
-        
-        <button type="button" class="profile-card" id="settingsAppearanceBtn" style="width: 100%;">
-          <div class="profile-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          </div>
-          <div class="profile-card-text" style="flex:1; text-align:left; padding-left:12px;">
-            <div class="profile-card-title">Оформление</div>
-            <div class="profile-card-sub">Цвета и тема приложения</div>
-          </div>
-          <div class="profile-card-chevron">›</div>
-        </button>
-      </div>
-    `;
-    
-    // Attach listeners
-    const wBtn = $('settingsWithdrawBtn');
-    if (wBtn) {
-      wBtn.onclick = () => {
-        if (tg && tg.showAlert) tg.showAlert('Вывод филькоинов скоро будет доступен 🐷');
-        else alert('Вывод филькоинов скоро будет доступен 🐷');
-      };
-    }
-    
-    const aBtn = $('settingsAppearanceBtn');
-    if (aBtn) {
-      aBtn.onclick = () => {
-        showAppearanceModal();
-      };
-    }
-  }
-
-  function showAppearanceModal() {
-    const modal = document.createElement('div');
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:999;';
-    modal.innerHTML = `
-      <div style="background:var(--tg-card);border-radius:20px;padding:24px 20px;max-width:340px;width:92%;box-shadow:0 10px 40px rgba(0,0,0,.4);">
-        <div style="font-size:20px;font-weight:600;margin-bottom:8px;text-align:center;">Оформление</div>
-        <div style="font-size:13px;color:var(--tg-hint);text-align:center;margin-bottom:20px;">Выбери вариант тёмной темы</div>
-        
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <button id="themeDefault" class="profile-card" style="width:100%;justify-content:flex-start;padding:14px 16px;">
-            <div style="flex:1;text-align:left;">
-              <div style="font-weight:600;">Стандартная тёмная</div>
-              <div style="font-size:12px;color:var(--tg-hint);">Текущая (рекомендуется)</div>
-            </div>
-          </button>
-          
-          <button id="themeMinimal" class="profile-card" style="width:100%;justify-content:flex-start;padding:14px 16px;">
-            <div style="flex:1;text-align:left;">
-              <div style="font-weight:600;">Тёмная минималистичная</div>
-              <div style="font-size:12px;color:var(--tg-hint);">#181818 • минимализм</div>
-            </div>
-          </button>
-          
-          <button id="themeWarm" class="profile-card" style="width:100%;justify-content:flex-start;padding:14px 16px;">
-            <div style="flex:1;text-align:left;">
-              <div style="font-weight:600;">Тёплая тёмная</div>
-              <div style="font-size:12px;color:var(--tg-hint);">С лёгким тёплым оттенком</div>
-            </div>
-          </button>
-        </div>
-        
-        <button id="closeModal" class="submit-btn" style="margin-top:20px;width:100%;background:var(--tg-secondary);color:var(--tg-text);">Готово</button>
-      </div>
-    `;
-    document.body.appendChild(modal);
-    
-    const applyTheme = (bg, card, secondary) => {
-      const root = document.documentElement;
-      root.style.setProperty('--tg-bg', bg);
-      root.style.setProperty('--tg-card', card);
-      root.style.setProperty('--tg-secondary', secondary);
-      // also update some text contrast if needed
-      modal.remove();
-    };
-    
-    modal.querySelector('#themeDefault').onclick = () => applyTheme('#000000', '#1c1c1e', '#2c2c2e');
-    modal.querySelector('#themeMinimal').onclick = () => applyTheme('#181818', '#252525', '#303030');
-    modal.querySelector('#themeWarm').onclick = () => applyTheme('#1a1815', '#2a2722', '#353025');
-    modal.querySelector('#closeModal').onclick = () => modal.remove();
-  }
-
-  function showAppearanceScreen() {
-    const body = document.createElement('div');
-    body.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:100;';
-    body.innerHTML = `
-      <div style="background:var(--tg-card);border-radius:16px;padding:20px;max-width:320px;width:90%;">
-        <h3 style="margin:0 0 16px;font-size:18px;">Оформление (тёмная тема)</h3>
-        
-        <div style="margin-bottom:12px;">
-          <button class="submit-btn" id="themeDefault" style="margin-bottom:8px;width:100%;">Стандартная тёмная</button>
-          <button class="submit-btn" id="themeMinimal" style="margin-bottom:8px;width:100%;background:#181818;color:#fff;">Тёмная минималистичная (#181818)</button>
-          <button class="submit-btn" id="themeWarm" style="width:100%;">Тёплая тёмная</button>
-        </div>
-        
-        <button class="submit-btn" id="closeAppearance" style="background:var(--tg-secondary);color:var(--tg-text);">Закрыть</button>
-      </div>
-    `;
-    
-    document.body.appendChild(body);
-    
-    $('themeDefault').onclick = () => {
-      document.documentElement.style.setProperty('--tg-bg', '#000000');
-      document.documentElement.style.setProperty('--tg-card', '#1c1c1e');
-      document.documentElement.style.setProperty('--tg-secondary', '#2c2c2e');
-      body.remove();
-    };
-    
-    $('themeMinimal').onclick = () => {
-      document.documentElement.style.setProperty('--tg-bg', '#181818');
-      document.documentElement.style.setProperty('--tg-card', '#252525');
-      document.documentElement.style.setProperty('--tg-secondary', '#303030');
-      body.remove();
-    };
-    
-    $('themeWarm').onclick = () => {
-      document.documentElement.style.setProperty('--tg-bg', '#1a1815');
-      document.documentElement.style.setProperty('--tg-card', '#2a2722');
-      document.documentElement.style.setProperty('--tg-secondary', '#353025');
-      body.remove();
-    };
-    
-    $('closeAppearance').onclick = () => body.remove();
-  }
-
 </script>
 </body>
 </html>
