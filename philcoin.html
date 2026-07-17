@@ -1328,9 +1328,9 @@
   }
 
   .clan-avatar-lg {
-    width: 72px;
-    height: 72px;
-    border-radius: 18px;
+    width: 100px;
+    height: 100px;
+    border-radius: 24px;
     object-fit: cover;
     background: var(--tg-secondary);
     display: flex;
@@ -1387,51 +1387,58 @@
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    gap: 10px;
-    padding: 0 0;
+    gap: 0;
+    padding: 0;
   }
   .profile-carousel::-webkit-scrollbar { display: none; }
   .profile-slide {
-    flex: 0 0 70%;
+    flex: 0 0 44%;
     scroll-snap-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    padding: 12px 4px 4px;
+    padding: 12px 0 4px;
     box-sizing: border-box;
-    transform: scale(0.82);
-    opacity: 0.4;
-    transition: transform .18s ease, opacity .18s ease;
-    will-change: transform, opacity;
   }
-  .profile-slide.is-center {
-    transform: scale(1);
-    opacity: 1;
-  }
-  /* отступы по краям — соседняя ава видна сбоку */
+  /* края: чтобы центральный слайд был по центру, сосед виден */
   .profile-carousel::before,
   .profile-carousel::after {
     content: '';
-    flex: 0 0 15%;
+    flex: 0 0 28%;
   }
   .profile-slide-avatar {
-    width: 96px;
-    height: 96px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     background: var(--tg-secondary);
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 34px;
+    font-size: 36px;
     font-weight: 700;
     color: var(--tier);
     font-family: 'Fredoka', sans-serif;
-    transition: transform .18s ease;
+    transform: scale(0.78);
+    opacity: 0.45;
+    transition: transform .15s ease-out, opacity .15s ease-out;
+  }
+  .profile-slide.is-center .profile-slide-avatar {
+    transform: scale(1);
+    opacity: 1;
+  }
+  .profile-slide-name,
+  .profile-slide-sub {
+    transition: opacity .15s ease-out;
+    opacity: 0.35;
+  }
+  .profile-slide.is-center .profile-slide-name,
+  .profile-slide.is-center .profile-slide-sub {
+    opacity: 1;
   }
   .profile-slide-avatar img {
     width: 100%; height: 100%; object-fit: cover;
@@ -1659,10 +1666,14 @@
     position: fixed;
     inset: 0;
     z-index: 80;
-    background: color-mix(in srgb, var(--tg-bg) 40%, transparent);
+    background: rgba(0,0,0,0);
     display: flex;
     align-items: flex-end;
     justify-content: center;
+    transition: background .28s ease;
+  }
+  .clan-members-sheet.open {
+    background: color-mix(in srgb, #000 45%, transparent);
   }
   .clan-members-sheet-inner {
     width: 100%;
@@ -1672,6 +1683,12 @@
     background: var(--tg-bg);
     border-radius: 20px 20px 0 0;
     padding: 16px 14px calc(var(--safe-bottom) + 20px);
+    transform: translateY(100%);
+    transition: transform .32s cubic-bezier(0.32, 0.72, 0, 1);
+    will-change: transform;
+  }
+  .clan-members-sheet.open .clan-members-sheet-inner {
+    transform: translateY(0);
   }
   .clan-sheet-handle {
     width: 36px; height: 4px;
@@ -2714,14 +2731,9 @@
       slides().forEach((sl, i) => {
         const c = sl.offsetLeft + sl.offsetWidth / 2;
         const d = Math.abs(c - mid);
-        const t = Math.max(0, 1 - d / (car.clientWidth * 0.7));
-        const scale = 0.78 + 0.22 * t;
-        const op = 0.35 + 0.65 * t;
-        sl.style.transform = 'scale(' + scale.toFixed(3) + ')';
-        sl.style.opacity = op.toFixed(3);
-        sl.classList.toggle('is-center', t > 0.7);
         if (d < bestDist) { bestDist = d; best = i; }
       });
+      slides().forEach((sl, i) => sl.classList.toggle('is-center', i === best));
       if (dots) {
         dots.querySelectorAll('span').forEach((s, i) => s.classList.toggle('on', i === best));
       }
@@ -2732,7 +2744,11 @@
     };
     if (!car._bound) {
       car._bound = true;
-      car.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+      let raf = 0;
+      car.addEventListener('scroll', () => {
+        if (raf) return;
+        raf = requestAnimationFrame(() => { raf = 0; update(); });
+      }, { passive: true });
       window.addEventListener('resize', update);
     }
     // force panel sync
@@ -2857,8 +2873,15 @@
       sheet.innerHTML = '<div class="clan-members-sheet-inner"><div class="clan-sheet-handle"></div>' +
         '<div style="font-family:Fredoka,sans-serif;font-size:18px;font-weight:600;margin-bottom:12px">Участники</div>' +
         rows + '</div>';
-      sheet.addEventListener('click', e => { if (e.target === sheet) sheet.remove(); });
+      const closeSheet = () => {
+        sheet.classList.remove('open');
+        setTimeout(() => { if (sheet.parentNode) sheet.remove(); }, 320);
+      };
+      sheet.addEventListener('click', e => { if (e.target === sheet) closeSheet(); });
       document.body.appendChild(sheet);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => sheet.classList.add('open'));
+      });
     };
 
     const mc = $('clanMembersCard');
@@ -3239,8 +3262,15 @@
       }).join('');
       sheet.innerHTML = '<div class="clan-members-sheet-inner"><div class="clan-sheet-handle"></div>' +
         '<div style="font-family:Fredoka,sans-serif;font-size:18px;font-weight:600;margin-bottom:12px">Участники</div>' + rows + '</div>';
-      sheet.addEventListener('click', e => { if (e.target === sheet) sheet.remove(); });
+      const closeSheet = () => {
+        sheet.classList.remove('open');
+        setTimeout(() => { if (sheet.parentNode) sheet.remove(); }, 320);
+      };
+      sheet.addEventListener('click', e => { if (e.target === sheet) closeSheet(); });
       document.body.appendChild(sheet);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => sheet.classList.add('open'));
+      });
     };
     const mc = $('clanMembersCard');
     if (mc) mc.onclick = openMembers;
