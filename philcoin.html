@@ -738,6 +738,99 @@
     background: var(--tier-soft);
     color: var(--tier);
   }
+
+  /* profile */
+  .profile-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 16px 20px;
+    gap: 10px;
+  }
+  .profile-avatar {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    background: var(--tg-secondary);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--tier);
+    font-family: 'Fredoka', sans-serif;
+  }
+  .profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .profile-name {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--tg-text);
+  }
+  .profile-id {
+    font-size: 12px;
+    color: var(--tg-hint);
+  }
+  .profile-cards {
+    padding: 8px 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .profile-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background: var(--tg-card);
+    border-radius: 16px;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--tg-text);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .profile-card:active { opacity: 0.85; }
+  .profile-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--tier-soft);
+    color: var(--tier);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .profile-card-icon svg { width: 22px; height: 22px; }
+  .profile-card-text { flex: 1; }
+  .profile-card-title {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .profile-card-sub {
+    font-size: 12px;
+    color: var(--tg-hint);
+    margin-top: 2px;
+  }
+  .profile-card-chevron {
+    color: var(--tg-hint);
+    font-size: 18px;
+  }
+  .profile-withdraw {
+    margin-top: 6px;
+  }
+  .profile-withdraw .profile-card-icon {
+    background: color-mix(in srgb, #57cf9d 18%, var(--tg-card));
+    color: #57cf9d;
+  }
 </style>
 </head>
 <body>
@@ -759,9 +852,6 @@
       </div>
     </div>
     <div class="topbar-actions">
-      <button class="icon-btn" id="marketBtn" title="Магазин">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9z"/><path d="M3 9l2.5-5h13L21 9"/><path d="M9 13v4M15 13v4"/></svg>
-      </button>
       <button class="icon-btn admin" id="adminBtn" title="Панель создателя" style="display:none;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
@@ -810,10 +900,51 @@
     <!-- MARKET -->
     <div class="screen" id="screenMarket">
       <div class="panel-header">
-        <div class="panel-title">Магазин</div>
-        <button class="close-btn" id="marketClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        <div class="panel-title">Шоп</div>
       </div>
       <div class="panel-body" id="marketList"></div>
+    </div>
+
+
+    <!-- PROFILE -->
+    <div class="screen" id="screenProfile">
+      <div class="profile-head">
+        <div class="profile-avatar" id="profileAvatar">?</div>
+        <div class="profile-name" id="profileName">Игрок</div>
+        <div class="profile-id" id="profileId"></div>
+      </div>
+      <div class="profile-cards">
+        <button type="button" class="profile-card" id="profileRatingBtn">
+          <div class="profile-card-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2H22l-6 4.8 2.3 7L12 16.8 5.7 21l2.3-7-6-4.8h7.6z"/></svg>
+          </div>
+          <div class="profile-card-text">
+            <div class="profile-card-title">Рейтинг</div>
+            <div class="profile-card-sub">Таблица лидеров</div>
+          </div>
+          <div class="profile-card-chevron">›</div>
+        </button>
+        <button type="button" class="profile-card" id="profileAchsBtn">
+          <div class="profile-card-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a3 3 0 0 1 3 3v1h2a2 2 0 0 1 2 2v2c0 1.5-.7 2.8-1.8 3.6A6 6 0 0 1 13 17.9V20h2a1 1 0 1 1 0 2H9a1 1 0 1 1 0-2h2v-2.1A6 6 0 0 1 6.8 13.6 4.5 4.5 0 0 1 5 10V8a2 2 0 0 1 2-2h2V5a3 3 0 0 1 3-3zm0 2a1 1 0 0 0-1 1v1h2V5a1 1 0 0 0-1-1zM7 8v2c0 .9.4 1.7 1 2.2V10a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2.2c.6-.5 1-1.3 1-2.2V8H7z"/></svg>
+          </div>
+          <div class="profile-card-text">
+            <div class="profile-card-title">Награды</div>
+            <div class="profile-card-sub">Достижения</div>
+          </div>
+          <div class="profile-card-chevron">›</div>
+        </button>
+        <button type="button" class="profile-card profile-withdraw" id="profileWithdrawBtn">
+          <div class="profile-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 19h14"/></svg>
+          </div>
+          <div class="profile-card-text">
+            <div class="profile-card-title">Вывести филькоины</div>
+            <div class="profile-card-sub">Обмен монет</div>
+          </div>
+          <div class="profile-card-chevron">›</div>
+        </button>
+      </div>
     </div>
 
     <!-- ADMIN -->
@@ -896,13 +1027,13 @@
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 2.5a1 1 0 0 1 1.5.9v7.2l5.2-5.2a1 1 0 0 1 1.6.3l.1.2a1 1 0 0 1-.3 1.3l-5.2 4.3h5.1a1 1 0 0 1 .9 1.1l-.1.2a1 1 0 0 1-1 .7h-6.2l4.1 4.1a1 1 0 0 1-.1 1.5l-.2.1a1 1 0 0 1-1.3-.1L10 15.4V21a1 1 0 0 1-1.9.3l-.1-.2V14l-3.6 3.6a1 1 0 0 1-1.5-1.3l.1-.2L7.5 12H2a1 1 0 0 1-.9-1.4l.1-.2A1 1 0 0 1 2 10h6.2L3.1 5.7a1 1 0 0 1 .1-1.5l.2-.1a1 1 0 0 1 1.3.1L9 8.5V3.4a1 1 0 0 1 .9-.9z"/></svg>
       Тапалка
     </button>
-    <button class="nav-btn" data-screen="rating">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2H22l-6 4.8 2.3 7L12 16.8 5.7 21l2.3-7-6-4.8h7.6z"/></svg>
-      Рейтинг
+    <button class="nav-btn" data-screen="market">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9z"/><path d="M3 9l2.5-5h13L21 9"/><path d="M9 13v4M15 13v4"/></svg>
+      Шоп
     </button>
-    <button class="nav-btn" data-screen="ach">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a3 3 0 0 1 3 3v1h2a2 2 0 0 1 2 2v2c0 1.5-.7 2.8-1.8 3.6A6 6 0 0 1 13 17.9V20h2a1 1 0 1 1 0 2H9a1 1 0 1 1 0-2h2v-2.1A6 6 0 0 1 6.8 13.6 4.5 4.5 0 0 1 5 10V8a2 2 0 0 1 2-2h2V5a3 3 0 0 1 3-3zm0 2a1 1 0 0 0-1 1v1h2V5a1 1 0 0 0-1-1zM7 8v2c0 .9.4 1.7 1 2.2V10a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2.2c.6-.5 1-1.3 1-2.2V8H7z"/></svg>
-      Награды
+    <button class="nav-btn" data-screen="profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Профиль
     </button>
   </nav>
 </div>
@@ -1001,8 +1132,47 @@
   let lastPushedScore = -1;
   let pushTimer = null;
 
+  /* стартовые товары (если админ ещё ничего не создал) */
+  const DEFAULT_MARKET = [
+    {
+      id: 'autoclicker',
+      name: 'Автокликер',
+      desc: 'Свинка копит монеты сама, пока вас нет',
+      price: 5000,
+      income: 1,
+      tapBonus: 0,
+      maxLevel: 5,
+      icon: 'bolt'
+    },
+    {
+      id: 'golden_hoof',
+      name: 'Золотое копытце',
+      desc: 'Усиливает каждый тап',
+      price: 12000,
+      income: 0,
+      tapBonus: 1,
+      maxLevel: 5,
+      icon: 'fire'
+    },
+    {
+      id: 'piggy_bank',
+      name: 'Копилка',
+      desc: 'Пассивный доход побольше',
+      price: 35000,
+      income: 3,
+      tapBonus: 0,
+      maxLevel: 4,
+      icon: 'gift'
+    }
+  ];
+
   function allAchievements() { return customAchievements; }
-  function allMarket() { return customMarket; }
+  function allMarket() {
+    // кастомные админа + дефолтные, которых ещё нет по id
+    const ids = new Set(customMarket.map(i => i.id));
+    const defaults = DEFAULT_MARKET.filter(i => !ids.has(i.id));
+    return customMarket.concat(defaults);
+  }
 
   async function fetchShared() {
     try {
@@ -1365,34 +1535,62 @@
     rating: $('screenRating'),
     ach: $('screenAch'),
     market: $('screenMarket'),
+    profile: $('screenProfile'),
     admin: $('screenAdmin')
   };
 
   function showScreen(name) {
     Object.entries(screens).forEach(([k, el]) => {
-      el.classList.toggle('active', k === name);
+      if (el) el.classList.toggle('active', k === name);
     });
     $('topbar').style.display = (name === 'tap') ? '' : 'none';
+    // nav highlights main tabs; rating/ach keep profile active
+    let navActive = name;
+    if (name === 'rating' || name === 'ach') navActive = 'profile';
+    if (name === 'admin') navActive = null;
     document.querySelectorAll('.nav-btn').forEach(b => {
-      b.classList.toggle('active', b.dataset.screen === name);
+      b.classList.toggle('active', b.dataset.screen === navActive);
     });
-    // hide bottom nav on admin so keyboard doesn't push it
     document.getElementById('app').classList.toggle('admin-open', name === 'admin');
     if (name === 'rating') { pushLeaderboard(true); renderRating(); }
     if (name === 'ach') renderAch();
     if (name === 'market') renderMarket();
+    if (name === 'profile') renderProfile();
     if (name === 'admin') renderAdmin();
+  }
+
+  function renderProfile() {
+    const av = $('profileAvatar');
+    const nm = $('profileName');
+    const idEl = $('profileId');
+    if (nm) nm.textContent = myName || 'Игрок';
+    if (idEl) idEl.textContent = myId ? ('ID ' + myId) : '';
+    if (av) {
+      const photo = user && user.photo_url;
+      if (photo) {
+        av.innerHTML = '<img src="' + photo + '" alt="">';
+      } else {
+        const init = (myName || '?').trim().charAt(0).toUpperCase();
+        av.textContent = init;
+        av.innerHTML = init;
+      }
+    }
   }
 
   document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => showScreen(btn.dataset.screen));
   });
-  $('marketBtn').addEventListener('click', () => showScreen('market'));
-  $('adminBtn').addEventListener('click', () => showScreen('admin'));
-  $('ratingClose').addEventListener('click', () => showScreen('tap'));
-  $('achClose').addEventListener('click', () => showScreen('tap'));
-  $('marketClose').addEventListener('click', () => showScreen('tap'));
-  $('adminClose').addEventListener('click', () => showScreen('tap'));
+  if ($('adminBtn')) $('adminBtn').addEventListener('click', () => showScreen('admin'));
+  if ($('ratingClose')) $('ratingClose').addEventListener('click', () => showScreen('profile'));
+  if ($('achClose')) $('achClose').addEventListener('click', () => showScreen('profile'));
+  if ($('adminClose')) $('adminClose').addEventListener('click', () => showScreen('tap'));
+
+  if ($('profileRatingBtn')) $('profileRatingBtn').addEventListener('click', () => showScreen('rating'));
+  if ($('profileAchsBtn')) $('profileAchsBtn').addEventListener('click', () => showScreen('ach'));
+  if ($('profileWithdrawBtn')) $('profileWithdrawBtn').addEventListener('click', () => {
+    if (tg && tg.showAlert) tg.showAlert('Вывод филькоинов скоро будет доступен 🐷');
+    else alert('Вывод филькоинов скоро будет доступен 🐷');
+  });
 
   /* ===== RATING (real) ===== */
   function renderRating() {
