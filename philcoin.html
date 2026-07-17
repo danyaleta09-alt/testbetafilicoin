@@ -931,44 +931,52 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 18px;
+    gap: 6px;
+    margin-bottom: 20px;
+    padding-top: 4px;
   }
   .up-avatar {
-    width: 88px;
-    height: 88px;
+    width: 96px;
+    height: 96px;
     border-radius: 50%;
     background: var(--tg-secondary);
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 34px;
+    font-size: 36px;
     font-weight: 700;
     color: var(--tier);
     font-family: 'Fredoka', sans-serif;
+    box-shadow: 0 0 0 3px var(--tg-bg), 0 0 0 5px color-mix(in srgb, var(--tier) 35%, transparent);
+    margin-bottom: 6px;
   }
   .up-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .up-name { font-family: 'Fredoka', sans-serif; font-size: 22px; font-weight: 600; }
-  .up-score { font-size: 13px; color: var(--tg-hint); }
+  .up-name { font-family: 'Fredoka', sans-serif; font-size: 24px; font-weight: 600; letter-spacing: -0.02em; }
+  .up-score { font-size: 13px; color: var(--tg-hint); margin-bottom: 4px; }
   .up-stats {
     display: flex;
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 8px;
+    margin-bottom: 14px;
   }
   .up-stat {
     flex: 1;
     background: var(--tg-card);
-    border-radius: 14px;
-    padding: 12px;
+    border-radius: 16px;
+    padding: 14px 8px;
     text-align: center;
   }
-  .up-stat-val { font-weight: 700; font-size: 16px; color: var(--tg-text); }
-  .up-stat-lbl { font-size: 11px; color: var(--tg-hint); margin-top: 2px; }
+  .up-stat-val {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--tg-text);
+  }
+  .up-stat-lbl { font-size: 11px; color: var(--tg-hint); margin-top: 3px; }
   .up-tg-btn {
     width: 100%;
-    padding: 14px;
-    border-radius: 14px;
+    padding: 15px;
+    border-radius: 16px;
     border: none;
     background: var(--tier);
     color: #fff;
@@ -976,7 +984,29 @@
     font-weight: 600;
     font-size: 15px;
     cursor: pointer;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
+  }
+  .up-tg-btn:active { opacity: 0.88; transform: scale(0.985); }
+  .up-section {
+    background: var(--tg-card);
+    border-radius: 18px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .up-section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--tg-hint);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 12px;
+  }
+  .up-section .up-empty {
+    padding: 4px 0;
+  }
+  .up-section .my-skins-grid,
+  .up-section .up-awards-grid {
+    gap: 8px;
   }
   .rating-row { cursor: pointer; }
 
@@ -1650,17 +1680,17 @@
     if (tg) {
       const sa = tg.safeAreaInset || {};
       const csa = tg.contentSafeAreaInset || {};
-      // берём один источник, не суммируем (иначе огромный отступ)
-      top = Math.max(csa.top || 0, sa.top || 0);
-      bottom = Math.max(csa.bottom || 0, sa.bottom || 0);
-      // лёгкий запас только если совсем 0
-      if (top < 8) top = 12;
+      // один источник — contentSafeArea предпочтительнее
+      top = (csa.top > 0 ? csa.top : (sa.top || 0));
+      bottom = (csa.bottom > 0 ? csa.bottom : (sa.bottom || 0));
+      // место под кнопку «Закрыть» Telegram
+      if (top < 48) top = 54;
+      if (top > 72) top = 72;
     } else {
-      top = 12;
+      top = 20;
     }
-    if (bottom < 8) bottom = 8;
-    // жёсткий потолок — не больше 40px
-    if (top > 40) top = 40;
+    if (bottom < 8) bottom = 10;
+    if (bottom > 40) bottom = 40;
     document.documentElement.style.setProperty('--safe-top', top + 'px');
     document.documentElement.style.setProperty('--safe-bottom', bottom + 'px');
   }
@@ -2490,7 +2520,7 @@
 
     let skinsHtml = '';
     if (!skinIds.length) {
-      skinsHtml = '<div class="up-empty">Нет скинов</div>';
+      skinsHtml = '<div class="up-empty">Пока нет скинов</div>';
     } else {
       skinsHtml = '<div class="my-skins-grid">';
       skinIds.forEach(sid => {
@@ -2503,7 +2533,7 @@
       });
       skinsHtml += '</div>';
       if (skinsHtml === '<div class="my-skins-grid"></div>') {
-        skinsHtml = '<div class="up-empty">Нет скинов</div>';
+        skinsHtml = '<div class="up-empty">Пока нет скинов</div>';
       }
     }
 
@@ -2535,17 +2565,16 @@
         '<div class="up-avatar">' + photo + '</div>' +
         '<div class="up-name">' + (p.name || 'Игрок') + '</div>' +
         '<div class="up-score">' + fmt(p.score || 0) + ' очков</div>' +
-        (p.clanId && getClan(p.clanId) ? '<div class="clan-badge" style="margin-top:8px">' + clanAvatarHtml(getClan(p.clanId)) + '<span>' + getClan(p.clanId).name + '</span></div>' : '') +
+        (p.clanId && getClan(p.clanId) ? '<div class="clan-badge" style="margin-top:6px">' + clanAvatarHtml(getClan(p.clanId)) + '<span>' + getClan(p.clanId).name + '</span></div>' : '') +
       '</div>' +
       '<div class="up-stats">' +
-        '<div class="up-stat"><div class="up-stat-val">' + fmt(p.score || 0) + '</div><div class="up-stat-lbl">Рейтинг</div></div>' +
-        '<div class="up-stat"><div class="up-stat-val">' + skinIds.length + '</div><div class="up-stat-lbl">Скинов</div></div>' +
-        '<div class="up-stat"><div class="up-stat-val">' + achIds.length + '</div><div class="up-stat-lbl">Наград</div></div>' +
+        '<div class="up-stat"><div class="up-stat-val">' + fmt(p.score || 0) + '</div><div class="up-stat-lbl">Очки</div></div>' +
+        '<div class="up-stat"><div class="up-stat-val">' + skinIds.length + '</div><div class="up-stat-lbl">Скины</div></div>' +
+        '<div class="up-stat"><div class="up-stat-val">' + achIds.length + '</div><div class="up-stat-lbl">Награды</div></div>' +
       '</div>' +
       '<button type="button" class="up-tg-btn" id="openTgUser">Открыть в Telegram</button>' +
-      '<div class="my-skins-title">Скины</div>' + skinsHtml +
-      '<div class="my-skins-title" style="margin-top:16px">Награды</div>' +
-      '<div class="up-awards">' + awardsHtml + '</div>';
+      '<div class="up-section"><div class="up-section-title">Скины</div>' + skinsHtml + '</div>' +
+      '<div class="up-section"><div class="up-section-title">Награды</div><div class="up-awards">' + awardsHtml + '</div></div>';
 
     const btn = $('openTgUser');
     if (btn) {
