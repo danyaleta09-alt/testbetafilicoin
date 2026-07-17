@@ -159,6 +159,7 @@ const server = http.createServer(async (req, res) => {
         score,
         updated: Date.now(),
         photo: body.photo || prev.photo || null,
+        username: body.username || prev.username || null,
         skins: Array.isArray(body.skins) ? body.skins : (prev.skins || []),
         activeSkin: body.activeSkin || prev.activeSkin || null,
         achievements: Array.isArray(body.achievements) ? body.achievements : (prev.achievements || []),
