@@ -582,9 +582,9 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: calc(var(--nav-h) + var(--safe-bottom));
+    height: calc(var(--nav-h) + var(--safe-bottom) + 12px);
     padding: 0 10px;
-    padding-bottom: var(--safe-bottom);
+    padding-bottom: calc(var(--safe-bottom) + 12px);
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -621,7 +621,7 @@
     filter: none;
   }
 
-  .screens { padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 8px); }
+  .screens { padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 24px); }
   .panel-body { padding-bottom: 16px; }
 
   /* hide navbar on admin to avoid keyboard issues */
@@ -646,10 +646,11 @@
     pointer-events: none;
   }
   .splash-logo {
-    width: min(42vw, 180px);
-    height: min(42vw, 180px);
+    width: min(48vw, 200px);
+    height: min(48vw, 200px);
     object-fit: contain;
-    border-radius: 50%;
+    background: transparent;
+    border-radius: 0;
     animation: splashIn .7s ease both;
   }
   .splash-text {
@@ -678,7 +679,12 @@
     align-items: center;
     justify-content: center;
     opacity: 0;
-    animation: splashIn .5s ease .2s both;
+    transform: scale(0.92);
+    transition: opacity .55s ease, transform .55s ease;
+  }
+  .splash-age.show {
+    opacity: 1;
+    transform: scale(1);
   }
   @keyframes splashIn {
     from { opacity: 0; transform: scale(0.92); }
@@ -821,7 +827,6 @@
         <button class="admin-tab" data-tab="goods">Товары</button>
         <button class="admin-tab" data-tab="achs">Достижения</button>
       </div>
-      <div id="adminSyncBadge" class="admin-sync off">Синхронизация...</div>
       <div class="panel-body">
         <!-- USERS -->
         <div class="admin-section active" id="adminUsers">
@@ -966,6 +971,8 @@
     } else {
       top = 20;
     }
+    // slightly raise bottom UI above home indicator
+    if (bottom < 10) bottom = 10;
     document.documentElement.style.setProperty('--safe-top', top + 'px');
     document.documentElement.style.setProperty('--safe-bottom', bottom + 'px');
   }
@@ -1685,10 +1692,6 @@
   });
 
   function renderAdmin() {
-    const badge = $('adminSyncBadge');
-    badge.className = 'admin-sync on';
-    badge.textContent = 'Товары и достижения с этой панели видят все игроки';
-
     // users
     const uList = $('usersList');
     uList.innerHTML = '';
@@ -1805,9 +1808,10 @@
     // push score every 2 min while app is open
     setInterval(() => pushLeaderboard(false), 120000);
 
-    // splash: typewriter then hide
+    // splash: type text → then fade in 16+ → then hide
     const splash = document.getElementById('splash');
     const splashTextEl = document.getElementById('splashText');
+    const splashAge = splash && splash.querySelector('.splash-age');
     const phrase = 'любое совпадение с реальностью случайно';
     async function typeSplash() {
       if (!splashTextEl) return;
@@ -1816,9 +1820,16 @@
         splashTextEl.textContent += phrase[i];
         await new Promise(r => setTimeout(r, 38));
       }
-      await new Promise(r => setTimeout(r, 700));
     }
     await typeSplash();
+    // only after full text — show 16+
+    if (splashAge) {
+      await new Promise(r => setTimeout(r, 200));
+      splashAge.classList.add('show');
+      await new Promise(r => setTimeout(r, 900));
+    } else {
+      await new Promise(r => setTimeout(r, 500));
+    }
     if (splash) {
       splash.classList.add('hide');
       setTimeout(() => splash.remove(), 600);
