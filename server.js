@@ -198,6 +198,18 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    if (pathname === '/logo.png') {
+      const logoPath = path.join(__dirname, 'logo.png');
+      if (fs.existsSync(logoPath)) {
+        res.writeHead(200, {
+          'Content-Type': 'image/png',
+          'Cache-Control': 'public, max-age=86400'
+        });
+        res.end(fs.readFileSync(logoPath));
+        return;
+      }
+    }
+
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Not found');
   } catch (e) {
@@ -213,28 +225,12 @@ server.listen(PORT, () => {
 });
 
 async function sendWelcome(chatId) {
-  if (!APP_URL) {
-    await fetch(`${TG_API}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: 'Приложение почти готово, создатель ещё не включил публичный домен на хостинге 🐷'
-      })
-    });
-    return;
-  }
   await fetch(`${TG_API}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       chat_id: chatId,
-      text: 'Привет! Жми на кнопку ниже, чтобы открыть Филькоин 🐷',
-      reply_markup: {
-        inline_keyboard: [[
-          { text: '🐷 Открыть Филькоин', web_app: { url: APP_URL } }
-        ]]
-      }
+      text: 'беги тапать фильку'
     })
   });
 }
