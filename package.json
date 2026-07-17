@@ -1,8 +1,8 @@
 {
   "name": "philcoin",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "private": true,
-  "description": "Филькоин v2 — Telegram Mini App + бот в одном сервисе",
+  "description": "Филькоин — Telegram Mini App + бот в одном сервисе",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
