@@ -1624,6 +1624,61 @@
     flex-direction: column;
     gap: 10px;
   }
+
+  .clan-stack {
+    display: flex;
+    align-items: center;
+    padding: 4px 0;
+  }
+  .clan-stack-av {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--tg-card);
+    background: var(--tg-secondary);
+    overflow: hidden;
+    margin-left: -10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--tier);
+    flex-shrink: 0;
+  }
+  .clan-stack-av:first-child { margin-left: 0; }
+  .clan-stack-av img { width: 100%; height: 100%; object-fit: cover; }
+  .clan-stack-more {
+    margin-left: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--tg-hint);
+  }
+  .clan-simple {
+    padding: 4px 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .clan-members-sheet {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    background: color-mix(in srgb, var(--tg-bg) 40%, transparent);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .clan-members-sheet-inner {
+    width: 100%;
+    max-width: 480px;
+    max-height: 70vh;
+    overflow-y: auto;
+    background: var(--tg-bg);
+    border-radius: 20px 20px 0 0;
+    padding: 16px 14px calc(var(--safe-bottom) + 20px);
+  }
+  .clan-sheet-handle {
+    width: 36px; height: 4px;
+    border-radius: 99px;
+    background: var(--tg-secondary);
+    margin: 0 auto 14px;
+  }
 </style>
 </head>
 <body>
@@ -1926,34 +1981,53 @@
   }
 
   /* ===== THEME ===== */
+  function hexToRgb(hex) {
+    if (!hex || typeof hex !== 'string') return null;
+    let h = hex.trim().replace('#','');
+    if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    if (h.length !== 6) return null;
+    const n = parseInt(h, 16);
+    if (isNaN(n)) return null;
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
+  function softAccent(hex, a) {
+    const rgb = hexToRgb(hex);
+    if (!rgb) return 'rgba(255,111,165,' + a + ')';
+    return 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + a + ')';
+  }
   function applyTheme() {
     if (!tg) return;
     const tp = tg.themeParams || {};
     const root = document.documentElement.style;
     const scheme = (tg.colorScheme || '').toLowerCase();
-    // Prefer Telegram colorScheme, fallback to bg luminance
     const light = scheme === 'light' || (scheme !== 'dark' && isLight(tp.bg_color || '#000000'));
 
-    // EXACT colors as requested
     const bg = light ? '#f3f2f7' : '#000000';
     const card = light ? '#ffffff' : '#1c1c1e';
-    // inputs / secondary must contrast with card
     const secondary = light ? '#ebeaf0' : '#2c2c2e';
     const text = light ? '#000000' : (tp.text_color || '#ffffff');
     const hint = light ? '#8e8e93' : (tp.hint_color || '#8e8e93');
-    const button = tp.button_color || '#ff6fa5';
+
+    // акцент Telegram: accent_text_color → button_color → fallback
+    const accent = tp.accent_text_color || tp.button_color || tp.link_color || '#ff6fa5';
+    const button = tp.button_color || accent;
+    const buttonText = tp.button_text_color || '#ffffff';
 
     root.setProperty('--tg-bg', bg);
     root.setProperty('--tg-text', text);
     root.setProperty('--tg-hint', hint);
-    root.setProperty('--tg-link', tp.link_color || (light ? '#007aff' : '#6cb6ff'));
+    root.setProperty('--tg-link', tp.link_color || accent);
     root.setProperty('--tg-button', button);
-    root.setProperty('--tg-button-text', tp.button_text_color || '#ffffff');
+    root.setProperty('--tg-button-text', buttonText);
     root.setProperty('--tg-secondary', secondary);
     root.setProperty('--tg-card', card);
     root.setProperty('--tg-section', card);
     root.setProperty('--card-border', 'transparent');
     root.setProperty('--nav-bg', 'transparent');
+
+    // весь UI-акцент приложения
+    root.setProperty('--tier', accent);
+    root.setProperty('--tier-soft', softAccent(accent, 0.14));
 
     try { tg.setHeaderColor(bg); } catch(e){}
     try { tg.setBackgroundColor(bg); } catch(e){}
@@ -2508,7 +2582,13 @@
       b.classList.toggle('active', b.dataset.screen === navActive);
     });
     const isSub = ['rating','ach','user','search','clan','admin'].includes(name);
-    document.getElementById('app').classList.toggle('sub-open', isSub);
+    const appEl = document.getElementById('app');
+    if (name === 'profile') {
+      const idx = ($('profileCarousel') && $('profileCarousel')._lastIdx) || 0;
+      appEl.classList.toggle('sub-open', idx === 1);
+    } else {
+      appEl.classList.toggle('sub-open', isSub);
+    }
     if (name === 'rating') { pushLeaderboard(true); renderRating(); }
     if (name === 'ach') renderAch();
     if (name === 'market') {
@@ -2613,6 +2693,13 @@
     const cl = $('profileClanPanel');
     if (me) me.style.display = idx === 0 ? '' : 'none';
     if (cl) cl.style.display = idx === 1 ? '' : 'none';
+    // navbar hide on clan slide
+    const app = document.getElementById('app');
+    if (app) {
+      const onProfile = $('screenProfile') && $('screenProfile').classList.contains('active');
+      app.classList.toggle('sub-open', (onProfile && idx === 1) || app.classList.contains('sub-open') && !onProfile);
+      if (onProfile) app.classList.toggle('sub-open', idx === 1);
+    }
     if (idx === 1) renderProfileClanPanel();
   }
 
@@ -2645,10 +2732,13 @@
     };
     if (!car._bound) {
       car._bound = true;
-      car.addEventListener('scroll', () => {
-        requestAnimationFrame(update);
-      }, { passive: true });
+      car.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
       window.addEventListener('resize', update);
+    }
+    // force panel sync
+    if (car._lastIdx === undefined) {
+      car._lastIdx = 0;
+      setProfileSlide(0);
     }
     update();
   }
@@ -2657,8 +2747,6 @@
     const wrap = $('profileClanContent');
     if (!wrap) return;
     const c = myClan();
-
-    // update carousel clan slide header bits
     const cAv = $('profileClanAvatar');
     const cNm = $('profileClanName');
     const cSub = $('profileClanSub');
@@ -2670,12 +2758,12 @@
         cAv.onclick = () => { clanWizardStep = 1; showScreen('clan'); };
       }
       if (cNm) cNm.textContent = 'Клан';
-      if (cSub) cSub.innerHTML = 'Ещё нет клана';
+      if (cSub) cSub.textContent = 'Создай или вступи';
       wrap.innerHTML =
-        '<div class="clan-empty-actions">' +
+        '<div class="clan-simple">' +
           '<button type="button" class="profile-card" id="clanCreateCard">' +
             '<div class="profile-card-icon" style="background:var(--tier-soft);color:var(--tier)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>' +
-            '<div class="profile-card-text"><div class="profile-card-title">Создать клан</div><div class="profile-card-sub">Стань лидером команды</div></div>' +
+            '<div class="profile-card-text"><div class="profile-card-title">Создать клан</div><div class="profile-card-sub">Стань лидером</div></div>' +
             '<div class="profile-card-chevron">›</div>' +
           '</button>' +
           '<button type="button" class="profile-card" id="clanFindCard">' +
@@ -2691,7 +2779,7 @@
       return;
     }
 
-    // has clan — rich panel
+    // has clan
     if (cAv) {
       cAv.classList.add('has-clan');
       if (c.avatar) cAv.innerHTML = '<img src="' + c.avatar + '" alt="">';
@@ -2699,64 +2787,86 @@
       cAv.onclick = null;
     }
     if (cNm) cNm.textContent = c.name || 'Клан';
-    if (cSub) {
-      cSub.innerHTML = '<div class="clan-bank-pill">Казна · <span>' + fmt(c.bank || 0) + '</span></div>';
-    }
+    if (cSub) cSub.textContent = fmt(c.bank || 0) + ' в казне';
 
     const isOwner = String(c.ownerId) === String(myId);
     const members = c.members || [];
-    let membersHtml = members.map(mid => {
+    // last 3 joined = last 3 in array
+    const last3 = members.slice(-3).reverse();
+
+    function memberAvHtml(mid, cls) {
       const u = leaderboard.find(x => String(x.id) === String(mid));
-      const name = u ? (u.name || 'Игрок') : ('ID ' + mid);
+      const name = u ? (u.name || '?') : '?';
       const photo = u && u.photo;
-      const init = (name || '?').charAt(0).toUpperCase();
-      const role = String(c.ownerId) === String(mid) ? 'Лидер' : 'Участник';
-      const av = photo
-        ? '<div class="clan-member-av"><img src="' + photo + '" alt=""></div>'
-        : '<div class="clan-member-av">' + init + '</div>';
-      return '<div class="clan-member-row">' + av +
-        '<div class="clan-member-info"><div class="clan-member-name">' + name + (String(mid)===String(myId)?' · вы':'') + '</div>' +
-        '<div class="clan-member-role">' + role + '</div></div>' +
-        '<div class="clan-member-score">' + fmt(u ? u.score : 0) + '</div></div>';
-    }).join('');
+      const init = name.charAt(0).toUpperCase();
+      if (photo) return '<div class="' + cls + '"><img src="' + photo + '" alt=""></div>';
+      return '<div class="' + cls + '">' + init + '</div>';
+    }
+
+    let stack = '<div class="clan-stack">';
+    last3.forEach(mid => { stack += memberAvHtml(mid, 'clan-stack-av'); });
+    if (!last3.length) stack += '<div class="clan-stack-av">?</div>';
+    stack += '<div class="clan-stack-more">' + members.length + ' уч.</div></div>';
 
     wrap.innerHTML =
-      '<div class="clan-panel-cards">' +
-        '<div class="profile-card" style="cursor:default">' +
-          '<div class="profile-card-icon" style="background:color-mix(in srgb,#57cf9d 18%,var(--tg-card));color:#57cf9d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>' +
-          '<div class="profile-card-text"><div class="profile-card-title">Казна клана</div><div class="profile-card-sub">' + fmt(c.bank || 0) + ' филькоинов</div></div>' +
-        '</div>' +
+      '<div class="clan-simple">' +
+        // participants card
+        '<button type="button" class="profile-card" id="clanMembersCard">' +
+          '<div class="profile-card-text" style="flex:1">' +
+            '<div class="profile-card-title">Участники</div>' +
+            '<div style="margin-top:8px">' + stack + '</div>' +
+          '</div>' +
+          '<div class="profile-card-chevron">›</div>' +
+        '</button>' +
+        // donate
         '<button type="button" class="profile-card" id="clanDonateCard">' +
-          '<div class="profile-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>' +
-          '<div class="profile-card-text"><div class="profile-card-title">Внести в казну</div><div class="profile-card-sub">Пополнить общий баланс</div></div>' +
+          '<div class="profile-card-icon" style="background:color-mix(in srgb,#57cf9d 18%,var(--tg-card));color:#57cf9d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>' +
+          '<div class="profile-card-text"><div class="profile-card-title">Внести в казну</div><div class="profile-card-sub">Сейчас: ' + fmt(c.bank || 0) + '</div></div>' +
           '<div class="profile-card-chevron">›</div>' +
         '</button>' +
         (isOwner ? (
-          '<button type="button" class="profile-card" id="clanInviteCard">' +
-            '<div class="profile-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></div>' +
-            '<div class="profile-card-text"><div class="profile-card-title">Пригласить</div><div class="profile-card-sub">Добавить участника</div></div>' +
-            '<div class="profile-card-chevron">›</div>' +
-          '</button>' +
-          '<button type="button" class="profile-card" id="clanShareCard">' +
-            '<div class="profile-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg></div>' +
-            '<div class="profile-card-text"><div class="profile-card-title">Поделиться</div><div class="profile-card-sub">Ссылка на клан</div></div>' +
+          '<button type="button" class="profile-card" id="clanManageCard">' +
+            '<div class="profile-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>' +
+            '<div class="profile-card-text"><div class="profile-card-title">Управление</div><div class="profile-card-sub">Пригласить, ссылка, распуск</div></div>' +
             '<div class="profile-card-chevron">›</div>' +
           '</button>'
-        ) : '') +
-        '<button type="button" class="profile-card" id="clanLeaveCard" style="opacity:0.95">' +
-          '<div class="profile-card-icon" style="background:rgba(255,92,92,.12);color:#ff5c5c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></div>' +
-          '<div class="profile-card-text"><div class="profile-card-title">Покинуть клан</div><div class="profile-card-sub">Выйти из команды</div></div>' +
-          '<div class="profile-card-chevron">›</div>' +
-        '</button>' +
-      '</div>' +
-      '<div class="clan-members-block">' +
-        '<div class="clan-members-title">Участники · ' + members.length + '</div>' +
-        membersHtml +
+        ) : (
+          '<button type="button" class="profile-card" id="clanLeaveCard">' +
+            '<div class="profile-card-icon" style="background:rgba(255,92,92,.12);color:#ff5c5c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></div>' +
+            '<div class="profile-card-text"><div class="profile-card-title">Покинуть клан</div><div class="profile-card-sub">Выйти из команды</div></div>' +
+            '<div class="profile-card-chevron">›</div>' +
+          '</button>'
+        )) +
       '</div>';
+
+    // members sheet
+    const openMembers = () => {
+      const sheet = document.createElement('div');
+      sheet.className = 'clan-members-sheet';
+      sheet.id = 'clanMembersSheet';
+      let rows = members.map(mid => {
+        const u = leaderboard.find(x => String(x.id) === String(mid));
+        const name = u ? (u.name || 'Игрок') : ('ID ' + mid);
+        const role = String(c.ownerId) === String(mid) ? 'Лидер' : 'Участник';
+        const score = fmt(u ? u.score : 0);
+        return '<div class="clan-member-row">' + memberAvHtml(mid, 'clan-member-av') +
+          '<div class="clan-member-info"><div class="clan-member-name">' + name + (String(mid)===String(myId)?' · вы':'') + '</div>' +
+          '<div class="clan-member-role">' + role + '</div></div>' +
+          '<div class="clan-member-score">' + score + '</div></div>';
+      }).join('');
+      sheet.innerHTML = '<div class="clan-members-sheet-inner"><div class="clan-sheet-handle"></div>' +
+        '<div style="font-family:Fredoka,sans-serif;font-size:18px;font-weight:600;margin-bottom:12px">Участники</div>' +
+        rows + '</div>';
+      sheet.addEventListener('click', e => { if (e.target === sheet) sheet.remove(); });
+      document.body.appendChild(sheet);
+    };
+
+    const mc = $('clanMembersCard');
+    if (mc) mc.onclick = openMembers;
 
     const don = $('clanDonateCard');
     if (don) don.onclick = () => {
-      const val = prompt('Сумма взноса в казну:', '1000');
+      const val = prompt('Сумма взноса:', '1000');
       if (val === null) return;
       const amt = Math.max(0, parseInt(val, 10) || 0);
       if (amt <= 0) return;
@@ -2766,27 +2876,38 @@
       saveState();
       saveClans();
       render();
-      renderProfile();
       renderProfileClanPanel();
     };
-    const inv = $('clanInviteCard');
-    if (inv) inv.onclick = () => {
-      const uid = prompt('Telegram ID игрока:');
-      if (!uid) return;
-      if (!c.members) c.members = [];
-      if (!c.members.map(String).includes(String(uid.trim()))) c.members.push(uid.trim());
-      if (!c.invites) c.invites = [];
-      if (!c.invites.map(String).includes(String(uid.trim()))) c.invites.push(uid.trim());
-      saveClans();
-      alert('Приглашение отправлено');
-      renderProfileClanPanel();
+
+    const mg = $('clanManageCard');
+    if (mg) mg.onclick = () => {
+      const act = prompt('Управление:\\n1 — пригласить по ID\\n2 — поделиться\\n3 — распустить клан\\n\\nВведи номер:','1');
+      if (act === '1') {
+        const uid = prompt('Telegram ID:');
+        if (!uid) return;
+        if (!c.members) c.members = [];
+        if (!c.members.map(String).includes(String(uid.trim()))) c.members.push(uid.trim());
+        if (!c.invites) c.invites = [];
+        if (!c.invites.map(String).includes(String(uid.trim()))) c.invites.push(uid.trim());
+        saveClans();
+        alert('Приглашён');
+        renderProfileClanPanel();
+      } else if (act === '2') {
+        const link = 'https://t.me/share/url?url=' + encodeURIComponent((window.location.origin || '') + '/?clan=' + c.id) + '&text=' + encodeURIComponent('Вступай в клан «' + c.name + '»!');
+        if (tg && tg.openTelegramLink) tg.openTelegramLink(link);
+        else window.open(link, '_blank');
+      } else if (act === '3') {
+        if (!confirm('Распустить клан?')) return;
+        customClans = customClans.filter(x => x.id !== c.id);
+        state.clanId = null;
+        saveState();
+        saveClans();
+        pushLeaderboard(true);
+        renderProfile();
+        renderProfileClanPanel();
+      }
     };
-    const sh = $('clanShareCard');
-    if (sh) sh.onclick = () => {
-      const link = 'https://t.me/share/url?url=' + encodeURIComponent((window.location.origin || '') + '/?clan=' + c.id) + '&text=' + encodeURIComponent('Вступай в клан «' + c.name + '» в Филькоине!');
-      if (tg && tg.openTelegramLink) tg.openTelegramLink(link);
-      else window.open(link, '_blank');
-    };
+
     const leave = $('clanLeaveCard');
     if (leave) leave.onclick = () => {
       if (!confirm('Покинуть клан?')) return;
@@ -2801,7 +2922,6 @@
       renderProfileClanPanel();
     };
   }
-
 
   function renderSearch(q) {
     const wrap = $('searchResults');
@@ -2935,12 +3055,22 @@
         };
         customClans.push(clan);
         state.clanId = clan.id;
-        clanWizardCreated = clan;
-        clanWizardStep = 3;
+        clanWizardCreated = null;
+        clanWizardStep = 0;
         saveState();
         saveClans();
         pushLeaderboard(true);
-        renderClanScreen();
+        // сразу в профиль на слайд клана
+        showScreen('profile');
+        setTimeout(() => {
+          const car = $('profileCarousel');
+          if (car) {
+            const slides = car.querySelectorAll('.profile-slide');
+            if (slides[1]) car.scrollTo({ left: slides[1].offsetLeft - car.clientWidth * 0.11, behavior: 'smooth' });
+          }
+          renderProfile();
+          setProfileSlide(1);
+        }, 50);
       };
       return;
     }
