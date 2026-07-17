@@ -159,7 +159,6 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/api/force-balance' && req.method === 'POST') {
       const body = await readBody(req);
       const id = String(body.id || '');
-      const balance = Math.max(0, Math.floor(Number(body.balance) || 0));
       if (!id) {
         sendJson(res, 400, { ok: false, error: 'id required' });
         return;
@@ -167,12 +166,23 @@ const server = http.createServer(async (req, res) => {
       if (!shared.forceBalances || typeof shared.forceBalances !== 'object') {
         shared.forceBalances = {};
       }
+      const raw = Number(body.balance);
+      // -1 or null => clear force flag (one-shot applied)
+      if (body.balance === null || body.balance === undefined || raw < 0) {
+        delete shared.forceBalances[id];
+        saveData();
+        sendJson(res, 200, { ok: true, forceBalances: shared.forceBalances, cleared: true });
+        return;
+      }
+      const balance = Math.max(0, Math.floor(raw) || 0);
       shared.forceBalances[id] = balance;
       if (!Array.isArray(shared.leaderboard)) shared.leaderboard = [];
       const idx = shared.leaderboard.findIndex(u => String(u.id) === id);
       if (idx >= 0) {
         shared.leaderboard[idx].score = balance;
         shared.leaderboard[idx].updated = Date.now();
+      } else {
+        shared.leaderboard.push({ id, name: 'Игрок', score: balance, updated: Date.now() });
       }
       saveData();
       sendJson(res, 200, { ok: true, forceBalances: shared.forceBalances });

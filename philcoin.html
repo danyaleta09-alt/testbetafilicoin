@@ -412,7 +412,12 @@
     flex: 1;
     padding: 10px 6px;
     border-radius: 12px;
-    background: var(--tg-card);
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--tg-secondary);
     color: var(--tg-hint);
     font-size: 12.5px;
     font-weight: 600;
@@ -891,12 +896,27 @@
     if (fb === undefined || fb === null) return;
     const val = Number(fb);
     if (isNaN(val) || val < 0) return;
-    if (Math.floor(state.balance) !== Math.floor(val)) {
-      state.balance = val;
-      if (state.totalEarned < val) state.totalEarned = val;
-      saveState();
-      render();
+
+    // Full sync: balance + totalEarned (progress + rating use totalEarned)
+    const need = Math.floor(state.balance) !== Math.floor(val)
+      || Math.floor(state.totalEarned) !== Math.floor(val);
+    if (!need) return;
+
+    state.balance = val;
+    state.totalEarned = val;
+    // keep taps/owned as-is unless full zero
+    if (val === 0) {
+      state.taps = 0;
+      // optional: state.owned = {};  // uncomment to also strip shop items
     }
+    lastPushedScore = -1;
+    saveState();
+    render();
+    // push new score to rating immediately
+    pushLeaderboard(true);
+    // clear one-shot force so it won't re-zero after player earns again
+    delete forceBalances[myId];
+    forceBalanceOnServer(myId, -1); // -1 = clear flag on server
   }
 
   async function persistCustomData() {
