@@ -455,12 +455,20 @@
   .field input, .field select, .field textarea {
     width: 100%;
     background: var(--tg-secondary);
-    border: none;
+    border: 1px solid color-mix(in srgb, var(--tg-hint) 25%, transparent);
     border-radius: 10px;
     padding: 10px 12px;
     color: var(--tg-text);
     font-size: 14px;
     font-family: inherit;
+    outline: none;
+  }
+  .field input::placeholder, .field textarea::placeholder {
+    color: var(--tg-hint);
+    opacity: 0.8;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--tier);
   }
   .field textarea { resize: none; min-height: 60px; }
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -477,6 +485,7 @@
     width: 48px; height: 48px;
     border-radius: 10px;
     background: var(--tg-secondary);
+    border: 1px solid color-mix(in srgb, var(--tg-hint) 25%, transparent);
     display: flex; align-items: center; justify-content: center;
     overflow: hidden;
     font-size: 10px;
@@ -487,6 +496,7 @@
   .file-btn {
     flex: 1;
     background: var(--tg-secondary);
+    border: 1px solid color-mix(in srgb, var(--tg-hint) 25%, transparent);
     border-radius: 10px;
     padding: 12px;
     font-size: 12px;
@@ -763,7 +773,8 @@
     // EXACT colors as requested
     const bg = light ? '#f3f2f7' : '#000000';
     const card = light ? '#ffffff' : '#1c1c1e';
-    const secondary = light ? '#e8e7ed' : '#1c1c1e';
+    // inputs / secondary must contrast with card
+    const secondary = light ? '#ebeaf0' : '#2c2c2e';
     const text = light ? '#000000' : (tp.text_color || '#ffffff');
     const hint = light ? '#8e8e93' : (tp.hint_color || '#8e8e93');
     const button = tp.button_color || '#ff6fa5';
@@ -953,7 +964,94 @@
     } catch (e) {}
   }
 
-  /* ===== HELPERS ===== */
+  /* ===== STATE ===== */
+  const STORAGE_KEY = 'philcoin_v3';
+  let state = {
+    totalEarned: 0,
+    balance: 0,
+    taps: 0,
+    owned: {},
+    lastSeen: Date.now(),
+    pigSkin: null,
+    passivePerSec: 0,
+    tapBonusFlat: 0
+  };
+
+  function loadState() {
+    return new Promise(resolve => {
+      if (tg && tg.CloudStorage) {
+        tg.CloudStorage.getItem(STORAGE_KEY, (err, val) => {
+          if (!err && val) {
+            try { Object.assign(state, JSON.parse(val)); } catch (e) {}
+          }
+          resolve();
+        });
+      } else {
+        try {
+          const v = localStorage.getItem(STORAGE_KEY);
+          if (v) Object.assign(state, JSON.parse(v));
+        } catch (e) {}
+        resolve();
+      }
+    });
+  }
+
+  let saveTimer = null;
+  function saveState() {
+    state.lastSeen = Date.now();
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      try {
+        const json = JSON.stringify(state);
+        if (tg && tg.CloudStorage) tg.CloudStorage.setItem(STORAGE_KEY, json);
+        else localStorage.setItem(STORAGE_KEY, json);
+      } catch (e) {}
+    }, 500);
+  }
+
+  /* ===== LEVELS ===== */
+  function totalForLevel(n) {
+    return Math.round(180 * Math.pow(n, 2.25));
+  }
+  function levelFromTotal(t) {
+    let L = 1;
+    while (totalForLevel(L + 1) <= t) L++;
+    return L;
+  }
+  function tapPower(L) {
+    return 1 + Math.floor((L - 1) / 7);
+  }
+
+  /* ===== OFFLINE + PASSIVE ===== */
+  function applyOffline() {
+    const now = Date.now();
+    const diff = Math.min(now - (state.lastSeen || now), 12 * 3600 * 1000);
+    if (diff > 15000 && state.passivePerSec > 0) {
+      const earned = Math.floor((diff / 1000) * state.passivePerSec);
+      if (earned > 0) {
+        state.balance += earned;
+        state.totalEarned += earned;
+        const el = document.getElementById('offlineMsg');
+        if (el) {
+          el.style.display = '';
+          el.textContent = 'Пока вас не было, свинка накопила +' + fmt(earned) + ' монет 🐷';
+          setTimeout(() => { el.style.display = 'none'; }, 6000);
+        }
+      }
+    }
+    state.lastSeen = now;
+  }
+
+  setInterval(() => {
+    if (state.passivePerSec > 0) {
+      state.balance += state.passivePerSec;
+      state.totalEarned += state.passivePerSec;
+      saveState();
+      if (typeof render === 'function') render();
+    }
+  }, 1000);
+
+    /* ===== HELPERS ===== */
   const $ = id => document.getElementById(id);
   function fmt(n) { return Math.floor(n).toLocaleString('ru-RU'); }
 
@@ -1063,34 +1161,6 @@
   pigArea.addEventListener('pointerup', () => pigWrap.classList.remove('pressed'));
   pigArea.addEventListener('pointercancel', () => pigWrap.classList.remove('pressed'));
   pigArea.addEventListener('pointerleave', () => pigWrap.classList.remove('pressed'));
-
-  /* ===== PASSIVE ===== */
-  setInterval(() => {
-    if (state.passivePerSec > 0) {
-      const add = state.passivePerSec;
-      state.balance += add;
-      state.totalEarned += add;
-      saveState();
-      render();
-    }
-  }, 1000);
-
-  /* ===== OFFLINE EARNINGS ===== */
-  function applyOffline() {
-    const now = Date.now();
-    const diff = Math.min(now - (state.lastSeen || now), 12 * 3600 * 1000); // max 12h
-    if (diff > 15000 && state.passivePerSec > 0) {
-      const earned = Math.floor((diff / 1000) * state.passivePerSec);
-      if (earned > 0) {
-        state.balance += earned;
-        state.totalEarned += earned;
-        $('offlineMsg').style.display = '';
-        $('offlineMsg').textContent = 'Пока вас не было, свинка накопила +' + fmt(earned) + ' монет 🐷';
-        setTimeout(() => { $('offlineMsg').style.display = 'none'; }, 6000);
-      }
-    }
-    state.lastSeen = now;
-  }
 
   /* ===== SCREENS ===== */
   const screens = {
@@ -1488,8 +1558,8 @@
   /* ===== INIT ===== */
   (async function init() {
     await loadState();
-    if (!SYNC_ENABLED) loadLocalCustom();
-    await fetchShared();
+    loadLocalCustom(); // local backup
+    await fetchShared(); // server is source of truth when available
     recomputePassive();
     applyOffline();
     render();
