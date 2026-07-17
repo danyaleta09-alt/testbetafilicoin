@@ -1027,6 +1027,284 @@
     font-size: 13px;
     padding: 8px 0 4px;
   }
+
+  /* soft top fade — content scrolls under it */
+  .top-fade {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: calc(var(--safe-top) + 28px);
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--tg-bg) 88%, transparent) 0%,
+      color-mix(in srgb, var(--tg-bg) 40%, transparent) 55%,
+      transparent 100%
+    );
+    pointer-events: none;
+    z-index: 40;
+  }
+
+  .panel-header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(var(--safe-top) + 6px) 14px 10px;
+    background: transparent !important;
+    position: relative;
+    z-index: 5;
+  }
+  .panel-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 14px 24px;
+    overscroll-behavior: contain;
+  }
+
+  /* admin tabs — light translucent, no solid cut */
+  .admin-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 0 14px 12px;
+    background: transparent;
+    flex-shrink: 0;
+  }
+
+  /* skins carousel */
+  .skins-carousel {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 8px 0 28px;
+    margin: 0 -14px;
+    padding-left: 14px;
+    padding-right: 14px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .skins-carousel::-webkit-scrollbar { display: none; }
+  .skin-slide {
+    flex: 0 0 min(78%, 280px);
+    scroll-snap-align: center;
+    background: var(--tg-card);
+    border-radius: 20px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .skin-slide-img {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 16px;
+    background: var(--tg-secondary);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .skin-slide-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .skin-slide-img svg { width: 48px; height: 48px; color: var(--tg-hint); }
+  .skin-slide-name {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .skin-slide-desc {
+    font-size: 13px;
+    color: var(--tg-hint);
+    line-height: 1.35;
+  }
+  .skin-slide-bonus {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--tier);
+  }
+  .skin-slide .buy-btn {
+    width: 100%;
+    margin-top: 4px;
+  }
+  .skin-slide.equipped {
+    outline: 2px solid var(--tier);
+    outline-offset: 0;
+  }
+
+  .panel-header, .admin-tabs, .shop-tabs {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  #screenAdmin .panel-header,
+  #screenMarket .panel-header,
+  #screenRating .panel-header,
+  #screenAch .panel-header,
+  #screenUser .panel-header {
+    padding-top: calc(var(--safe-top) + 8px);
+  }
+  /* content can scroll under soft fade */
+  .safe-top {
+    background: transparent !important;
+  }
+
+  /* ios switch */
+  .ios-switch {
+    position: relative;
+    width: 50px;
+    height: 30px;
+    flex-shrink: 0;
+  }
+  .ios-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+  .ios-switch .slider {
+    position: absolute;
+    inset: 0;
+    background: var(--tg-secondary);
+    border-radius: 99px;
+    transition: background .25s ease;
+    cursor: pointer;
+  }
+  .ios-switch .slider::before {
+    content: '';
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    left: 2px;
+    top: 2px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform .25s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  }
+  .ios-switch input:checked + .slider {
+    background: #34c759;
+  }
+  .ios-switch input:checked + .slider::before {
+    transform: translateX(20px);
+  }
+
+  .profile-card {
+    min-height: 64px;
+    padding: 14px 16px;
+  }
+  .profile-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+  }
+  .profile-card-title { font-size: 15px; }
+  .profile-card-sub { font-size: 12px; }
+
+  .profile-actions-row {
+    display: flex;
+    gap: 10px;
+    padding: 0 14px 12px;
+  }
+  .profile-action-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 14px;
+    border: none;
+    background: var(--tg-card);
+    color: var(--tg-text);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .profile-action-btn svg { width: 18px; height: 18px; color: var(--tier); }
+
+  .clan-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    padding: 6px 10px;
+    background: var(--tg-card);
+    border-radius: 10px;
+    font-size: 12px;
+    color: var(--tg-text);
+  }
+  .clan-avatar-sm {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    object-fit: cover;
+    background: var(--tg-secondary);
+    flex-shrink: 0;
+  }
+  .clan-avatar-sm.letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--tier);
+  }
+
+  .clan-avatar-lg {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    object-fit: cover;
+    background: var(--tg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--tier);
+    overflow: hidden;
+  }
+  .clan-avatar-lg img { width: 100%; height: 100%; object-fit: cover; }
+
+  .search-box {
+    display: flex;
+    gap: 8px;
+    padding: 0 0 12px;
+  }
+  .search-box input {
+    flex: 1;
+    background: var(--tg-secondary);
+    border: 1px solid color-mix(in srgb, var(--tg-hint) 20%, transparent);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: var(--tg-text);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+  }
+  .search-box input:focus { border-color: var(--tier); }
+  .search-results { display: flex; flex-direction: column; gap: 8px; }
+
+  .rank-row .avatar {
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .rank-row .avatar.clan-sq {
+    border-radius: 10px;
+  }
+
+  #screenProfile {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 12px;
+  }
+  #screenProfile .profile-head {
+    padding-top: calc(var(--safe-top) + 12px);
+  }
 </style>
 </head>
 <body>
@@ -1034,6 +1312,7 @@
   <div class="splash-age" id="splashAge">16+</div>
 </div>
 <div class="app" id="app">
+  <div class="top-fade" id="topFade"></div>
   <div class="safe-top" id="safeTop"></div>
 
   <!-- TOPBAR (только на тапалке) -->
@@ -1117,8 +1396,32 @@
         <div class="profile-avatar" id="profileAvatar">?</div>
         <div class="profile-name" id="profileName">Игрок</div>
         <div class="profile-id" id="profileId"></div>
+        <div id="profileClanBadge"></div>
+      </div>
+      <div class="profile-actions-row">
+        <button type="button" class="profile-action-btn" id="profileSearchBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
+          Поиск
+        </button>
+        <button type="button" class="profile-action-btn" id="profileClanBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Клан
+        </button>
       </div>
       <div class="profile-cards">
+        <div class="profile-card" id="profilePublicRow" style="cursor:default">
+          <div class="profile-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+          </div>
+          <div class="profile-card-text">
+            <div class="profile-card-title">Публичный профиль</div>
+            <div class="profile-card-sub">Виден в рейтинге и поиске</div>
+          </div>
+          <label class="ios-switch">
+            <input type="checkbox" id="publicSwitch">
+            <span class="slider"></span>
+          </label>
+        </div>
         <button type="button" class="profile-card" id="profileRatingBtn">
           <div class="profile-card-icon">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2H22l-6 4.8 2.3 7L12 16.8 5.7 21l2.3-7-6-4.8h7.6z"/></svg>
@@ -1154,6 +1457,29 @@
         <div class="my-skins-title">Мои скины</div>
         <div class="my-skins-grid" id="mySkinsGrid"></div>
       </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="screen" id="screenSearch">
+      <div class="panel-header">
+        <div class="panel-title">Поиск</div>
+        <button class="close-btn" id="searchClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="Имя или ID игрока">
+        </div>
+        <div class="search-results" id="searchResults"></div>
+      </div>
+    </div>
+
+    <!-- CLAN -->
+    <div class="screen" id="screenClan">
+      <div class="panel-header">
+        <div class="panel-title">Клан</div>
+        <button class="close-btn" id="clanClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="panel-body" id="clanBody"></div>
     </div>
 
     <!-- USER PUBLIC PROFILE -->
@@ -1263,6 +1589,15 @@
     tg.ready();
     tg.expand();
     try { tg.disableVerticalSwipes && tg.disableVerticalSwipes(); } catch(e){}
+    // keyboard: don't shift whole app under TG chrome
+    if (window.visualViewport) {
+      const vv = window.visualViewport;
+      const onVv = () => {
+        document.documentElement.style.setProperty('--vv-offset', Math.max(0, window.innerHeight - vv.height - vv.offsetTop) + 'px');
+      };
+      vv.addEventListener('resize', onVv);
+      vv.addEventListener('scroll', onVv);
+    }
   }
 
   /* ===== THEME ===== */
@@ -1344,6 +1679,7 @@
 
   let customAchievements = [];
   let customSkins = [];
+  let customClans = [];
   let leaderboard = [];
   let forceBalances = {};
   let syncLock = false;
@@ -1387,6 +1723,19 @@
   function allAchievements() { return customAchievements; }
   function allUpgrades() { return UPGRADES; }
   function allSkins() { return customSkins; }
+
+  function allClans() { return customClans; }
+  function getClan(id) { return customClans.find(c => c.id === id) || null; }
+  function myClan() { return state.clanId ? getClan(state.clanId) : null; }
+  function clanAvatarHtml(clan, cls) {
+    cls = cls || 'clan-avatar-sm';
+    if (clan && clan.avatar) return '<img class="' + cls + '" src="' + clan.avatar + '" alt="">';
+    const letter = (clan && clan.name ? clan.name : '?').charAt(0).toUpperCase();
+    return '<div class="' + cls + ' letter">' + letter + '</div>';
+  }
+  function saveClans() { persistCustomData(); }
+
+
   function allMarket() { return UPGRADES; } // compat for old calls
 
   async function fetchShared() {
@@ -1423,7 +1772,9 @@
             photo: (user && user.photo_url) || null,
             skins: Object.keys(state.ownedSkins || {}),
             activeSkin: state.activeSkin || null,
-            achievements: Object.keys(state.claimedAchs || {})
+            achievements: Object.keys(state.claimedAchs || {}),
+            public: state.publicProfile !== false,
+            clanId: state.clanId || null
           })
         });
         if (res.ok) {
@@ -1443,26 +1794,37 @@
     const val = Number(fb);
     if (isNaN(val) || val < 0) return;
 
-    // Full sync: balance + totalEarned (progress + rating use totalEarned)
-    const need = Math.floor(state.balance) !== Math.floor(val)
-      || Math.floor(state.totalEarned) !== Math.floor(val);
-    if (!need) return;
-
-    state.balance = val;
-    state.totalEarned = val;
-    // keep taps/owned as-is unless full zero
+    // Full wipe when zeroed: balance, progress, upgrades, skins, passive
     if (val === 0) {
+      state.balance = 0;
+      state.totalEarned = 0;
       state.taps = 0;
-      // optional: state.owned = {};  // uncomment to also strip shop items
+      state.owned = {};
+      state.ownedSkins = {};
+      state.activeSkin = null;
+      state.pigSkin = null;
+      state.passivePerSec = 0;
+      state.tapBonusFlat = 0;
+      // restore default pig image
+      const pig = $('pigPhoto');
+      if (pig && pig.dataset && pig.dataset.defaultSrc) {
+        pig.src = pig.dataset.defaultSrc;
+      }
+    } else {
+      const need = Math.floor(state.balance) !== Math.floor(val)
+        || Math.floor(state.totalEarned) !== Math.floor(val);
+      if (!need) return;
+      state.balance = val;
+      state.totalEarned = val;
     }
+
     lastPushedScore = -1;
+    recomputePassive();
     saveState();
     render();
-    // push new score to rating immediately
     pushLeaderboard(true);
-    // clear one-shot force so it won't re-zero after player earns again
     delete forceBalances[myId];
-    forceBalanceOnServer(myId, -1); // -1 = clear flag on server
+    forceBalanceOnServer(myId, -1);
   }
 
   async function persistCustomData() {
@@ -1476,7 +1838,8 @@
       try {
         localStorage.setItem('philcoin_custom', JSON.stringify({
           achievements: customAchievements,
-          skins: customSkins
+          skins: customSkins,
+          clans: customClans
         }));
       } catch (e) {}
 
@@ -1485,7 +1848,8 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           achievements: customAchievements,
-          skins: customSkins
+          skins: customSkins,
+          clans: customClans
         })
       });
       if (res.ok) {
@@ -1493,6 +1857,7 @@
         if (data.shared) {
           if (Array.isArray(data.shared.achievements)) customAchievements = data.shared.achievements;
           if (Array.isArray(data.shared.skins)) customSkins = data.shared.skins;
+          if (Array.isArray(data.shared.clans)) customClans = data.shared.clans;
           if (Array.isArray(data.shared.leaderboard)) leaderboard = data.shared.leaderboard;
         }
       }
@@ -1527,6 +1892,7 @@
         if (Array.isArray(o.achievements) && o.achievements.length) customAchievements = o.achievements;
         if (Array.isArray(o.skins) && o.skins.length) customSkins = o.skins;
         else if (Array.isArray(o.market) && o.market.length) customSkins = o.market;
+        if (Array.isArray(o.clans) && o.clans.length) customClans = o.clans;
       }
     } catch (e) {}
   }
@@ -1541,6 +1907,8 @@
     ownedSkins: {},
     activeSkin: null,
     claimedAchs: {},
+    publicProfile: true,
+    clanId: null,
     lastSeen: Date.now(),
     pigSkin: null,
     passivePerSec: 0,
@@ -1792,6 +2160,8 @@
     market: $('screenMarket'),
     profile: $('screenProfile'),
     user: $('screenUser'),
+    search: $('screenSearch'),
+    clan: $('screenClan'),
     admin: $('screenAdmin')
   };
 
@@ -1802,7 +2172,7 @@
     $('topbar').style.display = (name === 'tap') ? '' : 'none';
     // nav highlights main tabs; rating/ach keep profile active
     let navActive = name;
-    if (name === 'rating' || name === 'ach' || name === 'user') navActive = 'profile';
+    if (name === 'rating' || name === 'ach' || name === 'user' || name === 'search' || name === 'clan') navActive = 'profile';
     if (name === 'admin') navActive = null;
     document.querySelectorAll('.nav-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.screen === navActive);
@@ -1815,6 +2185,8 @@
       renderSkins();
     }
     if (name === 'profile') renderProfile();
+    if (name === 'search') renderSearch('');
+    if (name === 'clan') renderClanScreen();
     if (name === 'admin') renderAdmin();
   }
 
@@ -1847,6 +2219,21 @@
         av.innerHTML = init;
       }
     }
+    // public switch
+    const sw = $('publicSwitch');
+    if (sw) {
+      sw.checked = state.publicProfile !== false;
+    }
+    // clan badge
+    const badge = $('profileClanBadge');
+    if (badge) {
+      const c = myClan();
+      if (c) {
+        badge.innerHTML = '<div class="clan-badge">' + clanAvatarHtml(c) + '<span>' + c.name + '</span></div>';
+      } else {
+        badge.innerHTML = '';
+      }
+    }
     // my skins
     const grid = $('mySkinsGrid');
     if (grid) {
@@ -1876,6 +2263,216 @@
     }
     loadNavAvatar();
   }
+
+  function renderSearch(q) {
+    const wrap = $('searchResults');
+    if (!wrap) return;
+    q = (q || '').trim().toLowerCase();
+    wrap.innerHTML = '';
+    let list = leaderboard.filter(u => u.public !== false);
+    if (q) {
+      list = list.filter(u =>
+        String(u.name || '').toLowerCase().includes(q) ||
+        String(u.id || '').toLowerCase().includes(q)
+      );
+    }
+    list = list.slice(0, 40);
+    if (!list.length) {
+      wrap.innerHTML = '<div class="up-empty">Никого не найдено</div>';
+      return;
+    }
+    list.forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'rank-row rating-row';
+      const init = (p.name || '?').charAt(0).toUpperCase();
+      const av = p.photo
+        ? '<div class="avatar" style="padding:0;overflow:hidden"><img src="' + p.photo + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></div>'
+        : '<div class="avatar">' + init + '</div>';
+      const clan = p.clanId ? getClan(p.clanId) : null;
+      row.innerHTML = av +
+        '<div class="rank-info"><div class="rank-name">' + (p.name || 'Игрок') + '</div>' +
+        '<div class="rank-sub">' + (clan ? clan.name : 'Без клана') + '</div></div>' +
+        '<div class="rank-score">' + fmt(p.score || 0) + '</div>';
+      row.addEventListener('click', () => openUserProfile(p));
+      wrap.appendChild(row);
+    });
+  }
+
+  function renderClanScreen() {
+    const body = $('clanBody');
+    if (!body) return;
+    const c = myClan();
+    if (!c) {
+      body.innerHTML =
+        '<div class="admin-form">' +
+          '<h3>Создать клан</h3>' +
+          '<div class="field"><label>Название</label><input type="text" id="clanNameInput" placeholder="Свинский легион" maxlength="24"></div>' +
+          '<div class="field"><label>Аватар (необяз.)</label>' +
+            '<div class="img-row"><div class="img-preview" id="clanImgPreview">нет</div>' +
+            '<div class="file-btn">Выбрать<input type="file" accept="image/png,image/webp,image/jpeg" id="clanImgInput"></div></div></div>' +
+          '<p style="font-size:12px;color:var(--tg-hint);margin-bottom:12px">Клан — команда игроков. Общая казна пополняется взносами. Аватар клана — скруглённый квадрат.</p>' +
+          '<button class="submit-btn" id="clanCreateBtn">Создать клан</button>' +
+        '</div>' +
+        '<div class="my-skins-title" style="margin-top:8px">Все кланы</div>' +
+        '<div id="clansList"></div>';
+      let clanImg = null;
+      const inp = $('clanImgInput');
+      if (inp) inp.addEventListener('change', async e => {
+        const f = e.target.files[0];
+        if (!f) return;
+        try {
+          clanImg = await loadImageHighQuality(f, 512);
+          $('clanImgPreview').innerHTML = '<img src="' + clanImg + '">';
+        } catch (err) {}
+      });
+      const btn = $('clanCreateBtn');
+      if (btn) btn.addEventListener('click', () => {
+        const name = ($('clanNameInput').value || '').trim();
+        if (!name) { alert('Введите название'); return; }
+        if (state.clanId) { alert('Сначала выйдите из текущего клана'); return; }
+        const clan = {
+          id: 'c' + Date.now(),
+          name: name.slice(0, 24),
+          avatar: clanImg,
+          ownerId: myId,
+          members: [myId],
+          bank: 0,
+          created: Date.now()
+        };
+        customClans.push(clan);
+        state.clanId = clan.id;
+        saveState();
+        saveClans();
+        pushLeaderboard(true);
+        renderClanScreen();
+        renderProfile();
+      });
+      // list all clans
+      const list = $('clansList');
+      if (list) {
+        if (!customClans.length) {
+          list.innerHTML = '<div class="up-empty">Пока нет кланов</div>';
+        } else {
+          customClans.forEach(cl => {
+            const row = document.createElement('div');
+            row.className = 'rank-row';
+            row.innerHTML =
+              clanAvatarHtml(cl, 'clan-avatar-sm') +
+              '<div class="rank-info"><div class="rank-name">' + cl.name + '</div>' +
+              '<div class="rank-sub">' + (cl.members || []).length + ' уч. · казна ' + fmt(cl.bank || 0) + '</div></div>' +
+              '<button class="buy-btn can" data-join="' + cl.id + '" style="padding:8px 12px;font-size:12px">Вступить</button>';
+            list.appendChild(row);
+          });
+          list.querySelectorAll('[data-join]').forEach(b => {
+            b.addEventListener('click', () => {
+              if (state.clanId) {
+                // leave old
+                const old = getClan(state.clanId);
+                if (old) {
+                  old.members = (old.members || []).filter(id => String(id) !== String(myId));
+                }
+              }
+              const cl = getClan(b.dataset.join);
+              if (!cl) return;
+              if (!cl.members) cl.members = [];
+              if (!cl.members.includes(myId)) cl.members.push(myId);
+              state.clanId = cl.id;
+              saveState();
+              saveClans();
+              pushLeaderboard(true);
+              renderClanScreen();
+              renderProfile();
+            });
+          });
+        }
+      }
+      return;
+    }
+
+    // in clan view
+    const isOwner = String(c.ownerId) === String(myId);
+    const members = c.members || [];
+    let membersHtml = members.map(mid => {
+      const u = leaderboard.find(x => String(x.id) === String(mid));
+      const name = u ? u.name : ('ID ' + mid);
+      const photo = u && u.photo;
+      const init = (name || '?').charAt(0).toUpperCase();
+      const av = photo
+        ? '<div class="avatar" style="padding:0;overflow:hidden;width:36px;height:36px"><img src="' + photo + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></div>'
+        : '<div class="avatar" style="width:36px;height:36px;font-size:13px">' + init + '</div>';
+      return '<div class="rank-row">' + av +
+        '<div class="rank-info"><div class="rank-name">' + name + (String(mid)===String(myId)?' · вы':'') + '</div>' +
+        '<div class="rank-sub">' + (String(c.ownerId)===String(mid)?'Лидер':'Участник') + '</div></div>' +
+        '<div class="rank-score">' + fmt(u ? u.score : 0) + '</div></div>';
+    }).join('');
+
+    body.innerHTML =
+      '<div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px 0 18px">' +
+        '<div class="clan-avatar-lg">' + (c.avatar ? '<img src="' + c.avatar + '">' : (c.name||'?').charAt(0).toUpperCase()) + '</div>' +
+        '<div style="font-family:Fredoka,sans-serif;font-size:22px;font-weight:600">' + c.name + '</div>' +
+        '<div style="font-size:13px;color:var(--tg-hint)">' + members.length + ' участников</div>' +
+      '</div>' +
+      '<div class="up-stats">' +
+        '<div class="up-stat"><div class="up-stat-val">' + fmt(c.bank || 0) + '</div><div class="up-stat-lbl">Казна</div></div>' +
+        '<div class="up-stat"><div class="up-stat-val">' + members.length + '</div><div class="up-stat-lbl">Состав</div></div>' +
+      '</div>' +
+      '<div class="admin-form" style="margin-top:12px">' +
+        '<h3>Взнос в казну</h3>' +
+        '<div class="field"><label>Сумма</label><input type="number" id="clanDonateAmt" placeholder="1000"></div>' +
+        '<button class="submit-btn" id="clanDonateBtn">Пополнить</button>' +
+      '</div>' +
+      (isOwner ? (
+        '<div class="admin-form">' +
+          '<h3>Пригласить</h3>' +
+          '<div class="field"><label>ID игрока</label><input type="text" id="clanInviteId" placeholder="telegram id"></div>' +
+          '<button class="submit-btn" id="clanInviteBtn">Добавить</button>' +
+        '</div>'
+      ) : '') +
+      '<div class="my-skins-title">Участники</div>' + membersHtml +
+      '<button class="submit-btn" id="clanLeaveBtn" style="margin-top:16px;background:var(--tg-secondary);color:var(--tg-text)">Покинуть клан</button>';
+
+    const don = $('clanDonateBtn');
+    if (don) don.addEventListener('click', () => {
+      const amt = Math.max(0, parseInt(($('clanDonateAmt') && $('clanDonateAmt').value) || '0', 10) || 0);
+      if (amt <= 0) return;
+      if (state.balance < amt) { alert('Недостаточно монет'); return; }
+      state.balance -= amt;
+      c.bank = (c.bank || 0) + amt;
+      saveState();
+      saveClans();
+      render();
+      renderClanScreen();
+    });
+    const inv = $('clanInviteBtn');
+    if (inv) inv.addEventListener('click', () => {
+      const uid = (($('clanInviteId') && $('clanInviteId').value) || '').trim();
+      if (!uid) return;
+      if (!c.members.includes(uid)) c.members.push(uid);
+      // if that user is online they'll sync clanId via their own state; store pending invites on clan
+      if (!c.invites) c.invites = [];
+      if (!c.invites.includes(uid)) c.invites.push(uid);
+      saveClans();
+      alert('Игрок добавлен / приглашён');
+      renderClanScreen();
+    });
+    const leave = $('clanLeaveBtn');
+    if (leave) leave.addEventListener('click', () => {
+      c.members = (c.members || []).filter(id => String(id) !== String(myId));
+      if (String(c.ownerId) === String(myId) && c.members.length) {
+        c.ownerId = c.members[0];
+      }
+      if (!c.members.length) {
+        customClans = customClans.filter(x => x.id !== c.id);
+      }
+      state.clanId = null;
+      saveState();
+      saveClans();
+      pushLeaderboard(true);
+      renderClanScreen();
+      renderProfile();
+    });
+  }
+
 
   function openUserProfile(p) {
     const body = $('userProfileBody');
@@ -1934,6 +2531,7 @@
         '<div class="up-avatar">' + photo + '</div>' +
         '<div class="up-name">' + (p.name || 'Игрок') + '</div>' +
         '<div class="up-score">' + fmt(p.score || 0) + ' очков</div>' +
+        (p.clanId && getClan(p.clanId) ? '<div class="clan-badge" style="margin-top:8px">' + clanAvatarHtml(getClan(p.clanId)) + '<span>' + getClan(p.clanId).name + '</span></div>' : '') +
       '</div>' +
       '<div class="up-stats">' +
         '<div class="up-stat"><div class="up-stat-val">' + fmt(p.score || 0) + '</div><div class="up-stat-lbl">Рейтинг</div></div>' +
@@ -1972,14 +2570,32 @@
   if ($('ratingClose')) $('ratingClose').addEventListener('click', () => showScreen('profile'));
   if ($('achClose')) $('achClose').addEventListener('click', () => showScreen('profile'));
   if ($('userClose')) $('userClose').addEventListener('click', () => showScreen('rating'));
+  if ($('searchClose')) $('searchClose').addEventListener('click', () => showScreen('profile'));
+  if ($('clanClose')) $('clanClose').addEventListener('click', () => showScreen('profile'));
   if ($('adminClose')) $('adminClose').addEventListener('click', () => showScreen('tap'));
 
   if ($('profileRatingBtn')) $('profileRatingBtn').addEventListener('click', () => showScreen('rating'));
   if ($('profileAchsBtn')) $('profileAchsBtn').addEventListener('click', () => showScreen('ach'));
+  if ($('profileSearchBtn')) $('profileSearchBtn').addEventListener('click', () => showScreen('search'));
+  if ($('profileClanBtn')) $('profileClanBtn').addEventListener('click', () => showScreen('clan'));
   if ($('profileWithdrawBtn')) $('profileWithdrawBtn').addEventListener('click', () => {
     if (tg && tg.showAlert) tg.showAlert('Вывод филькоинов скоро будет доступен 🐷');
     else alert('Вывод филькоинов скоро будет доступен 🐷');
   });
+  if ($('publicSwitch')) {
+    $('publicSwitch').addEventListener('change', () => {
+      state.publicProfile = !!$('publicSwitch').checked;
+      saveState();
+      pushLeaderboard(true);
+    });
+  }
+  if ($('searchInput')) {
+    let st = null;
+    $('searchInput').addEventListener('input', () => {
+      clearTimeout(st);
+      st = setTimeout(() => renderSearch($('searchInput').value), 180);
+    });
+  }
 
   /* ===== RATING (real) ===== */
   function renderRating() {
@@ -1997,16 +2613,21 @@
       list[meIdx].skins = mySkins;
       list[meIdx].activeSkin = state.activeSkin;
       list[meIdx].achievements = myAchs;
+      list[meIdx].public = state.publicProfile !== false;
+      list[meIdx].clanId = state.clanId;
     } else {
       list.push({
         id: myId, name: myName, score: Math.floor(state.totalEarned), me: true,
-        photo: myPhoto, skins: mySkins, activeSkin: state.activeSkin, achievements: myAchs
+        photo: myPhoto, skins: mySkins, activeSkin: state.activeSkin, achievements: myAchs,
+        public: state.publicProfile !== false, clanId: state.clanId
       });
     }
+    // only public profiles in rating
+    list = list.filter(u => u.public !== false || String(u.id) === myId);
     list.sort((a, b) => b.score - a.score);
 
     if (!list.length) {
-      wrap.innerHTML = '<div class="rating-empty">Пока никого нет в рейтинге.<br>Тапай и стань первым!</div>';
+      wrap.innerHTML = '<div class="rating-empty">Пока никого нет в рейтинге.<br>Включите публичный профиль.</div>';
       return;
     }
 
@@ -2150,13 +2771,15 @@
       wrap.innerHTML = '<div class="market-empty" style="padding:24px;text-align:center;color:var(--tg-hint)">Пока нет скинов.<br>Создатель ещё не добавил.</div>';
       return;
     }
+    const car = document.createElement('div');
+    car.className = 'skins-carousel';
     list.forEach(skin => {
       const owned = !!state.ownedSkins[skin.id];
       const equipped = state.activeSkin === skin.id;
       const can = !owned && state.balance >= (skin.price || 0);
-      const card = document.createElement('div');
-      card.className = 'skin-card';
-      const thumb = skin.image
+      const slide = document.createElement('div');
+      slide.className = 'skin-slide' + (equipped ? ' equipped' : '');
+      const imgInner = skin.image
         ? '<img src="' + skin.image + '" alt="">'
         : iconSvg('gift');
       const bonuses = [];
@@ -2173,17 +2796,17 @@
           'Купить<span class="buy-price-line">' + fmt(skin.price || 0) + '</span></button>';
       }
 
-      card.innerHTML =
-        '<div class="skin-thumb">' + thumb + '</div>' +
-        '<div class="skin-info">' +
-          '<div class="skin-name">' + skin.name + '</div>' +
-          '<div class="skin-desc">' + (skin.desc || '') + '</div>' +
-          (bonuses.length ? '<div class="skin-bonus">' + bonuses.join(' · ') + ' (пока надет)</div>' : '') +
-        '</div>' +
-        '<div class="skin-actions">' + btn + '</div>';
-      wrap.appendChild(card);
+      slide.innerHTML =
+        '<div class="skin-slide-img">' + imgInner + '</div>' +
+        '<div class="skin-slide-name">' + skin.name + '</div>' +
+        '<div class="skin-slide-desc">' + (skin.desc || '') + '</div>' +
+        (bonuses.length ? '<div class="skin-slide-bonus">' + bonuses.join(' · ') + '</div>' : '') +
+        btn;
+      car.appendChild(slide);
     });
-    wrap.querySelectorAll('[data-buy]').forEach(btn => {
+    wrap.appendChild(car);
+
+    car.querySelectorAll('[data-buy]').forEach(btn => {
       btn.addEventListener('click', () => {
         const skin = allSkins().find(s => s.id === btn.dataset.buy);
         if (!skin || state.ownedSkins[skin.id]) return;
@@ -2197,7 +2820,7 @@
         renderSkins();
       });
     });
-    wrap.querySelectorAll('[data-equip]').forEach(btn => {
+    car.querySelectorAll('[data-equip]').forEach(btn => {
       btn.addEventListener('click', () => {
         state.activeSkin = btn.dataset.equip;
         recomputePassive();
@@ -2414,7 +3037,7 @@
       uList.querySelectorAll('.del-btn').forEach(b => {
         b.addEventListener('click', async () => {
           const id = b.dataset.id;
-          if (!confirm('Обнулить баланс игрока? Он применится при следующем его входе.')) return;
+          if (!confirm('Полный сброс: баланс, улучшения, скины и прогресс. Применится при следующем входе.')) return;
           forceBalances[id] = 0;
           const idx = leaderboard.findIndex(x => String(x.id) === id);
           if (idx >= 0) {
@@ -2475,6 +3098,8 @@
 
   /* ===== INIT ===== */
   (async function init() {
+    const pigEl = $('pigPhoto');
+    if (pigEl && !pigEl.dataset.defaultSrc) pigEl.dataset.defaultSrc = pigEl.src;
     await loadState();
     loadLocalCustom(); // local backup
     loadNavAvatar();

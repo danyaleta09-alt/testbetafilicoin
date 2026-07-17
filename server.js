@@ -30,6 +30,7 @@ function defaultShared() {
     achievements: [],
     market: [],
     skins: [],
+    clans: [],
     leaderboard: [],
     forceBalances: {}
   };
@@ -46,6 +47,7 @@ function loadData() {
         achievements: Array.isArray(parsed.achievements) ? parsed.achievements : [],
         market: Array.isArray(parsed.market) ? parsed.market : [],
         skins: Array.isArray(parsed.skins) ? parsed.skins : [],
+        clans: Array.isArray(parsed.clans) ? parsed.clans : [],
         leaderboard: Array.isArray(parsed.leaderboard) ? parsed.leaderboard : [],
         forceBalances: (parsed.forceBalances && typeof parsed.forceBalances === 'object')
           ? parsed.forceBalances : {}
@@ -129,6 +131,7 @@ const server = http.createServer(async (req, res) => {
       if (Array.isArray(body.achievements)) shared.achievements = body.achievements;
       if (Array.isArray(body.market)) shared.market = body.market;
       if (Array.isArray(body.skins)) shared.skins = body.skins;
+      if (Array.isArray(body.clans)) shared.clans = body.clans;
       if (Array.isArray(body.leaderboard)) shared.leaderboard = body.leaderboard;
       if (body.forceBalances && typeof body.forceBalances === 'object') {
         shared.forceBalances = body.forceBalances;
@@ -158,7 +161,9 @@ const server = http.createServer(async (req, res) => {
         photo: body.photo || prev.photo || null,
         skins: Array.isArray(body.skins) ? body.skins : (prev.skins || []),
         activeSkin: body.activeSkin || prev.activeSkin || null,
-        achievements: Array.isArray(body.achievements) ? body.achievements : (prev.achievements || [])
+        achievements: Array.isArray(body.achievements) ? body.achievements : (prev.achievements || []),
+        public: body.public === true || body.public === false ? !!body.public : (prev.public !== false),
+        clanId: body.clanId !== undefined ? body.clanId : (prev.clanId || null)
       };
       if (idx >= 0) shared.leaderboard[idx] = entry;
       else shared.leaderboard.push(entry);
