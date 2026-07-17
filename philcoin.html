@@ -2025,7 +2025,16 @@
       </div>
     
     <!-- SETTINGS -->
-    <div class="screen" id="screenClan">
+        <!-- SETTINGS -->
+    <div class="screen" id="screenSettings">
+      <div class="panel-header">
+        <div class="panel-title">Настройки</div>
+        <button class="close-btn" id="settingsClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="panel-body" id="settingsBody"></div>
+    </div>
+
+<div class="screen" id="screenClan">
       <div class="panel-header">
         <div class="panel-title">Клан</div>
         <button class="close-btn" id="clanClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
@@ -2972,7 +2981,7 @@
     const members = c.members || [];
     let html =
       '<div class="clan-simple">' +
-        '<button type="button" class="profile-card" id="clanMembersCard">' +
+        '<button type="button" class="profile-card" id="clanMembersCardFull">' +
           '<div class="profile-card-text" style="flex:1">' +
             '<div class="profile-card-title">Участники</div>' +
             '<div style="margin-top:8px">' + clanStackHtml(members) + '</div>' +
@@ -3028,7 +3037,7 @@
       renderClanScreen();
     };
 
-    const mc = $('clanMembersCard');
+    const mc = $('clanMembersCardFull');
     if (mc) mc.onclick = (e) => {
       e.preventDefault(); e.stopPropagation();
       state._membersClanId = c.id;
@@ -3206,7 +3215,7 @@
       '</div>';
     const openBtn = $('clanOpenFull');
     if (openBtn) openBtn.onclick = () => openClanView(c.id, 'profile');
-    const mc = $('clanMembersCard');
+    const mc = $('clanMembersCardFull');
     if (mc) mc.onclick = () => {
       state._clanFrom = 'profile';
       state._membersClanId = c.id;
@@ -4200,7 +4209,7 @@
     const screen = $('screenSettings');
     if (!screen) return;
     
-    const body = screen.querySelector('.panel-body');
+    const body = $('settingsBody');
     if (!body) return;
     
     body.innerHTML = `
