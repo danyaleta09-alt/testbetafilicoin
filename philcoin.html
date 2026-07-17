@@ -75,7 +75,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: calc(var(--safe-top) + 6px) 14px 8px;
+    padding: calc(var(--safe-top) + 10px) 14px 8px;
     z-index: 30;
     background: transparent;
   }
@@ -649,9 +649,11 @@
   }
   .panel-body { padding-bottom: 8px; }
 
-  /* hide navbar on admin to avoid keyboard issues */
-  .app.admin-open .navbar { display: none; }
-  .app.admin-open .screens { padding-bottom: 0; }
+  /* hide navbar on sub-screens */
+  .app.sub-open .navbar { display: none; }
+  .app.sub-open .screen:not(#screenTap) {
+    padding-bottom: calc(var(--safe-bottom) + 20px);
+  }
 
   /* ========== SPLASH ========== */
   .splash {
@@ -1700,8 +1702,8 @@
       top = (csa.top > 0 ? csa.top : (sa.top || 0));
       bottom = (csa.bottom > 0 ? csa.bottom : (sa.bottom || 0));
       // обязательно ниже кнопки «Закрыть»
-      if (top < 64) top = 68;
-      if (top > 88) top = 88;
+      if (top < 76) top = 80;
+      if (top > 96) top = 96;
     } else {
       top = 24;
     }
@@ -2227,7 +2229,8 @@
     document.querySelectorAll('.nav-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.screen === navActive);
     });
-    document.getElementById('app').classList.toggle('admin-open', name === 'admin');
+    const isSub = ['rating','ach','user','search','clan','admin'].includes(name);
+    document.getElementById('app').classList.toggle('sub-open', isSub);
     if (name === 'rating') { pushLeaderboard(true); renderRating(); }
     if (name === 'ach') renderAch();
     if (name === 'market') {
