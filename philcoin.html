@@ -17,18 +17,17 @@
     --tg-button-text: #ffffff;
     --tg-secondary: #1c1c1e;
     --tg-card: #1c1c1e;
-    --tg-section: #2c2c2e;
-    --card-border: rgba(255,255,255,0.06);
-    --card-shadow: 0 2px 12px rgba(0,0,0,0.25);
-    --nav-bg: rgba(28,28,30,0.92);
+    --tg-section: #1c1c1e;
+    --card-border: transparent;
+    --nav-bg: transparent;
     --safe-top: 0px;
     --safe-bottom: 0px;
     --header-h: 56px;
-    --nav-h: 64px;
-    --radius: 18px;
-    --radius-sm: 14px;
+    --nav-h: 60px;
+    --radius: 16px;
+    --radius-sm: 12px;
     --tier: #ff6fa5;
-    --tier-soft: rgba(255,111,165,.16);
+    --tier-soft: rgba(255,111,165,.14);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body {
@@ -72,8 +71,6 @@
     align-items: center;
     gap: 10px;
     background: var(--tg-card);
-    border: 1px solid var(--card-border);
-    box-shadow: var(--card-shadow);
     padding: 7px 14px 7px 8px;
     border-radius: 999px;
   }
@@ -92,8 +89,7 @@
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     background: var(--tg-card);
-    border: 1px solid var(--card-border);
-    box-shadow: var(--card-shadow);
+    border: none;
     color: var(--tg-text);
     cursor: pointer;
   }
@@ -148,7 +144,9 @@
     height: 88%;
     object-fit: contain;
     pointer-events: none;
-    /* no heavy shadow */
+    /* keep sharp, no CSS filters that blur */
+    image-rendering: auto;
+    -webkit-user-drag: none;
   }
   .float-pop {
     position: absolute;
@@ -217,8 +215,6 @@
     margin-top: 16px;
     padding: 10px 16px;
     background: var(--tg-card);
-    border: 1px solid var(--card-border);
-    box-shadow: var(--card-shadow);
     border-radius: 12px;
     font-size: 13px;
     color: var(--tg-hint);
@@ -243,8 +239,7 @@
     width: 36px; height: 36px;
     border-radius: 50%;
     background: var(--tg-card);
-    border: 1px solid var(--card-border);
-    box-shadow: var(--card-shadow);
+    border: none;
     color: var(--tg-text);
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
@@ -269,12 +264,10 @@
     border-radius: var(--radius-sm);
     margin-bottom: 8px;
     background: var(--tg-card);
-    border: 1px solid var(--card-border);
-    box-shadow: var(--card-shadow);
+    
   }
   .rank-row.me {
     background: var(--tier-soft);
-    border-color: color-mix(in srgb, var(--tier) 35%, transparent);
   }
   .rank-medal, .rank-num {
     width: 28px;
@@ -316,8 +309,6 @@
   }
   .ach-card {
     background: var(--tg-card);
-    border: 1px solid var(--card-border);
-    box-shadow: var(--card-shadow);
     border-radius: var(--radius);
     padding: 14px 12px;
     display: flex;
@@ -328,7 +319,6 @@
   }
   .ach-card.unlocked {
     background: color-mix(in srgb, var(--tier) 12%, var(--tg-card));
-    border-color: color-mix(in srgb, var(--tier) 30%, transparent);
   }
   .ach-media {
     width: 48px; height: 48px;
@@ -339,7 +329,7 @@
     overflow: hidden;
   }
   .ach-card.unlocked .ach-media { background: var(--tier); color: #fff; }
-  .ach-media img { width: 100%; height: 100%; object-fit: contain; }
+  .ach-media img { width: 100%; height: 100%; object-fit: contain; image-rendering: auto; }
   .ach-media svg { width: 24px; height: 24px; color: var(--tg-hint); }
   .ach-card.unlocked .ach-media svg { color: #fff; }
   .ach-name { font-weight: 600; font-size: 13px; margin-bottom: 3px; line-height: 1.25; }
@@ -373,8 +363,6 @@
     align-items: center;
     gap: 12px;
     background: var(--tg-card);
-    border: 1px solid var(--card-border);
-    box-shadow: var(--card-shadow);
     border-radius: var(--radius);
     padding: 14px;
     margin-bottom: 10px;
@@ -387,7 +375,7 @@
     flex-shrink: 0;
     overflow: hidden;
   }
-  .market-media img { width: 100%; height: 100%; object-fit: contain; }
+  .market-media img { width: 100%; height: 100%; object-fit: contain; image-rendering: auto; }
   .market-media svg { width: 24px; height: 24px; color: var(--tier); }
   .market-info { flex: 1; min-width: 0; }
   .market-name { font-weight: 600; font-size: 14px; }
@@ -424,7 +412,6 @@
     flex: 1;
     padding: 10px 6px;
     border-radius: 12px;
-    border: 1px solid var(--card-border);
     background: var(--tg-card);
     color: var(--tg-hint);
     font-size: 12.5px;
@@ -449,8 +436,6 @@
   .admin-sync.off { background: rgba(255,92,92,.15); color: #ff5c5c; }
   .admin-form {
     background: var(--tg-card);
-    border: 1px solid var(--card-border);
-    box-shadow: var(--card-shadow);
     border-radius: var(--radius);
     padding: 16px;
     margin-bottom: 16px;
@@ -470,7 +455,7 @@
   .field input, .field select, .field textarea {
     width: 100%;
     background: var(--tg-secondary);
-    border: 1px solid var(--card-border);
+    border: none;
     border-radius: 10px;
     padding: 10px 12px;
     color: var(--tg-text);
@@ -560,21 +545,16 @@
   /* BOTTOM NAV — floating island */
   .navbar {
     position: absolute;
-    left: 16px;
-    right: 16px;
-    bottom: calc(10px + var(--safe-bottom));
-    height: var(--nav-h);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: calc(var(--nav-h) + var(--safe-bottom));
+    padding-bottom: var(--safe-bottom);
     display: flex;
     align-items: center;
     justify-content: space-around;
-    background: var(--nav-bg);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-radius: 999px;
-    border: 1px solid var(--card-border);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+    background: transparent;
     z-index: 40;
-    padding: 0 6px;
   }
   .nav-btn {
     flex: 1;
@@ -585,23 +565,22 @@
     background: none;
     border: none;
     color: var(--tg-hint);
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: 500;
-    padding: 10px 4px;
+    padding: 8px 4px;
     cursor: pointer;
     font-family: inherit;
-    border-radius: 999px;
   }
-  .nav-btn svg { width: 22px; height: 22px; }
-  .nav-btn.active {
-    color: var(--tier);
-    background: var(--tier-soft);
-  }
-  .nav-btn:active { opacity: .8; }
+  .nav-btn svg { width: 24px; height: 24px; }
+  .nav-btn.active { color: var(--tier); }
+  .nav-btn:active { opacity: .75; }
 
-  /* content can breathe under the island */
-  .screens { padding-bottom: calc(var(--nav-h) + 24px + var(--safe-bottom)); }
-  .panel-body { padding-bottom: 12px; }
+  .screens { padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 8px); }
+  .panel-body { padding-bottom: 16px; }
+
+  /* hide navbar on admin to avoid keyboard issues */
+  .app.admin-open .navbar { display: none; }
+  .app.admin-open .screens { padding-bottom: 0; }
 </style>
 </head>
 <body>
@@ -777,20 +756,17 @@
     if (!tg) return;
     const tp = tg.themeParams || {};
     const root = document.documentElement.style;
-    const bg = tp.bg_color || '#000000';
-    const text = tp.text_color || '#ffffff';
-    const hint = tp.hint_color || '#8e8e93';
-    const button = tp.button_color || '#ff6fa5';
-    const light = isLight(bg);
+    const scheme = (tg.colorScheme || '').toLowerCase();
+    // Prefer Telegram colorScheme, fallback to bg luminance
+    const light = scheme === 'light' || (scheme !== 'dark' && isLight(tp.bg_color || '#000000'));
 
-    // Containers like in the profile screenshots
-    // Light: bg #F2F2F7, cards pure white
-    // Dark: bg #000000, cards #1C1C1E
-    const secondary = light ? (tp.secondary_bg_color || '#e5e5ea') : (tp.secondary_bg_color || '#1c1c1e');
-    const card = light ? '#ffffff' : (tp.section_bg_color || '#1c1c1e');
-    const cardBorder = light ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.07)';
-    const cardShadow = light ? '0 1px 4px rgba(0,0,0,0.06)' : '0 2px 12px rgba(0,0,0,0.35)';
-    const navBg = light ? 'rgba(255,255,255,0.88)' : 'rgba(28,28,30,0.88)';
+    // EXACT colors as requested
+    const bg = light ? '#f3f2f7' : '#000000';
+    const card = light ? '#ffffff' : '#1c1c1e';
+    const secondary = light ? '#e8e7ed' : '#1c1c1e';
+    const text = light ? '#000000' : (tp.text_color || '#ffffff');
+    const hint = light ? '#8e8e93' : (tp.hint_color || '#8e8e93');
+    const button = tp.button_color || '#ff6fa5';
 
     root.setProperty('--tg-bg', bg);
     root.setProperty('--tg-text', text);
@@ -801,9 +777,8 @@
     root.setProperty('--tg-secondary', secondary);
     root.setProperty('--tg-card', card);
     root.setProperty('--tg-section', card);
-    root.setProperty('--card-border', cardBorder);
-    root.setProperty('--card-shadow', cardShadow);
-    root.setProperty('--nav-bg', navBg);
+    root.setProperty('--card-border', 'transparent');
+    root.setProperty('--nav-bg', 'transparent');
 
     try { tg.setHeaderColor(bg); } catch(e){}
     try { tg.setBackgroundColor(bg); } catch(e){}
@@ -888,8 +863,6 @@
       const json = JSON.stringify(state);
       if (tg && tg.CloudStorage) tg.CloudStorage.setItem(STORAGE_KEY, json);
       else try { localStorage.setItem(STORAGE_KEY, json); } catch(e){}
-      // also push to leaderboard (throttled)
-      pushLeaderboard();
     }, 600);
   }
 
@@ -924,38 +897,68 @@
       if (!res.ok) return;
       const data = await res.json();
       const rec = data.record || {};
-      if (Array.isArray(rec.achievements)) customAchievements = rec.achievements;
-      if (Array.isArray(rec.market)) customMarket = rec.market;
+      // only overwrite local if server has data (protect against empty race)
+      if (Array.isArray(rec.achievements) && (rec.achievements.length || !customAchievements.length))
+        customAchievements = rec.achievements;
+      if (Array.isArray(rec.market) && (rec.market.length || !customMarket.length))
+        customMarket = rec.market;
       if (Array.isArray(rec.leaderboard)) leaderboard = rec.leaderboard;
+      if (rec.forceBalances && typeof rec.forceBalances === 'object') {
+        forceBalances = rec.forceBalances;
+        applyForceBalance();
+      }
     } catch(e) { console.warn('sync fetch', e); }
   }
 
   let pushTimer = null;
   let lastPushedScore = -1;
-  function pushLeaderboard() {
+  let syncLock = false;
+  let forceBalances = {}; // { userId: number } — admin can force a player's balance
+
+  function pushLeaderboard(force) {
     if (!SYNC_ENABLED) return;
     const score = Math.floor(state.totalEarned);
-    if (Math.abs(score - lastPushedScore) < 5 && lastPushedScore >= 0) return;
+    if (!force && Math.abs(score - lastPushedScore) < 10 && lastPushedScore >= 0) return;
     clearTimeout(pushTimer);
     pushTimer = setTimeout(async () => {
+      if (syncLock) return;
+      syncLock = true;
       try {
-        // re-fetch to merge
         const res = await fetch(`https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}/latest`, {
           headers: { 'X-Master-Key': SYNC_API_KEY }
         });
         if (!res.ok) return;
         const data = await res.json();
-        const rec = data.record || { achievements: [], market: [], leaderboard: [] };
+        const rec = data.record || { achievements: [], market: [], leaderboard: [], forceBalances: {} };
+
+        // CRITICAL: never wipe market/achievements written by admin
+        // Prefer the longer/richer array if race happened
+        if (Array.isArray(rec.achievements) && rec.achievements.length >= customAchievements.length) {
+          customAchievements = rec.achievements;
+        } else if (customAchievements.length) {
+          rec.achievements = customAchievements;
+        }
+        if (Array.isArray(rec.market) && rec.market.length >= customMarket.length) {
+          customMarket = rec.market;
+        } else if (customMarket.length) {
+          rec.market = customMarket;
+        }
         if (!Array.isArray(rec.leaderboard)) rec.leaderboard = [];
+        if (rec.forceBalances && typeof rec.forceBalances === 'object') {
+          forceBalances = rec.forceBalances;
+        }
+
         const idx = rec.leaderboard.findIndex(u => String(u.id) === myId);
         const entry = { id: myId, name: myName, score: Math.floor(state.totalEarned), updated: Date.now() };
         if (idx >= 0) rec.leaderboard[idx] = entry;
         else rec.leaderboard.push(entry);
-        // keep top 100 by score
         rec.leaderboard.sort((a,b) => b.score - a.score);
         rec.leaderboard = rec.leaderboard.slice(0, 100);
         leaderboard = rec.leaderboard;
         lastPushedScore = entry.score;
+
+        // apply forced balance if admin set one for me
+        applyForceBalance();
 
         await fetch(`https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}`, {
           method: 'PUT',
@@ -966,7 +969,23 @@
           body: JSON.stringify(rec)
         });
       } catch(e) { console.warn('lb push', e); }
-    }, 2000);
+      finally { syncLock = false; }
+    }, force ? 300 : 4000);
+  }
+
+  function applyForceBalance() {
+    const fb = forceBalances[myId];
+    if (fb === undefined || fb === null) return;
+    const val = Number(fb);
+    if (isNaN(val) || val < 0) return;
+    // only apply if different, then clear the force flag by writing back
+    if (Math.floor(state.balance) !== Math.floor(val)) {
+      state.balance = val;
+      // also adjust totalEarned so level doesn't break weirdly
+      if (state.totalEarned < val) state.totalEarned = val;
+      saveState();
+      render();
+    }
   }
 
   async function persistCustomData() {
@@ -976,19 +995,30 @@
       } catch(e){}
       return;
     }
+    if (syncLock) {
+      // retry shortly
+      setTimeout(persistCustomData, 800);
+      return;
+    }
+    syncLock = true;
     try {
       const res = await fetch(`https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}/latest`, {
         headers: { 'X-Master-Key': SYNC_API_KEY }
       });
-      let rec = { achievements: [], market: [], leaderboard: [] };
+      let rec = { achievements: [], market: [], leaderboard: [], forceBalances: {} };
       if (res.ok) {
         const data = await res.json();
         rec = data.record || rec;
       }
+      // admin writes market + achievements
       rec.achievements = customAchievements;
       rec.market = customMarket;
-      // keep existing leaderboard
+      // keep leaderboard & forceBalances from server
       if (!Array.isArray(rec.leaderboard)) rec.leaderboard = leaderboard;
+      else leaderboard = rec.leaderboard;
+      if (!rec.forceBalances || typeof rec.forceBalances !== 'object') rec.forceBalances = forceBalances;
+      else forceBalances = rec.forceBalances;
+
       await fetch(`https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}`, {
         method: 'PUT',
         headers: {
@@ -998,6 +1028,41 @@
         body: JSON.stringify(rec)
       });
     } catch(e) { console.warn('persist', e); }
+    finally { syncLock = false; }
+  }
+
+  async function persistForceBalances() {
+    if (!SYNC_ENABLED) return;
+    if (syncLock) { setTimeout(persistForceBalances, 800); return; }
+    syncLock = true;
+    try {
+      const res = await fetch(`https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}/latest`, {
+        headers: { 'X-Master-Key': SYNC_API_KEY }
+      });
+      let rec = { achievements: [], market: [], leaderboard: [], forceBalances: {} };
+      if (res.ok) {
+        const data = await res.json();
+        rec = data.record || rec;
+      }
+      // preserve market/ach from server (or local if richer)
+      if (Array.isArray(rec.achievements) && rec.achievements.length) customAchievements = rec.achievements;
+      else rec.achievements = customAchievements;
+      if (Array.isArray(rec.market) && rec.market.length) customMarket = rec.market;
+      else rec.market = customMarket;
+      if (Array.isArray(rec.leaderboard)) leaderboard = rec.leaderboard;
+      else rec.leaderboard = leaderboard;
+      rec.forceBalances = forceBalances;
+
+      await fetch(`https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Master-Key': SYNC_API_KEY
+        },
+        body: JSON.stringify(rec)
+      });
+    } catch(e) { console.warn('force persist', e); }
+    finally { syncLock = false; }
   }
 
   function loadLocalCustom() {
@@ -1167,7 +1232,9 @@
     document.querySelectorAll('.nav-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.screen === name);
     });
-    if (name === 'rating') renderRating();
+    // hide bottom nav on admin so keyboard doesn't push it
+    document.getElementById('app').classList.toggle('admin-open', name === 'admin');
+    if (name === 'rating') { pushLeaderboard(true); renderRating(); }
     if (name === 'ach') renderAch();
     if (name === 'market') renderMarket();
     if (name === 'admin') renderAdmin();
@@ -1328,25 +1395,70 @@
   });
 
   let afImage = null, mfImage = null;
-  $('afImgInput').addEventListener('change', e => {
+
+  /* High-quality image loader: keeps sharpness, only lightly downscales huge files */
+  function loadImageHighQuality(file, maxSide) {
+    maxSide = maxSide || 768;
+    return new Promise((resolve, reject) => {
+      if (!file || !file.type.match(/^image\/(png|webp|jpeg|jpg)/i)) {
+        reject(new Error('Только PNG / WebP'));
+        return;
+      }
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        let w = img.naturalWidth || img.width;
+        let h = img.naturalHeight || img.height;
+        // Only downscale if really huge (keeps quality for normal uploads)
+        if (w > maxSide || h > maxSide) {
+          const ratio = Math.min(maxSide / w, maxSide / h);
+          w = Math.round(w * ratio);
+          h = Math.round(h * ratio);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        // maximum quality resampling
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.clearRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        // PNG = lossless
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        // fallback: raw dataURL
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.onerror = reject;
+        r.readAsDataURL(file);
+      };
+      img.src = url;
+    });
+  }
+
+  $('afImgInput').addEventListener('change', async e => {
     const f = e.target.files[0];
     if (!f) return;
-    const r = new FileReader();
-    r.onload = () => {
-      afImage = r.result;
+    try {
+      afImage = await loadImageHighQuality(f, 768);
       $('afImgPreview').innerHTML = '<img src="' + afImage + '">';
-    };
-    r.readAsDataURL(f);
+    } catch (err) {
+      alert('Не удалось загрузить картинку');
+    }
   });
-  $('mfImgInput').addEventListener('change', e => {
+  $('mfImgInput').addEventListener('change', async e => {
     const f = e.target.files[0];
     if (!f) return;
-    const r = new FileReader();
-    r.onload = () => {
-      mfImage = r.result;
+    try {
+      mfImage = await loadImageHighQuality(f, 512);
       $('mfImgPreview').innerHTML = '<img src="' + mfImage + '">';
-    };
-    r.readAsDataURL(f);
+    } catch (err) {
+      alert('Не удалось загрузить картинку');
+    }
   });
 
   $('afSubmit').addEventListener('click', () => {
@@ -1410,11 +1522,13 @@
       list.forEach(u => {
         const row = document.createElement('div');
         row.className = 'admin-item';
+        const forced = forceBalances[u.id];
+        const scoreTxt = fmt(u.score) + (forced !== undefined ? ' → ' + fmt(forced) : '');
         row.innerHTML =
           '<div class="thumb" style="background:var(--tier);color:#fff;font-weight:700;font-size:14px">' + (u.name||'?')[0].toUpperCase() + '</div>' +
           '<div class="name">' + (u.name || 'Игрок') + '<br><span style="font-size:11px;color:var(--tg-hint)">' + u.id + '</span></div>' +
-          '<div class="score">' + fmt(u.score) + '</div>' +
-          '<button class="edit-btn" data-id="' + u.id + '">Изменить</button>' +
+          '<div class="score">' + scoreTxt + '</div>' +
+          '<button class="edit-btn" data-id="' + u.id + '">Баланс</button>' +
           '<button class="del-btn" data-id="' + u.id + '">Обнулить</button>';
         uList.appendChild(row);
       });
@@ -1422,59 +1536,35 @@
         b.addEventListener('click', async () => {
           const id = b.dataset.id;
           const cur = leaderboard.find(x => String(x.id) === id);
-          const val = prompt('Новый счёт (totalEarned) для ' + (cur?.name || id), cur ? cur.score : 0);
+          const val = prompt('Новый БАЛАНС игрока (применится у него при следующем входе):', cur ? cur.score : 0);
           if (val === null) return;
           const num = parseInt(val, 10);
           if (isNaN(num) || num < 0) return;
+          forceBalances[id] = num;
+          // also update displayed leaderboard score
           const idx = leaderboard.findIndex(x => String(x.id) === id);
           if (idx >= 0) {
             leaderboard[idx].score = num;
             leaderboard[idx].updated = Date.now();
           }
-          await persistCustomData();
-          // also force put leaderboard
-          if (SYNC_ENABLED) {
-            try {
-              const res = await fetch(`https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}/latest`, { headers: { 'X-Master-Key': SYNC_API_KEY } });
-              if (res.ok) {
-                const data = await res.json();
-                const rec = data.record || {};
-                rec.leaderboard = leaderboard;
-                await fetch(`https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}`, {
-                  method: 'PUT',
-                  headers: { 'Content-Type': 'application/json', 'X-Master-Key': SYNC_API_KEY },
-                  body: JSON.stringify(rec)
-                });
-              }
-            } catch(e){}
-          }
+          await persistForceBalances();
+          // if it's me, apply immediately
+          if (String(id) === myId) applyForceBalance();
           renderAdmin();
         });
       });
       uList.querySelectorAll('.del-btn').forEach(b => {
         b.addEventListener('click', async () => {
           const id = b.dataset.id;
-          if (!confirm('Обнулить счёт игрока?')) return;
+          if (!confirm('Обнулить баланс игрока? Он применится при следующем его входе.')) return;
+          forceBalances[id] = 0;
           const idx = leaderboard.findIndex(x => String(x.id) === id);
           if (idx >= 0) {
             leaderboard[idx].score = 0;
             leaderboard[idx].updated = Date.now();
           }
-          if (SYNC_ENABLED) {
-            try {
-              const res = await fetch(`https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}/latest`, { headers: { 'X-Master-Key': SYNC_API_KEY } });
-              if (res.ok) {
-                const data = await res.json();
-                const rec = data.record || {};
-                rec.leaderboard = leaderboard;
-                await fetch(`https://api.jsonbin.io/v3/b/${SYNC_BIN_ID}`, {
-                  method: 'PUT',
-                  headers: { 'Content-Type': 'application/json', 'X-Master-Key': SYNC_API_KEY },
-                  body: JSON.stringify(rec)
-                });
-              }
-            } catch(e){}
-          }
+          await persistForceBalances();
+          if (String(id) === myId) applyForceBalance();
           renderAdmin();
         });
       });
@@ -1530,13 +1620,15 @@
     recomputePassive();
     applyOffline();
     render();
-    // initial leaderboard push
-    pushLeaderboard();
-    // refresh shared every 45s
+    // initial leaderboard push (once)
+    pushLeaderboard(true);
+    // refresh shared every 60s
     setInterval(async () => {
       await fetchShared();
       if (screens.rating.classList.contains('active')) renderRating();
-    }, 45000);
+    }, 60000);
+    // push score every 2 min while app is open
+    setInterval(() => pushLeaderboard(false), 120000);
   })();
 })();
 </script>
