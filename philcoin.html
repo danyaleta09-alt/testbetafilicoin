@@ -2025,39 +2025,6 @@
       </div>
     
     <!-- SETTINGS -->
-    <div class="screen" id="screenSettings">
-      <div class="panel-header">
-        <div class="panel-title">Настройки</div>
-        <button class="close-btn" id="settingsClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-      </div>
-      <div class="panel-body">
-        <div class="profile-cards">
-          <button type="button" class="profile-card" id="settingsWithdrawBtn">
-            <div class="profile-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 19h14"/></svg>
-            </div>
-            <div class="profile-card-text">
-              <div class="profile-card-title">Вывести филькоины</div>
-              <div class="profile-card-sub">Обмен монет</div>
-            </div>
-            <div class="profile-card-chevron">›</div>
-          </button>
-          <button type="button" class="profile-card" id="settingsAppearanceBtn">
-            <div class="profile-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            </div>
-            <div class="profile-card-text">
-              <div class="profile-card-title">Оформление</div>
-              <div class="profile-card-sub">Цвета и тема</div>
-            </div>
-            <div class="profile-card-chevron">›</div>
-          </button>
-        </div>
-      </div>
-    </div>
-</div>
-
-    <!-- CLAN -->
     <div class="screen" id="screenClan">
       <div class="panel-header">
         <div class="panel-title">Клан</div>
@@ -4228,21 +4195,106 @@
   })();
 })();
 
+
   function renderSettings() {
-    // Attach listeners for settings buttons
-    const withdrawBtn = $('settingsWithdrawBtn');
-    if (withdrawBtn) {
-      withdrawBtn.onclick = () => {
+    const screen = $('screenSettings');
+    if (!screen) return;
+    
+    const body = screen.querySelector('.panel-body');
+    if (!body) return;
+    
+    body.innerHTML = `
+      <div style="padding: 12px 0;">
+        <button type="button" class="profile-card" id="settingsWithdrawBtn" style="margin-bottom: 10px; width: 100%;">
+          <div class="profile-card-icon" style="background: #34c75922; color: #34c759;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 19h14"/></svg>
+          </div>
+          <div class="profile-card-text" style="flex:1; text-align:left; padding-left:12px;">
+            <div class="profile-card-title">Вывести филькоины</div>
+            <div class="profile-card-sub">Обмен монет</div>
+          </div>
+          <div class="profile-card-chevron">›</div>
+        </button>
+        
+        <button type="button" class="profile-card" id="settingsAppearanceBtn" style="width: 100%;">
+          <div class="profile-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <div class="profile-card-text" style="flex:1; text-align:left; padding-left:12px;">
+            <div class="profile-card-title">Оформление</div>
+            <div class="profile-card-sub">Цвета и тема приложения</div>
+          </div>
+          <div class="profile-card-chevron">›</div>
+        </button>
+      </div>
+    `;
+    
+    // Attach listeners
+    const wBtn = $('settingsWithdrawBtn');
+    if (wBtn) {
+      wBtn.onclick = () => {
         if (tg && tg.showAlert) tg.showAlert('Вывод филькоинов скоро будет доступен 🐷');
         else alert('Вывод филькоинов скоро будет доступен 🐷');
       };
     }
-    const appearanceBtn = $('settingsAppearanceBtn');
-    if (appearanceBtn) {
-      appearanceBtn.onclick = () => {
-        showAppearanceScreen();
+    
+    const aBtn = $('settingsAppearanceBtn');
+    if (aBtn) {
+      aBtn.onclick = () => {
+        showAppearanceModal();
       };
     }
+  }
+
+  function showAppearanceModal() {
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:999;';
+    modal.innerHTML = `
+      <div style="background:var(--tg-card);border-radius:20px;padding:24px 20px;max-width:340px;width:92%;box-shadow:0 10px 40px rgba(0,0,0,.4);">
+        <div style="font-size:20px;font-weight:600;margin-bottom:8px;text-align:center;">Оформление</div>
+        <div style="font-size:13px;color:var(--tg-hint);text-align:center;margin-bottom:20px;">Выбери вариант тёмной темы</div>
+        
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button id="themeDefault" class="profile-card" style="width:100%;justify-content:flex-start;padding:14px 16px;">
+            <div style="flex:1;text-align:left;">
+              <div style="font-weight:600;">Стандартная тёмная</div>
+              <div style="font-size:12px;color:var(--tg-hint);">Текущая (рекомендуется)</div>
+            </div>
+          </button>
+          
+          <button id="themeMinimal" class="profile-card" style="width:100%;justify-content:flex-start;padding:14px 16px;">
+            <div style="flex:1;text-align:left;">
+              <div style="font-weight:600;">Тёмная минималистичная</div>
+              <div style="font-size:12px;color:var(--tg-hint);">#181818 • минимализм</div>
+            </div>
+          </button>
+          
+          <button id="themeWarm" class="profile-card" style="width:100%;justify-content:flex-start;padding:14px 16px;">
+            <div style="flex:1;text-align:left;">
+              <div style="font-weight:600;">Тёплая тёмная</div>
+              <div style="font-size:12px;color:var(--tg-hint);">С лёгким тёплым оттенком</div>
+            </div>
+          </button>
+        </div>
+        
+        <button id="closeModal" class="submit-btn" style="margin-top:20px;width:100%;background:var(--tg-secondary);color:var(--tg-text);">Готово</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    
+    const applyTheme = (bg, card, secondary) => {
+      const root = document.documentElement;
+      root.style.setProperty('--tg-bg', bg);
+      root.style.setProperty('--tg-card', card);
+      root.style.setProperty('--tg-secondary', secondary);
+      // also update some text contrast if needed
+      modal.remove();
+    };
+    
+    modal.querySelector('#themeDefault').onclick = () => applyTheme('#000000', '#1c1c1e', '#2c2c2e');
+    modal.querySelector('#themeMinimal').onclick = () => applyTheme('#181818', '#252525', '#303030');
+    modal.querySelector('#themeWarm').onclick = () => applyTheme('#1a1815', '#2a2722', '#353025');
+    modal.querySelector('#closeModal').onclick = () => modal.remove();
   }
 
   function showAppearanceScreen() {
