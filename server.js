@@ -29,6 +29,7 @@ function defaultShared() {
   return {
     achievements: [],
     market: [],
+    skins: [],
     leaderboard: [],
     forceBalances: {}
   };
@@ -44,6 +45,7 @@ function loadData() {
       shared = {
         achievements: Array.isArray(parsed.achievements) ? parsed.achievements : [],
         market: Array.isArray(parsed.market) ? parsed.market : [],
+        skins: Array.isArray(parsed.skins) ? parsed.skins : [],
         leaderboard: Array.isArray(parsed.leaderboard) ? parsed.leaderboard : [],
         forceBalances: (parsed.forceBalances && typeof parsed.forceBalances === 'object')
           ? parsed.forceBalances : {}
@@ -126,6 +128,7 @@ const server = http.createServer(async (req, res) => {
       const body = await readBody(req);
       if (Array.isArray(body.achievements)) shared.achievements = body.achievements;
       if (Array.isArray(body.market)) shared.market = body.market;
+      if (Array.isArray(body.skins)) shared.skins = body.skins;
       if (Array.isArray(body.leaderboard)) shared.leaderboard = body.leaderboard;
       if (body.forceBalances && typeof body.forceBalances === 'object') {
         shared.forceBalances = body.forceBalances;
@@ -146,7 +149,17 @@ const server = http.createServer(async (req, res) => {
       }
       if (!Array.isArray(shared.leaderboard)) shared.leaderboard = [];
       const idx = shared.leaderboard.findIndex(u => String(u.id) === id);
-      const entry = { id, name, score, updated: Date.now() };
+      const prev = idx >= 0 ? shared.leaderboard[idx] : {};
+      const entry = {
+        id,
+        name,
+        score,
+        updated: Date.now(),
+        photo: body.photo || prev.photo || null,
+        skins: Array.isArray(body.skins) ? body.skins : (prev.skins || []),
+        activeSkin: body.activeSkin || prev.activeSkin || null,
+        achievements: Array.isArray(body.achievements) ? body.achievements : (prev.achievements || [])
+      };
       if (idx >= 0) shared.leaderboard[idx] = entry;
       else shared.leaderboard.push(entry);
       shared.leaderboard.sort((a, b) => b.score - a.score);
@@ -198,17 +211,6 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    if (pathname === '/logo.png') {
-      const logoPath = path.join(__dirname, 'logo.png');
-      if (fs.existsSync(logoPath)) {
-        res.writeHead(200, {
-          'Content-Type': 'image/png',
-          'Cache-Control': 'public, max-age=86400'
-        });
-        res.end(fs.readFileSync(logoPath));
-        return;
-      }
-    }
 
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Not found');

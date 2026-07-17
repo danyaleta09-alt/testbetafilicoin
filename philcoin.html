@@ -634,61 +634,35 @@
     inset: 0;
     z-index: 9999;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     background: var(--tg-bg, #000000);
-    transition: opacity .55s ease, visibility .55s ease;
+    transition: opacity .5s ease, visibility .5s ease;
   }
   .splash.hide {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
   }
-  .splash-logo {
-    width: min(48vw, 200px);
-    height: min(48vw, 200px);
-    object-fit: contain;
-    background: transparent;
-    border-radius: 0;
-    animation: splashIn .7s ease both;
-  }
-  .splash-text {
-    margin-top: 28px;
-    max-width: 85%;
-    min-height: 1.45em;
-    text-align: center;
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: 13.5px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    color: var(--tg-hint, #8e8e93);
-    line-height: 1.45;
-  }
   .splash-age {
-    margin-top: 22px;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    border: 2px solid var(--tg-hint, #8e8e93);
+    width: 88px;
+    height: 88px;
+    border-radius: 18px;
+    border: 3px solid var(--tg-hint, #8e8e93);
     color: var(--tg-hint, #8e8e93);
-    font-family: 'Fredoka', sans-serif;
+    font-family: 'Fredoka', system-ui, sans-serif;
     font-weight: 700;
-    font-size: 12px;
+    font-size: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
-    transform: scale(0.92);
-    transition: opacity .55s ease, transform .55s ease;
+    transform: scale(0.88);
+    transition: opacity .6s ease, transform .6s ease;
   }
   .splash-age.show {
     opacity: 1;
     transform: scale(1);
-  }
-  @keyframes splashIn {
-    from { opacity: 0; transform: scale(0.92); }
-    to { opacity: 1; transform: scale(1); }
   }
 
   /* custom select */
@@ -831,13 +805,233 @@
     background: color-mix(in srgb, #57cf9d 18%, var(--tg-card));
     color: #57cf9d;
   }
+
+  .shop-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 0 14px 12px;
+  }
+  .shop-tab {
+    flex: 1;
+    padding: 10px;
+    border-radius: 12px;
+    border: none;
+    background: var(--tg-secondary);
+    color: var(--tg-hint);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .shop-tab.active {
+    background: var(--tier-soft);
+    color: var(--tier);
+  }
+  .shop-section { display: none; }
+  .shop-section.active { display: block; }
+  .skin-card {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 14px;
+    background: var(--tg-card);
+    border-radius: 16px;
+    margin: 0 14px 10px;
+  }
+  .skin-thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    background: var(--tg-secondary);
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .skin-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .skin-info { flex: 1; min-width: 0; }
+  .skin-name { font-weight: 600; font-size: 15px; }
+  .skin-desc { font-size: 12px; color: var(--tg-hint); margin-top: 2px; }
+  .skin-bonus { font-size: 11px; color: var(--tier); margin-top: 4px; font-weight: 500; }
+  .skin-actions { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
+
+  .nav-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity .45s ease;
+    display: none;
+  }
+  .nav-avatar.show {
+    display: block;
+    opacity: 1;
+  }
+  .nav-btn .nav-icon-fallback {
+    width: 22px;
+    height: 22px;
+    display: block;
+  }
+  .nav-btn.has-avatar .nav-icon-fallback {
+    display: none;
+  }
+  .nav-btn.has-avatar .nav-avatar {
+    display: block;
+  }
+
+  .my-skins {
+    padding: 4px 14px 20px;
+  }
+  .my-skins-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--tg-hint);
+    margin-bottom: 10px;
+    padding: 0 2px;
+  }
+  .my-skins-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .my-skin-item {
+    background: var(--tg-card);
+    border-radius: 14px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+  }
+  .my-skin-item.equipped {
+    border-color: var(--tier);
+  }
+  .my-skin-item img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 10px;
+    background: var(--tg-secondary);
+  }
+  .my-skin-item .lbl {
+    font-size: 11px;
+    margin-top: 6px;
+    color: var(--tg-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* public user profile */
+  .user-profile-body {
+    padding: 20px 14px 30px;
+  }
+  .up-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .up-avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: var(--tg-secondary);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--tier);
+    font-family: 'Fredoka', sans-serif;
+  }
+  .up-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .up-name { font-family: 'Fredoka', sans-serif; font-size: 22px; font-weight: 600; }
+  .up-score { font-size: 13px; color: var(--tg-hint); }
+  .up-stats {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .up-stat {
+    flex: 1;
+    background: var(--tg-card);
+    border-radius: 14px;
+    padding: 12px;
+    text-align: center;
+  }
+  .up-stat-val { font-weight: 700; font-size: 16px; color: var(--tg-text); }
+  .up-stat-lbl { font-size: 11px; color: var(--tg-hint); margin-top: 2px; }
+  .up-tg-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    background: var(--tier);
+    color: #fff;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    margin-bottom: 18px;
+  }
+  .rating-row { cursor: pointer; }
+
+  .up-awards {
+    margin-top: 6px;
+  }
+  .up-awards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .up-award {
+    background: var(--tg-card);
+    border-radius: 14px;
+    padding: 12px 8px;
+    text-align: center;
+  }
+  .up-award-media {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    margin: 0 auto 8px;
+    background: var(--tier-soft);
+    color: var(--tier);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .up-award-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .up-award-media svg { width: 24px; height: 24px; }
+  .up-award-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--tg-text);
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .up-empty {
+    color: var(--tg-hint);
+    font-size: 13px;
+    padding: 8px 0 4px;
+  }
 </style>
 </head>
 <body>
 <div class="splash" id="splash">
-  <img class="splash-logo" src="/logo.png" alt="">
-  <div class="splash-text" id="splashText"></div>
-  <div class="splash-age">16+</div>
+  <div class="splash-age" id="splashAge">16+</div>
 </div>
 <div class="app" id="app">
   <div class="safe-top" id="safeTop"></div>
@@ -902,7 +1096,18 @@
       <div class="panel-header">
         <div class="panel-title">Шоп</div>
       </div>
-      <div class="panel-body" id="marketList"></div>
+      <div class="shop-tabs">
+        <button type="button" class="shop-tab active" data-shop="upgrades">Улучшения</button>
+        <button type="button" class="shop-tab" data-shop="skins">Скины</button>
+      </div>
+      <div class="panel-body">
+        <div class="shop-section active" id="shopUpgrades">
+          <div class="market-list" id="marketList"></div>
+        </div>
+        <div class="shop-section" id="shopSkins">
+          <div id="skinsList"></div>
+        </div>
+      </div>
     </div>
 
 
@@ -945,6 +1150,19 @@
           <div class="profile-card-chevron">›</div>
         </button>
       </div>
+      <div class="my-skins">
+        <div class="my-skins-title">Мои скины</div>
+        <div class="my-skins-grid" id="mySkinsGrid"></div>
+      </div>
+    </div>
+
+    <!-- USER PUBLIC PROFILE -->
+    <div class="screen" id="screenUser">
+      <div class="panel-header">
+        <div class="panel-title">Профиль</div>
+        <button class="close-btn" id="userClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="user-profile-body" id="userProfileBody"></div>
     </div>
 
     <!-- ADMIN -->
@@ -955,7 +1173,7 @@
       </div>
       <div class="admin-tabs">
         <button class="admin-tab active" data-tab="users">Пользователи</button>
-        <button class="admin-tab" data-tab="goods">Товары</button>
+        <button class="admin-tab" data-tab="skins">Скины</button>
         <button class="admin-tab" data-tab="achs">Достижения</button>
       </div>
       <div class="panel-body">
@@ -963,27 +1181,26 @@
         <div class="admin-section active" id="adminUsers">
           <div class="admin-list" id="usersList"></div>
         </div>
-        <!-- GOODS -->
-        <div class="admin-section" id="adminGoods">
+        <!-- SKINS -->
+        <div class="admin-section" id="adminSkins">
           <div class="admin-form">
-            <h3>Новый товар</h3>
-            <div class="field"><label>Название</label><input type="text" id="mfName" placeholder="Автокликер"></div>
-            <div class="field"><label>Описание</label><textarea id="mfDesc" placeholder="Что даёт товар"></textarea></div>
+            <h3>Новый скин</h3>
+            <div class="field"><label>Название</label><input type="text" id="skName" placeholder="Золотая свинка"></div>
+            <div class="field"><label>Описание</label><textarea id="skDesc" placeholder="Как выглядит / зачем"></textarea></div>
             <div class="field-row">
-              <div class="field"><label>Цена (монеты)</label><input type="number" id="mfPrice" placeholder="5000"></div>
-              <div class="field"><label>Доход / сек</label><input type="number" id="mfIncome" placeholder="1"></div>
+              <div class="field"><label>Цена</label><input type="number" id="skPrice" placeholder="25000"></div>
+              <div class="field"><label>Бонус к тапу (экип.)</label><input type="number" id="skTapBonus" placeholder="1"></div>
             </div>
-            <div class="field"><label>Бонус к тапу</label><input type="number" id="mfTapBonus" placeholder="0"></div>
-            <div class="field"><label>Макс. уровень прокачки</label><input type="number" id="mfMaxLevel" placeholder="5" value="5"></div>
-            <div class="field"><label>Картинка PNG (необяз.)</label>
+            <div class="field"><label>Пассив / сек (экип.)</label><input type="number" id="skIncome" placeholder="0"></div>
+            <div class="field"><label>Картинка PNG</label>
               <div class="img-row">
-                <div class="img-preview" id="mfImgPreview">нет</div>
-                <div class="file-btn">Выбрать файл<input type="file" accept="image/png,image/webp" id="mfImgInput"></div>
+                <div class="img-preview" id="skImgPreview">нет</div>
+                <div class="file-btn">Выбрать файл<input type="file" accept="image/png,image/webp" id="skImgInput"></div>
               </div>
             </div>
-            <button class="submit-btn" id="mfSubmit">Создать товар</button>
+            <button class="submit-btn" id="skSubmit">Создать скин</button>
           </div>
-          <div class="admin-list" id="mfList"></div>
+          <div class="admin-list" id="skList"></div>
         </div>
         <!-- ACHIEVEMENTS -->
         <div class="admin-section" id="adminAchs">
@@ -1005,8 +1222,8 @@
               </div>
               <div class="field"><label>Цель (число)</label><input type="number" id="afTarget" placeholder="1000"></div>
             </div>
+            <div class="field"><label>Награда монетами</label><input type="number" id="afReward" placeholder="500" value="0"></div>
             <div class="check-row"><input type="checkbox" id="afSecret"><label for="afSecret">Скрытое (показывать «?»)</label></div>
-            <div class="check-row"><input type="checkbox" id="afSkin"><label for="afSkin">Использовать как скин свинки</label></div>
             <div class="field"><label>Картинка PNG (необяз.)</label>
               <div class="img-row">
                 <div class="img-preview" id="afImgPreview">нет</div>
@@ -1031,8 +1248,9 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9z"/><path d="M3 9l2.5-5h13L21 9"/><path d="M9 13v4M15 13v4"/></svg>
       Шоп
     </button>
-    <button class="nav-btn" data-screen="profile">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    <button class="nav-btn" data-screen="profile" id="navProfileBtn">
+      <img class="nav-avatar" id="navAvatar" alt="">
+      <svg class="nav-icon-fallback" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       Профиль
     </button>
   </nav>
@@ -1125,54 +1343,51 @@
   const isAdmin = Number(user.id) === ADMIN_TG_ID;
 
   let customAchievements = [];
-  let customMarket = [];
+  let customSkins = [];
   let leaderboard = [];
   let forceBalances = {};
   let syncLock = false;
   let lastPushedScore = -1;
   let pushTimer = null;
 
-  /* стартовые товары (если админ ещё ничего не создал) */
-  const DEFAULT_MARKET = [
+  /* Улучшения — встроенные, прокачиваются за монеты */
+  const UPGRADES = [
     {
       id: 'autoclicker',
       name: 'Автокликер',
-      desc: 'Свинка копит монеты сама, пока вас нет',
+      desc: 'Пассивный доход — свинка копит сама',
       price: 5000,
       income: 1,
       tapBonus: 0,
-      maxLevel: 5,
+      maxLevel: 6,
       icon: 'bolt'
     },
     {
-      id: 'golden_hoof',
-      name: 'Золотое копытце',
-      desc: 'Усиливает каждый тап',
-      price: 12000,
+      id: 'power_tap',
+      name: 'Сила тапа',
+      desc: 'Больше монет за каждое нажатие',
+      price: 8000,
       income: 0,
       tapBonus: 1,
-      maxLevel: 5,
+      maxLevel: 8,
       icon: 'fire'
     },
     {
       id: 'piggy_bank',
       name: 'Копилка',
-      desc: 'Пассивный доход побольше',
-      price: 35000,
-      income: 3,
+      desc: 'Усиливает пассивный доход',
+      price: 25000,
+      income: 2,
       tapBonus: 0,
-      maxLevel: 4,
+      maxLevel: 5,
       icon: 'gift'
     }
   ];
 
   function allAchievements() { return customAchievements; }
-  function allMarket() {
-    // кастомные админа + дефолтные, которых ещё нет по id
-    const ids = new Set(customMarket.map(i => i.id));
-    const defaults = DEFAULT_MARKET.filter(i => !ids.has(i.id));
-    return customMarket.concat(defaults);
-  }
+  function allUpgrades() { return UPGRADES; }
+  function allSkins() { return customSkins; }
+  function allMarket() { return UPGRADES; } // compat for old calls
 
   async function fetchShared() {
     try {
@@ -1180,7 +1395,8 @@
       if (!res.ok) return;
       const rec = await res.json();
       if (Array.isArray(rec.achievements)) customAchievements = rec.achievements;
-      if (Array.isArray(rec.market)) customMarket = rec.market;
+      if (Array.isArray(rec.skins)) customSkins = rec.skins;
+      else if (Array.isArray(rec.market)) customSkins = rec.market;
       if (Array.isArray(rec.leaderboard)) leaderboard = rec.leaderboard;
       if (rec.forceBalances && typeof rec.forceBalances === 'object') {
         forceBalances = rec.forceBalances;
@@ -1200,7 +1416,15 @@
         const res = await fetch('/api/score', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: myId, name: myName, score })
+          body: JSON.stringify({
+            id: myId,
+            name: myName,
+            score,
+            photo: (user && user.photo_url) || null,
+            skins: Object.keys(state.ownedSkins || {}),
+            activeSkin: state.activeSkin || null,
+            achievements: Object.keys(state.claimedAchs || {})
+          })
         });
         if (res.ok) {
           const data = await res.json();
@@ -1252,7 +1476,7 @@
       try {
         localStorage.setItem('philcoin_custom', JSON.stringify({
           achievements: customAchievements,
-          market: customMarket
+          skins: customSkins
         }));
       } catch (e) {}
 
@@ -1261,14 +1485,14 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           achievements: customAchievements,
-          market: customMarket
+          skins: customSkins
         })
       });
       if (res.ok) {
         const data = await res.json();
         if (data.shared) {
           if (Array.isArray(data.shared.achievements)) customAchievements = data.shared.achievements;
-          if (Array.isArray(data.shared.market)) customMarket = data.shared.market;
+          if (Array.isArray(data.shared.skins)) customSkins = data.shared.skins;
           if (Array.isArray(data.shared.leaderboard)) leaderboard = data.shared.leaderboard;
         }
       }
@@ -1301,7 +1525,8 @@
       if (v) {
         const o = JSON.parse(v);
         if (Array.isArray(o.achievements) && o.achievements.length) customAchievements = o.achievements;
-        if (Array.isArray(o.market) && o.market.length) customMarket = o.market;
+        if (Array.isArray(o.skins) && o.skins.length) customSkins = o.skins;
+        else if (Array.isArray(o.market) && o.market.length) customSkins = o.market;
       }
     } catch (e) {}
   }
@@ -1313,6 +1538,9 @@
     balance: 0,
     taps: 0,
     owned: {},
+    ownedSkins: {},
+    activeSkin: null,
+    claimedAchs: {},
     lastSeen: Date.now(),
     pigSkin: null,
     passivePerSec: 0,
@@ -1414,20 +1642,38 @@
   function achProg(a, s) { return a.target > 0 ? Math.min(1, achMetricValue(a, s) / a.target) : 0; }
 
   /* ===== RENDER TAP ===== */
-  function updatePigSkin() {
-    // take image from highest unlocked achievement marked as skin, or any with image
-    let best = null;
+
+  function claimAchievements() {
+    if (!state.claimedAchs) state.claimedAchs = {};
+    let changed = false;
     allAchievements().forEach(a => {
-      if (a.image && achCheck(a, state)) {
-        if (!best || (a.isSkin && !best.isSkin) || a.target > (best.target || 0)) best = a;
+      if (state.claimedAchs[a.id]) return;
+      if (!achCheck(a, state)) return;
+      state.claimedAchs[a.id] = true;
+      const reward = Math.max(0, Number(a.reward) || 0);
+      if (reward > 0) {
+        state.balance += reward;
+        state.totalEarned += reward;
       }
+      changed = true;
     });
-    const src = (best && best.image) || state.pigSkin || null;
+    if (changed) {
+      saveState();
+    }
+  }
+
+  function updatePigSkin() {
     const img = $('pigPhoto');
+    if (!img) return;
+    let src = null;
+    if (state.activeSkin && state.ownedSkins[state.activeSkin]) {
+      const skin = allSkins().find(s => s.id === state.activeSkin);
+      if (skin && skin.image) src = skin.image;
+    }
     if (src) {
       img.src = src;
     }
-    // else keep default (already in HTML)
+    // иначе остаётся дефолтная свинка из HTML
   }
 
   function render() {
@@ -1448,6 +1694,7 @@
     // accent color fixed (не меняется от уровня)
     $('levelDot').style.background = 'var(--tier)';
 
+    claimAchievements();
     updatePigSkin();
   }
 
@@ -1478,13 +1725,21 @@
   }
   function recomputePassive() {
     let income = 0, tapBonus = 0;
-    allMarket().forEach(item => {
+    allUpgrades().forEach(item => {
       const lv = ownedLevel(item.id);
       if (lv > 0) {
         income += itemIncome(item, lv);
         tapBonus += itemTapBonus(item, lv);
       }
     });
+    // бонусы активного скина
+    if (state.activeSkin) {
+      const skin = allSkins().find(s => s.id === state.activeSkin);
+      if (skin && state.ownedSkins[skin.id]) {
+        income += (skin.income || 0);
+        tapBonus += (skin.tapBonus || 0);
+      }
+    }
     state.passivePerSec = income;
     state.tapBonusFlat = tapBonus;
   }
@@ -1536,6 +1791,7 @@
     ach: $('screenAch'),
     market: $('screenMarket'),
     profile: $('screenProfile'),
+    user: $('screenUser'),
     admin: $('screenAdmin')
   };
 
@@ -1546,7 +1802,7 @@
     $('topbar').style.display = (name === 'tap') ? '' : 'none';
     // nav highlights main tabs; rating/ach keep profile active
     let navActive = name;
-    if (name === 'rating' || name === 'ach') navActive = 'profile';
+    if (name === 'rating' || name === 'ach' || name === 'user') navActive = 'profile';
     if (name === 'admin') navActive = null;
     document.querySelectorAll('.nav-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.screen === navActive);
@@ -1554,9 +1810,26 @@
     document.getElementById('app').classList.toggle('admin-open', name === 'admin');
     if (name === 'rating') { pushLeaderboard(true); renderRating(); }
     if (name === 'ach') renderAch();
-    if (name === 'market') renderMarket();
+    if (name === 'market') {
+      renderMarket();
+      renderSkins();
+    }
     if (name === 'profile') renderProfile();
     if (name === 'admin') renderAdmin();
+  }
+
+  function loadNavAvatar() {
+    const photo = user && user.photo_url;
+    const img = $('navAvatar');
+    const btn = $('navProfileBtn');
+    if (!img || !btn || !photo) return;
+    const pre = new Image();
+    pre.onload = () => {
+      img.src = photo;
+      img.classList.add('show');
+      btn.classList.add('has-avatar');
+    };
+    pre.src = photo;
   }
 
   function renderProfile() {
@@ -1571,10 +1844,125 @@
         av.innerHTML = '<img src="' + photo + '" alt="">';
       } else {
         const init = (myName || '?').trim().charAt(0).toUpperCase();
-        av.textContent = init;
         av.innerHTML = init;
       }
     }
+    // my skins
+    const grid = $('mySkinsGrid');
+    if (grid) {
+      grid.innerHTML = '';
+      const ownedIds = Object.keys(state.ownedSkins || {});
+      if (!ownedIds.length) {
+        grid.innerHTML = '<div style="grid-column:1/-1;color:var(--tg-hint);font-size:13px;padding:8px 0">Пока нет купленных скинов</div>';
+      } else {
+        ownedIds.forEach(sid => {
+          const skin = allSkins().find(s => s.id === sid);
+          if (!skin) return;
+          const el = document.createElement('div');
+          el.className = 'my-skin-item' + (state.activeSkin === sid ? ' equipped' : '');
+          el.innerHTML =
+            (skin.image ? '<img src="' + skin.image + '" alt="">' : '<div style="aspect-ratio:1;background:var(--tg-secondary);border-radius:10px"></div>') +
+            '<div class="lbl">' + (state.activeSkin === sid ? '✓ ' : '') + skin.name + '</div>';
+          el.addEventListener('click', () => {
+            state.activeSkin = sid;
+            recomputePassive();
+            saveState();
+            render();
+            renderProfile();
+          });
+          grid.appendChild(el);
+        });
+      }
+    }
+    loadNavAvatar();
+  }
+
+  function openUserProfile(p) {
+    const body = $('userProfileBody');
+    if (!body || !p) return;
+    const init = (p.name || '?').trim().charAt(0).toUpperCase();
+    const photo = p.photo
+      ? '<img src="' + p.photo + '" alt="">'
+      : init;
+    const skinIds = Array.isArray(p.skins) ? p.skins : [];
+    const achIds = Array.isArray(p.achievements) ? p.achievements : [];
+
+    let skinsHtml = '';
+    if (!skinIds.length) {
+      skinsHtml = '<div class="up-empty">Нет скинов</div>';
+    } else {
+      skinsHtml = '<div class="my-skins-grid">';
+      skinIds.forEach(sid => {
+        const skin = allSkins().find(s => s.id === sid);
+        if (!skin) return;
+        const eq = p.activeSkin === sid ? ' equipped' : '';
+        skinsHtml += '<div class="my-skin-item' + eq + '">' +
+          (skin.image ? '<img src="' + skin.image + '">' : '') +
+          '<div class="lbl">' + skin.name + '</div></div>';
+      });
+      skinsHtml += '</div>';
+      if (skinsHtml === '<div class="my-skins-grid"></div>') {
+        skinsHtml = '<div class="up-empty">Нет скинов</div>';
+      }
+    }
+
+    let awardsHtml = '';
+    if (!achIds.length) {
+      awardsHtml = '<div class="up-empty">Пока нет наград</div>';
+    } else {
+      awardsHtml = '<div class="up-awards-grid">';
+      achIds.forEach(aid => {
+        const a = allAchievements().find(x => x.id === aid);
+        if (!a) return;
+        const media = a.image
+          ? '<img src="' + a.image + '" alt="">'
+          : iconSvg(a.icon || 'trophy');
+        awardsHtml +=
+          '<div class="up-award">' +
+            '<div class="up-award-media">' + media + '</div>' +
+            '<div class="up-award-name">' + a.name + '</div>' +
+          '</div>';
+      });
+      awardsHtml += '</div>';
+      if (awardsHtml === '<div class="up-awards-grid"></div>') {
+        awardsHtml = '<div class="up-empty">Пока нет наград</div>';
+      }
+    }
+
+    body.innerHTML =
+      '<div class="up-head">' +
+        '<div class="up-avatar">' + photo + '</div>' +
+        '<div class="up-name">' + (p.name || 'Игрок') + '</div>' +
+        '<div class="up-score">' + fmt(p.score || 0) + ' очков</div>' +
+      '</div>' +
+      '<div class="up-stats">' +
+        '<div class="up-stat"><div class="up-stat-val">' + fmt(p.score || 0) + '</div><div class="up-stat-lbl">Рейтинг</div></div>' +
+        '<div class="up-stat"><div class="up-stat-val">' + skinIds.length + '</div><div class="up-stat-lbl">Скинов</div></div>' +
+        '<div class="up-stat"><div class="up-stat-val">' + achIds.length + '</div><div class="up-stat-lbl">Наград</div></div>' +
+      '</div>' +
+      '<button type="button" class="up-tg-btn" id="openTgUser">Открыть в Telegram</button>' +
+      '<div class="my-skins-title">Скины</div>' + skinsHtml +
+      '<div class="my-skins-title" style="margin-top:16px">Награды</div>' +
+      '<div class="up-awards">' + awardsHtml + '</div>';
+
+    const btn = $('openTgUser');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        const uid = String(p.id || '');
+        try {
+          if (tg && tg.openTelegramLink && uid.match(/^\d+$/)) {
+            tg.openTelegramLink('tg://user?id=' + uid);
+          } else if (tg && tg.openLink) {
+            tg.openLink('https://t.me/');
+          } else {
+            window.open('tg://user?id=' + uid, '_blank');
+          }
+        } catch (e) {
+          alert('Не удалось открыть профиль Telegram');
+        }
+      });
+    }
+    showScreen('user');
   }
 
   document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -1583,6 +1971,7 @@
   if ($('adminBtn')) $('adminBtn').addEventListener('click', () => showScreen('admin'));
   if ($('ratingClose')) $('ratingClose').addEventListener('click', () => showScreen('profile'));
   if ($('achClose')) $('achClose').addEventListener('click', () => showScreen('profile'));
+  if ($('userClose')) $('userClose').addEventListener('click', () => showScreen('rating'));
   if ($('adminClose')) $('adminClose').addEventListener('click', () => showScreen('tap'));
 
   if ($('profileRatingBtn')) $('profileRatingBtn').addEventListener('click', () => showScreen('rating'));
@@ -1596,14 +1985,23 @@
   function renderRating() {
     const wrap = $('ratingList');
     wrap.innerHTML = '';
-    // ensure me is present
     let list = leaderboard.slice();
     const meIdx = list.findIndex(u => String(u.id) === myId);
+    const myPhoto = (user && user.photo_url) || null;
+    const mySkins = Object.keys(state.ownedSkins || {});
+    const myAchs = Object.keys(state.claimedAchs || {});
     if (meIdx >= 0) {
       list[meIdx].score = Math.floor(state.totalEarned);
       list[meIdx].name = myName;
+      list[meIdx].photo = myPhoto;
+      list[meIdx].skins = mySkins;
+      list[meIdx].activeSkin = state.activeSkin;
+      list[meIdx].achievements = myAchs;
     } else {
-      list.push({ id: myId, name: myName, score: Math.floor(state.totalEarned), me: true });
+      list.push({
+        id: myId, name: myName, score: Math.floor(state.totalEarned), me: true,
+        photo: myPhoto, skins: mySkins, activeSkin: state.activeSkin, achievements: myAchs
+      });
     }
     list.sort((a, b) => b.score - a.score);
 
@@ -1616,15 +2014,22 @@
     list.forEach((p, i) => {
       const isMe = String(p.id) === myId;
       const row = document.createElement('div');
-      row.className = 'rank-row' + (isMe ? ' me' : '');
+      row.className = 'rank-row rating-row' + (isMe ? ' me' : '');
       const med = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null;
       const col = COLORS[i % COLORS.length];
       const init = (p.name || '?').trim().charAt(0).toUpperCase();
+      const avHtml = p.photo
+        ? '<div class="avatar" style="background:transparent;padding:0;overflow:hidden"><img src="' + p.photo + '" style="width:100%;height:100%;object-fit:cover"></div>'
+        : '<div class="avatar" style="background:' + (isMe ? 'var(--tier)' : col) + '">' + init + '</div>';
       row.innerHTML =
         (med ? '<div class="rank-medal">' + med + '</div>' : '<div class="rank-num">' + (i + 1) + '</div>') +
-        '<div class="avatar" style="background:' + (isMe ? 'var(--tier)' : col) + '">' + init + '</div>' +
-        '<div class="rank-info"><div class="rank-name">' + (p.name || 'Игрок') + '</div><div class="rank-sub">' + (isMe ? 'Это вы' : 'Игрок') + '</div></div>' +
+        avHtml +
+        '<div class="rank-info"><div class="rank-name">' + (p.name || 'Игрок') + '</div><div class="rank-sub">' + (isMe ? 'Это вы' : 'Нажмите, чтобы открыть') + '</div></div>' +
         '<div class="rank-score">' + fmt(p.score) + '</div>';
+      row.addEventListener('click', () => {
+        if (isMe) showScreen('profile');
+        else openUserProfile(p);
+      });
       wrap.appendChild(row);
     });
   }
@@ -1680,12 +2085,9 @@
   /* ===== MARKET ===== */
   function renderMarket() {
     const wrap = $('marketList');
+    if (!wrap) return;
     wrap.innerHTML = '';
-    const list = allMarket();
-    if (!list.length) {
-      wrap.innerHTML = '<div class="market-empty">Пока нет товаров в магазине.</div>';
-      return;
-    }
+    const list = allUpgrades();
     list.forEach(item => {
       const lv = ownedLevel(item.id);
       const maxLv = itemMaxLevel(item);
@@ -1693,10 +2095,8 @@
       const can = lv < maxLv && state.balance >= nextCost;
       const card = document.createElement('div');
       card.className = 'market-card';
-      const media = item.image ? '<img src="' + item.image + '">' : iconSvg(item.icon || 'gift');
+      const media = iconSvg(item.icon || 'gift');
       const effects = [];
-      const curInc = itemIncome(item, Math.max(lv, 1));
-      const curTap = itemTapBonus(item, Math.max(lv, 1));
       if ((item.income || 0) > 0) effects.push('+' + (lv > 0 ? itemIncome(item, lv) : item.income) + '/сек');
       if ((item.tapBonus || 0) > 0) effects.push('+' + (lv > 0 ? itemTapBonus(item, lv) : item.tapBonus) + ' к тапу');
 
@@ -1724,7 +2124,7 @@
     });
     wrap.querySelectorAll('.buy-btn.can').forEach(btn => {
       btn.addEventListener('click', () => {
-        const item = allMarket().find(i => i.id === btn.dataset.id);
+        const item = allUpgrades().find(i => i.id === btn.dataset.id);
         if (!item) return;
         const lv = ownedLevel(item.id);
         const maxLv = itemMaxLevel(item);
@@ -1741,6 +2141,73 @@
     });
   }
 
+  function renderSkins() {
+    const wrap = $('skinsList');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    const list = allSkins();
+    if (!list.length) {
+      wrap.innerHTML = '<div class="market-empty" style="padding:24px;text-align:center;color:var(--tg-hint)">Пока нет скинов.<br>Создатель ещё не добавил.</div>';
+      return;
+    }
+    list.forEach(skin => {
+      const owned = !!state.ownedSkins[skin.id];
+      const equipped = state.activeSkin === skin.id;
+      const can = !owned && state.balance >= (skin.price || 0);
+      const card = document.createElement('div');
+      card.className = 'skin-card';
+      const thumb = skin.image
+        ? '<img src="' + skin.image + '" alt="">'
+        : iconSvg('gift');
+      const bonuses = [];
+      if (skin.tapBonus) bonuses.push('+' + skin.tapBonus + ' к тапу');
+      if (skin.income) bonuses.push('+' + skin.income + '/сек');
+
+      let btn;
+      if (equipped) {
+        btn = '<button class="buy-btn maxed" disabled>Надето</button>';
+      } else if (owned) {
+        btn = '<button class="buy-btn can" data-equip="' + skin.id + '">Надеть</button>';
+      } else {
+        btn = '<button class="buy-btn' + (can ? ' can' : '') + '" data-buy="' + skin.id + '"' + (can ? '' : ' disabled') + '>' +
+          'Купить<span class="buy-price-line">' + fmt(skin.price || 0) + '</span></button>';
+      }
+
+      card.innerHTML =
+        '<div class="skin-thumb">' + thumb + '</div>' +
+        '<div class="skin-info">' +
+          '<div class="skin-name">' + skin.name + '</div>' +
+          '<div class="skin-desc">' + (skin.desc || '') + '</div>' +
+          (bonuses.length ? '<div class="skin-bonus">' + bonuses.join(' · ') + ' (пока надет)</div>' : '') +
+        '</div>' +
+        '<div class="skin-actions">' + btn + '</div>';
+      wrap.appendChild(card);
+    });
+    wrap.querySelectorAll('[data-buy]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const skin = allSkins().find(s => s.id === btn.dataset.buy);
+        if (!skin || state.ownedSkins[skin.id]) return;
+        if (state.balance < (skin.price || 0)) return;
+        state.balance -= (skin.price || 0);
+        state.ownedSkins[skin.id] = true;
+        state.activeSkin = skin.id;
+        recomputePassive();
+        saveState();
+        render();
+        renderSkins();
+      });
+    });
+    wrap.querySelectorAll('[data-equip]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.activeSkin = btn.dataset.equip;
+        recomputePassive();
+        saveState();
+        render();
+        renderSkins();
+      });
+    });
+  }
+
   /* ===== ADMIN ===== */
   if (isAdmin) $('adminBtn').style.display = '';
 
@@ -1749,8 +2216,22 @@
       document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-      const map = { users: 'adminUsers', goods: 'adminGoods', achs: 'adminAchs' };
-      $(map[tab.dataset.tab]).classList.add('active');
+      const map = { users: 'adminUsers', skins: 'adminSkins', achs: 'adminAchs' };
+      const el = $(map[tab.dataset.tab]);
+      if (el) el.classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.shop-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.shop-section').forEach(s => s.classList.remove('active'));
+      const id = tab.dataset.shop === 'skins' ? 'shopSkins' : 'shopUpgrades';
+      const el = $(id);
+      if (el) el.classList.add('active');
+      if (tab.dataset.shop === 'skins') renderSkins();
+      else renderMarket();
     });
   });
 
@@ -1776,7 +2257,7 @@
     document.addEventListener('click', () => root.classList.remove('open'));
   })();
 
-  let afImage = null, mfImage = null;
+  let afImage = null, skImage = null;
 
   /* High-quality image loader: keeps sharpness, only lightly downscales huge files */
   function loadImageHighQuality(file, maxSide) {
@@ -1832,12 +2313,12 @@
       alert('Не удалось загрузить картинку');
     }
   });
-  $('mfImgInput').addEventListener('change', async e => {
+  if ($('skImgInput')) $('skImgInput').addEventListener('change', async e => {
     const f = e.target.files[0];
     if (!f) return;
     try {
-      mfImage = await loadImageHighQuality(f, 512);
-      $('mfImgPreview').innerHTML = '<img src="' + mfImage + '">';
+      skImage = await loadImageHighQuality(f, 768);
+      $('skImgPreview').innerHTML = '<img src="' + skImage + '">';
     } catch (err) {
       alert('Не удалось загрузить картинку');
     }
@@ -1848,45 +2329,46 @@
     const desc = $('afDesc').value.trim();
     const metric = ($('afMetricSelect') && $('afMetricSelect').dataset.value) || 'taps';
     const target = parseInt($('afTarget').value, 10) || 0;
+    const reward = Math.max(0, parseInt(($('afReward') && $('afReward').value) || '0', 10) || 0);
     if (!name || target <= 0) { alert('Заполните название и цель'); return; }
     customAchievements.push({
       id: 'a' + Date.now(),
-      name, desc: desc || '—',
-      metric, target,
+      name, desc: desc || '-',
+      metric, target, reward,
       secret: $('afSecret').checked,
-      isSkin: $('afSkin').checked,
       image: afImage,
       icon: 'trophy'
     });
     $('afName').value = ''; $('afDesc').value = ''; $('afTarget').value = '';
-    $('afSecret').checked = false; $('afSkin').checked = false;
+    if ($('afReward')) $('afReward').value = '0';
+    $('afSecret').checked = false;
     afImage = null; $('afImgPreview').innerHTML = 'нет';
     persistCustomData();
     renderAdmin();
     renderAch();
   });
 
-  $('mfSubmit').addEventListener('click', () => {
-    const name = $('mfName').value.trim();
-    const desc = $('mfDesc').value.trim();
-    const price = parseInt($('mfPrice').value, 10) || 0;
-    const income = parseInt($('mfIncome').value, 10) || 0;
-    const tapBonus = parseInt($('mfTapBonus').value, 10) || 0;
+  if ($('skSubmit')) $('skSubmit').addEventListener('click', () => {
+    const name = $('skName').value.trim();
+    const desc = $('skDesc').value.trim();
+    const price = parseInt($('skPrice').value, 10) || 0;
+    const income = parseInt(($('skIncome') && $('skIncome').value) || '0', 10) || 0;
+    const tapBonus = parseInt(($('skTapBonus') && $('skTapBonus').value) || '0', 10) || 0;
     if (!name || price <= 0) { alert('Заполните название и цену'); return; }
-    const maxLevel = Math.max(1, parseInt(($('mfMaxLevel') && $('mfMaxLevel').value) || '5', 10) || 5);
-    customMarket.push({
-      id: 'm' + Date.now(),
-      name, desc: desc || '—',
-      price, income, tapBonus, maxLevel,
-      image: mfImage,
-      icon: 'gift'
+    if (!skImage) { alert('Загрузите картинку скина'); return; }
+    customSkins.push({
+      id: 's' + Date.now(),
+      name, desc: desc || '-',
+      price, income, tapBonus,
+      image: skImage
     });
-    $('mfName').value = ''; $('mfDesc').value = ''; $('mfPrice').value = '';
-    $('mfIncome').value = ''; $('mfTapBonus').value = '';
-    if ($('mfMaxLevel')) $('mfMaxLevel').value = '5';
-    mfImage = null; $('mfImgPreview').innerHTML = 'нет';
+    $('skName').value = ''; $('skDesc').value = ''; $('skPrice').value = '';
+    if ($('skIncome')) $('skIncome').value = '';
+    if ($('skTapBonus')) $('skTapBonus').value = '';
+    skImage = null; $('skImgPreview').innerHTML = 'нет';
     persistCustomData();
     renderAdmin();
+    renderSkins();
   });
 
   function renderAdmin() {
@@ -1946,25 +2428,28 @@
       });
     }
 
-    // goods list
-    const mList = $('mfList');
-    mList.innerHTML = '';
-    customMarket.forEach(item => {
-      const row = document.createElement('div');
-      row.className = 'admin-item';
-      row.innerHTML =
-        '<div class="thumb">' + (item.image ? '<img src="' + item.image + '">' : iconSvg('gift')) + '</div>' +
-        '<div class="name">' + item.name + ' · ' + fmt(item.price) + '</div>' +
-        '<button class="del-btn" data-id="' + item.id + '">Удалить</button>';
-      mList.appendChild(row);
-    });
-    mList.querySelectorAll('.del-btn').forEach(b => {
-      b.addEventListener('click', () => {
-        customMarket = customMarket.filter(i => i.id !== b.dataset.id);
-        persistCustomData();
-        renderAdmin();
+    // skins list
+    const skList = $('skList');
+    if (skList) {
+      skList.innerHTML = '';
+      customSkins.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'admin-item';
+        row.innerHTML =
+          '<div class="thumb">' + (item.image ? '<img src="' + item.image + '">' : iconSvg('gift')) + '</div>' +
+          '<div class="name">' + item.name + ' · ' + fmt(item.price) + '</div>' +
+          '<button class="del-btn" data-id="' + item.id + '">Удалить</button>';
+        skList.appendChild(row);
       });
-    });
+      skList.querySelectorAll('.del-btn').forEach(b => {
+        b.addEventListener('click', () => {
+          customSkins = customSkins.filter(i => i.id !== b.dataset.id);
+          persistCustomData();
+          renderAdmin();
+          renderSkins();
+        });
+      });
+    }
 
     // ach list
     const aList = $('afList');
@@ -1974,7 +2459,7 @@
       row.className = 'admin-item';
       row.innerHTML =
         '<div class="thumb">' + (a.image ? '<img src="' + a.image + '">' : iconSvg('trophy')) + '</div>' +
-        '<div class="name">' + a.name + (a.isSkin ? ' 🐷' : '') + '</div>' +
+        '<div class="name">' + a.name + (a.reward ? ' · +' + fmt(a.reward) : '') + '</div>' +
         '<button class="del-btn" data-id="' + a.id + '">Удалить</button>';
       aList.appendChild(row);
     });
@@ -1992,6 +2477,7 @@
   (async function init() {
     await loadState();
     loadLocalCustom(); // local backup
+    loadNavAvatar();
     await fetchShared(); // server is source of truth when available
     recomputePassive();
     applyOffline();
@@ -2006,31 +2492,15 @@
     // push score every 2 min while app is open
     setInterval(() => pushLeaderboard(false), 120000);
 
-    // splash: type text → then fade in 16+ → then hide
+    // splash: only 16+ fade in, then hide
     const splash = document.getElementById('splash');
-    const splashTextEl = document.getElementById('splashText');
-    const splashAge = splash && splash.querySelector('.splash-age');
-    const phrase = 'любое совпадение с реальностью случайно';
-    async function typeSplash() {
-      if (!splashTextEl) return;
-      splashTextEl.textContent = '';
-      for (let i = 0; i < phrase.length; i++) {
-        splashTextEl.textContent += phrase[i];
-        await new Promise(r => setTimeout(r, 38));
-      }
-    }
-    await typeSplash();
-    // only after full text — show 16+
-    if (splashAge) {
-      await new Promise(r => setTimeout(r, 200));
-      splashAge.classList.add('show');
-      await new Promise(r => setTimeout(r, 900));
-    } else {
-      await new Promise(r => setTimeout(r, 500));
-    }
+    const splashAge = document.getElementById('splashAge');
+    await new Promise(r => setTimeout(r, 120));
+    if (splashAge) splashAge.classList.add('show');
+    await new Promise(r => setTimeout(r, 1100));
     if (splash) {
       splash.classList.add('hide');
-      setTimeout(() => splash.remove(), 600);
+      setTimeout(() => splash.remove(), 550);
     }
   })();
 })();
