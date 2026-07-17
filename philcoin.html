@@ -616,9 +616,11 @@
   }
   .nav-btn {
     flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 3px;
     background: var(--tg-card);
     border: none !important;
@@ -632,8 +634,18 @@
     cursor: pointer;
     font-family: inherit;
     border-radius: 16px;
+    overflow: hidden;
   }
-  .nav-btn svg { width: 22px; height: 22px; }
+  .nav-btn .nav-ico {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .nav-btn svg { width: 22px; height: 22px; display: block; }
   .nav-btn.active {
     color: var(--tier);
     background: var(--tier-soft);
@@ -884,13 +896,14 @@
   .skin-actions { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
 
   .nav-avatar {
-    width: 26px;
-    height: 26px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     object-fit: cover;
     opacity: 0;
     transition: opacity .45s ease;
     display: none;
+    flex-shrink: 0;
   }
   .nav-avatar.show {
     display: block;
@@ -900,9 +913,10 @@
     width: 22px;
     height: 22px;
     display: block;
+    flex-shrink: 0;
   }
   .nav-btn.has-avatar .nav-icon-fallback {
-    display: none;
+    display: none !important;
   }
   .nav-btn.has-avatar .nav-avatar {
     display: block;
@@ -1376,17 +1390,33 @@
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    gap: 0;
+    padding: 0;
   }
   .profile-carousel::-webkit-scrollbar { display: none; }
   .profile-slide {
-    flex: 0 0 100%;
+    flex: 0 0 78%;
     scroll-snap-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    padding: 8px 16px 4px;
+    padding: 12px 8px 4px;
     box-sizing: border-box;
+    transform: scale(0.88);
+    opacity: 0.5;
+    transition: transform .18s ease, opacity .18s ease;
+    will-change: transform, opacity;
+  }
+  .profile-slide.is-center {
+    transform: scale(1);
+    opacity: 1;
+  }
+  /* side peeks */
+  .profile-carousel::before,
+  .profile-carousel::after {
+    content: '';
+    flex: 0 0 11%;
   }
   .profile-slide-avatar {
     width: 92px;
@@ -1401,6 +1431,7 @@
     font-weight: 700;
     color: var(--tier);
     font-family: 'Fredoka', sans-serif;
+    transition: transform .18s ease;
   }
   .profile-slide-avatar img {
     width: 100%; height: 100%; object-fit: cover;
@@ -1530,6 +1561,69 @@
     margin-top: 12px;
   }
   .clan-share-row button { flex: 1; }
+
+  .clan-bank-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--tg-card);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--tg-text);
+  }
+  .clan-bank-pill span { color: var(--tier); }
+  .clan-panel-cards {
+    padding: 8px 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .clan-members-block {
+    margin: 0 14px 16px;
+    background: var(--tg-card);
+    border-radius: 18px;
+    padding: 14px;
+  }
+  .clan-members-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--tg-hint);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 12px;
+  }
+  .clan-member-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+  }
+  .clan-member-row + .clan-member-row {
+    border-top: 1px solid color-mix(in srgb, var(--tg-hint) 12%, transparent);
+  }
+  .clan-member-av {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--tg-secondary);
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px; color: var(--tier);
+    flex-shrink: 0;
+  }
+  .clan-member-av img { width: 100%; height: 100%; object-fit: cover; }
+  .clan-member-info { flex: 1; min-width: 0; }
+  .clan-member-name { font-size: 14px; font-weight: 600; }
+  .clan-member-role { font-size: 11px; color: var(--tg-hint); margin-top: 1px; }
+  .clan-member-score { font-size: 13px; font-weight: 600; color: var(--tg-text); }
+  .clan-empty-actions {
+    padding: 8px 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 </style>
 </head>
 <body>
@@ -1637,54 +1731,62 @@
         </div>
         <div class="profile-dots" id="profileDots"><span class="on"></span><span></span></div>
       </div>
-      <div class="profile-cards">
-        <div class="profile-card" id="profilePublicRow" style="cursor:default">
-          <div class="profile-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+      <!-- ME PANEL -->
+      <div id="profileMePanel">
+        <div class="profile-cards">
+          <div class="profile-card" id="profilePublicRow" style="cursor:default">
+            <div class="profile-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+            </div>
+            <div class="profile-card-text">
+              <div class="profile-card-title">Публичный профиль</div>
+              <div class="profile-card-sub">Виден в рейтинге и поиске</div>
+            </div>
+            <label class="ios-switch">
+              <input type="checkbox" id="publicSwitch">
+              <span class="slider"></span>
+            </label>
           </div>
-          <div class="profile-card-text">
-            <div class="profile-card-title">Публичный профиль</div>
-            <div class="profile-card-sub">Виден в рейтинге и поиске</div>
-          </div>
-          <label class="ios-switch">
-            <input type="checkbox" id="publicSwitch">
-            <span class="slider"></span>
-          </label>
+          <button type="button" class="profile-card" id="profileRatingBtn">
+            <div class="profile-card-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2H22l-6 4.8 2.3 7L12 16.8 5.7 21l2.3-7-6-4.8h7.6z"/></svg>
+            </div>
+            <div class="profile-card-text">
+              <div class="profile-card-title">Рейтинг</div>
+              <div class="profile-card-sub">Таблица лидеров</div>
+            </div>
+            <div class="profile-card-chevron">›</div>
+          </button>
+          <button type="button" class="profile-card" id="profileAchsBtn">
+            <div class="profile-card-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a3 3 0 0 1 3 3v1h2a2 2 0 0 1 2 2v2c0 1.5-.7 2.8-1.8 3.6A6 6 0 0 1 13 17.9V20h2a1 1 0 1 1 0 2H9a1 1 0 1 1 0-2h2v-2.1A6 6 0 0 1 6.8 13.6 4.5 4.5 0 0 1 5 10V8a2 2 0 0 1 2-2h2V5a3 3 0 0 1 3-3zm0 2a1 1 0 0 0-1 1v1h2V5a1 1 0 0 0-1-1zM7 8v2c0 .9.4 1.7 1 2.2V10a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2.2c.6-.5 1-1.3 1-2.2V8H7z"/></svg>
+            </div>
+            <div class="profile-card-text">
+              <div class="profile-card-title">Награды</div>
+              <div class="profile-card-sub">Достижения</div>
+            </div>
+            <div class="profile-card-chevron">›</div>
+          </button>
+          <button type="button" class="profile-card profile-withdraw" id="profileWithdrawBtn">
+            <div class="profile-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 19h14"/></svg>
+            </div>
+            <div class="profile-card-text">
+              <div class="profile-card-title">Вывести филькоины</div>
+              <div class="profile-card-sub">Обмен монет</div>
+            </div>
+            <div class="profile-card-chevron">›</div>
+          </button>
         </div>
-        <button type="button" class="profile-card" id="profileRatingBtn">
-          <div class="profile-card-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2H22l-6 4.8 2.3 7L12 16.8 5.7 21l2.3-7-6-4.8h7.6z"/></svg>
-          </div>
-          <div class="profile-card-text">
-            <div class="profile-card-title">Рейтинг</div>
-            <div class="profile-card-sub">Таблица лидеров</div>
-          </div>
-          <div class="profile-card-chevron">›</div>
-        </button>
-        <button type="button" class="profile-card" id="profileAchsBtn">
-          <div class="profile-card-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a3 3 0 0 1 3 3v1h2a2 2 0 0 1 2 2v2c0 1.5-.7 2.8-1.8 3.6A6 6 0 0 1 13 17.9V20h2a1 1 0 1 1 0 2H9a1 1 0 1 1 0-2h2v-2.1A6 6 0 0 1 6.8 13.6 4.5 4.5 0 0 1 5 10V8a2 2 0 0 1 2-2h2V5a3 3 0 0 1 3-3zm0 2a1 1 0 0 0-1 1v1h2V5a1 1 0 0 0-1-1zM7 8v2c0 .9.4 1.7 1 2.2V10a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2.2c.6-.5 1-1.3 1-2.2V8H7z"/></svg>
-          </div>
-          <div class="profile-card-text">
-            <div class="profile-card-title">Награды</div>
-            <div class="profile-card-sub">Достижения</div>
-          </div>
-          <div class="profile-card-chevron">›</div>
-        </button>
-        <button type="button" class="profile-card profile-withdraw" id="profileWithdrawBtn">
-          <div class="profile-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 19h14"/></svg>
-          </div>
-          <div class="profile-card-text">
-            <div class="profile-card-title">Вывести филькоины</div>
-            <div class="profile-card-sub">Обмен монет</div>
-          </div>
-          <div class="profile-card-chevron">›</div>
-        </button>
+        <div class="my-skins">
+          <div class="my-skins-title">Мои скины</div>
+          <div class="my-skins-grid" id="mySkinsGrid"></div>
+        </div>
       </div>
-      <div class="my-skins">
-        <div class="my-skins-title">Мои скины</div>
-        <div class="my-skins-grid" id="mySkinsGrid"></div>
+
+      <!-- CLAN PANEL (same place as profile items) -->
+      <div id="profileClanPanel" style="display:none">
+        <div id="profileClanContent"></div>
       </div>
     </div>
 
@@ -1804,8 +1906,10 @@
       Шоп
     </button>
     <button class="nav-btn" data-screen="profile" id="navProfileBtn">
-      <img class="nav-avatar" id="navAvatar" alt="">
-      <svg class="nav-icon-fallback" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span class="nav-ico">
+        <img class="nav-avatar" id="navAvatar" alt="">
+        <svg class="nav-icon-fallback" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </span>
       Профиль
     </button>
   </nav>
@@ -2500,24 +2604,204 @@
     }
     loadNavAvatar();
     bindProfileCarousel();
+    const car = $('profileCarousel');
+    if (car && car._lastIdx === 1) renderProfileClanPanel();
+  }
+
+  function setProfileSlide(idx) {
+    const me = $('profileMePanel');
+    const cl = $('profileClanPanel');
+    if (me) me.style.display = idx === 0 ? '' : 'none';
+    if (cl) cl.style.display = idx === 1 ? '' : 'none';
+    if (idx === 1) renderProfileClanPanel();
   }
 
   function bindProfileCarousel() {
     const car = $('profileCarousel');
     const dots = $('profileDots');
-    if (!car || car._bound) return;
-    car._bound = true;
-    const updateDots = () => {
-      const idx = Math.round(car.scrollLeft / Math.max(1, car.clientWidth));
+    if (!car) return;
+    const slides = () => Array.from(car.querySelectorAll('.profile-slide'));
+    const update = () => {
+      const mid = car.scrollLeft + car.clientWidth / 2;
+      let best = 0, bestDist = Infinity;
+      slides().forEach((sl, i) => {
+        const c = sl.offsetLeft + sl.offsetWidth / 2;
+        const d = Math.abs(c - mid);
+        const t = Math.max(0, 1 - d / (car.clientWidth * 0.7));
+        const scale = 0.86 + 0.14 * t;
+        const op = 0.45 + 0.55 * t;
+        sl.style.transform = 'scale(' + scale.toFixed(3) + ')';
+        sl.style.opacity = op.toFixed(3);
+        sl.classList.toggle('is-center', t > 0.7);
+        if (d < bestDist) { bestDist = d; best = i; }
+      });
       if (dots) {
-        dots.querySelectorAll('span').forEach((s, i) => s.classList.toggle('on', i === idx));
+        dots.querySelectorAll('span').forEach((s, i) => s.classList.toggle('on', i === best));
+      }
+      if (car._lastIdx !== best) {
+        car._lastIdx = best;
+        setProfileSlide(best);
       }
     };
-    car.addEventListener('scroll', () => {
-      clearTimeout(car._st);
-      car._st = setTimeout(updateDots, 40);
-    }, { passive: true });
+    if (!car._bound) {
+      car._bound = true;
+      car.addEventListener('scroll', () => {
+        requestAnimationFrame(update);
+      }, { passive: true });
+      window.addEventListener('resize', update);
+    }
+    update();
   }
+
+  function renderProfileClanPanel() {
+    const wrap = $('profileClanContent');
+    if (!wrap) return;
+    const c = myClan();
+
+    // update carousel clan slide header bits
+    const cAv = $('profileClanAvatar');
+    const cNm = $('profileClanName');
+    const cSub = $('profileClanSub');
+
+    if (!c) {
+      if (cAv) {
+        cAv.classList.remove('has-clan');
+        cAv.innerHTML = '<svg class="plus-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+        cAv.onclick = () => { clanWizardStep = 1; showScreen('clan'); };
+      }
+      if (cNm) cNm.textContent = 'Клан';
+      if (cSub) cSub.innerHTML = 'Ещё нет клана';
+      wrap.innerHTML =
+        '<div class="clan-empty-actions">' +
+          '<button type="button" class="profile-card" id="clanCreateCard">' +
+            '<div class="profile-card-icon" style="background:var(--tier-soft);color:var(--tier)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>' +
+            '<div class="profile-card-text"><div class="profile-card-title">Создать клан</div><div class="profile-card-sub">Стань лидером команды</div></div>' +
+            '<div class="profile-card-chevron">›</div>' +
+          '</button>' +
+          '<button type="button" class="profile-card" id="clanFindCard">' +
+            '<div class="profile-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg></div>' +
+            '<div class="profile-card-text"><div class="profile-card-title">Найти клан</div><div class="profile-card-sub">Вступить в существующий</div></div>' +
+            '<div class="profile-card-chevron">›</div>' +
+          '</button>' +
+        '</div>';
+      const cc = $('clanCreateCard');
+      if (cc) cc.onclick = () => { clanWizardStep = 1; showScreen('clan'); };
+      const cf = $('clanFindCard');
+      if (cf) cf.onclick = () => showScreen('search');
+      return;
+    }
+
+    // has clan — rich panel
+    if (cAv) {
+      cAv.classList.add('has-clan');
+      if (c.avatar) cAv.innerHTML = '<img src="' + c.avatar + '" alt="">';
+      else cAv.innerHTML = '<span style="font-size:32px;font-weight:700;color:var(--tier)">' + (c.name || '?').charAt(0).toUpperCase() + '</span>';
+      cAv.onclick = null;
+    }
+    if (cNm) cNm.textContent = c.name || 'Клан';
+    if (cSub) {
+      cSub.innerHTML = '<div class="clan-bank-pill">Казна · <span>' + fmt(c.bank || 0) + '</span></div>';
+    }
+
+    const isOwner = String(c.ownerId) === String(myId);
+    const members = c.members || [];
+    let membersHtml = members.map(mid => {
+      const u = leaderboard.find(x => String(x.id) === String(mid));
+      const name = u ? (u.name || 'Игрок') : ('ID ' + mid);
+      const photo = u && u.photo;
+      const init = (name || '?').charAt(0).toUpperCase();
+      const role = String(c.ownerId) === String(mid) ? 'Лидер' : 'Участник';
+      const av = photo
+        ? '<div class="clan-member-av"><img src="' + photo + '" alt=""></div>'
+        : '<div class="clan-member-av">' + init + '</div>';
+      return '<div class="clan-member-row">' + av +
+        '<div class="clan-member-info"><div class="clan-member-name">' + name + (String(mid)===String(myId)?' · вы':'') + '</div>' +
+        '<div class="clan-member-role">' + role + '</div></div>' +
+        '<div class="clan-member-score">' + fmt(u ? u.score : 0) + '</div></div>';
+    }).join('');
+
+    wrap.innerHTML =
+      '<div class="clan-panel-cards">' +
+        '<div class="profile-card" style="cursor:default">' +
+          '<div class="profile-card-icon" style="background:color-mix(in srgb,#57cf9d 18%,var(--tg-card));color:#57cf9d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>' +
+          '<div class="profile-card-text"><div class="profile-card-title">Казна клана</div><div class="profile-card-sub">' + fmt(c.bank || 0) + ' филькоинов</div></div>' +
+        '</div>' +
+        '<button type="button" class="profile-card" id="clanDonateCard">' +
+          '<div class="profile-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>' +
+          '<div class="profile-card-text"><div class="profile-card-title">Внести в казну</div><div class="profile-card-sub">Пополнить общий баланс</div></div>' +
+          '<div class="profile-card-chevron">›</div>' +
+        '</button>' +
+        (isOwner ? (
+          '<button type="button" class="profile-card" id="clanInviteCard">' +
+            '<div class="profile-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></div>' +
+            '<div class="profile-card-text"><div class="profile-card-title">Пригласить</div><div class="profile-card-sub">Добавить участника</div></div>' +
+            '<div class="profile-card-chevron">›</div>' +
+          '</button>' +
+          '<button type="button" class="profile-card" id="clanShareCard">' +
+            '<div class="profile-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg></div>' +
+            '<div class="profile-card-text"><div class="profile-card-title">Поделиться</div><div class="profile-card-sub">Ссылка на клан</div></div>' +
+            '<div class="profile-card-chevron">›</div>' +
+          '</button>'
+        ) : '') +
+        '<button type="button" class="profile-card" id="clanLeaveCard" style="opacity:0.95">' +
+          '<div class="profile-card-icon" style="background:rgba(255,92,92,.12);color:#ff5c5c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></div>' +
+          '<div class="profile-card-text"><div class="profile-card-title">Покинуть клан</div><div class="profile-card-sub">Выйти из команды</div></div>' +
+          '<div class="profile-card-chevron">›</div>' +
+        '</button>' +
+      '</div>' +
+      '<div class="clan-members-block">' +
+        '<div class="clan-members-title">Участники · ' + members.length + '</div>' +
+        membersHtml +
+      '</div>';
+
+    const don = $('clanDonateCard');
+    if (don) don.onclick = () => {
+      const val = prompt('Сумма взноса в казну:', '1000');
+      if (val === null) return;
+      const amt = Math.max(0, parseInt(val, 10) || 0);
+      if (amt <= 0) return;
+      if (state.balance < amt) { alert('Недостаточно монет'); return; }
+      state.balance -= amt;
+      c.bank = (c.bank || 0) + amt;
+      saveState();
+      saveClans();
+      render();
+      renderProfile();
+      renderProfileClanPanel();
+    };
+    const inv = $('clanInviteCard');
+    if (inv) inv.onclick = () => {
+      const uid = prompt('Telegram ID игрока:');
+      if (!uid) return;
+      if (!c.members) c.members = [];
+      if (!c.members.map(String).includes(String(uid.trim()))) c.members.push(uid.trim());
+      if (!c.invites) c.invites = [];
+      if (!c.invites.map(String).includes(String(uid.trim()))) c.invites.push(uid.trim());
+      saveClans();
+      alert('Приглашение отправлено');
+      renderProfileClanPanel();
+    };
+    const sh = $('clanShareCard');
+    if (sh) sh.onclick = () => {
+      const link = 'https://t.me/share/url?url=' + encodeURIComponent((window.location.origin || '') + '/?clan=' + c.id) + '&text=' + encodeURIComponent('Вступай в клан «' + c.name + '» в Филькоине!');
+      if (tg && tg.openTelegramLink) tg.openTelegramLink(link);
+      else window.open(link, '_blank');
+    };
+    const leave = $('clanLeaveCard');
+    if (leave) leave.onclick = () => {
+      if (!confirm('Покинуть клан?')) return;
+      c.members = (c.members || []).filter(id => String(id) !== String(myId));
+      if (String(c.ownerId) === String(myId) && c.members.length) c.ownerId = c.members[0];
+      if (!c.members.length) customClans = customClans.filter(x => x.id !== c.id);
+      state.clanId = null;
+      saveState();
+      saveClans();
+      pushLeaderboard(true);
+      renderProfile();
+      renderProfileClanPanel();
+    };
+  }
+
 
   function renderSearch(q) {
     const wrap = $('searchResults');
