@@ -2444,7 +2444,7 @@
     setTimeout(close, 2000);
   }
 
-  // Global click handler — only for profile verified badge
+  // Global click handler for verified badge (tooltip)
   document.addEventListener('click', (e) => {
     const badge = e.target.closest('.verified-badge');
     if (!badge) return;
@@ -2453,6 +2453,23 @@
     const inMainProfile = !!badge.closest('#screenProfile');
     const inOtherProfile = !!badge.closest('#userProfile') || !!badge.closest('.up-head');
     if (!inMainProfile && !inOtherProfile) return;
+  });
+
+  // Global handler for admin pencil in other-user profiles
+  document.addEventListener('click', (e) => {
+    const pencil = e.target.closest('.admin-pencil');
+    if (!pencil) return;
+
+    const userId = pencil.dataset.userId;
+    if (!userId) return;
+
+    // Find the user object from leaderboard or shared data
+    const user = (shared.leaderboard || []).find(u => String(u.id) === String(userId));
+    if (user) {
+      e.stopImmediatePropagation();
+      openAdminBalanceEditor(user);
+    }
+  });
 
     let username = 'Игрок';
     const parent = badge.parentElement;
@@ -3833,10 +3850,10 @@
       ? '<img src="' + p.photo + '" alt="">'
       : init;
 
-    // Admin pencil for balance editing
+    // Admin pencil for balance editing (safe version)
     let adminEditHtml = '';
     if (isCreatorId(myId) && String(p.id) !== String(myId)) {
-      adminEditHtml = `<button class="admin-pencil" onclick="event.stopImmediatePropagation(); openAdminBalanceEditorFromProfile(${JSON.stringify(p)})">✏️</button>`;
+      adminEditHtml = `<button class="admin-pencil" data-user-id="${p.id}">✏️</button>`;
     }
     const skinIds = Array.isArray(p.skins) ? p.skins : [];
     const achIds = Array.isArray(p.achievements) ? p.achievements : [];
