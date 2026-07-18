@@ -32,7 +32,8 @@ function defaultShared() {
     skins: [],
     clans: [],
     leaderboard: [],
-    forceBalances: {}
+    forceBalances: {},
+    verifiedUsers: {}   // { userId: { verified: true, badgeText: "текст бейджа" } }
   };
 }
 
@@ -50,7 +51,9 @@ function loadData() {
         clans: Array.isArray(parsed.clans) ? parsed.clans : [],
         leaderboard: Array.isArray(parsed.leaderboard) ? parsed.leaderboard : [],
         forceBalances: (parsed.forceBalances && typeof parsed.forceBalances === 'object')
-          ? parsed.forceBalances : {}
+          ? parsed.forceBalances : {},
+        verifiedUsers: (parsed.verifiedUsers && typeof parsed.verifiedUsers === 'object')
+          ? parsed.verifiedUsers : {}
       };
       console.log('data.json загружен:', {
         ach: shared.achievements.length,
@@ -135,6 +138,9 @@ const server = http.createServer(async (req, res) => {
       if (Array.isArray(body.leaderboard)) shared.leaderboard = body.leaderboard;
       if (body.forceBalances && typeof body.forceBalances === 'object') {
         shared.forceBalances = body.forceBalances;
+      }
+      if (body.verifiedUsers && typeof body.verifiedUsers === 'object') {
+        shared.verifiedUsers = body.verifiedUsers;
       }
       saveData();
       sendJson(res, 200, { ok: true, shared });
