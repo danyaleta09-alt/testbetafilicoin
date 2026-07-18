@@ -1265,10 +1265,8 @@
     position: absolute;
     inset: 0;
     background: var(--tg-secondary);
-    border: 1px solid rgba(128,128,128,.4);
-    box-sizing: border-box;
     border-radius: 99px;
-    transition: background .25s ease, border-color .25s ease;
+    transition: background .25s ease;
     cursor: pointer;
   }
   .ios-switch .slider::before {
@@ -1285,7 +1283,6 @@
   }
   .ios-switch input:checked + .slider {
     background: var(--tier);
-    border-color: var(--tier);
   }
   .ios-switch input:checked + .slider::before {
     transform: translateX(20px);
