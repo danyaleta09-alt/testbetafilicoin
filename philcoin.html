@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=overlays-content">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#000000" id="themeColorMeta">
 <title>Филькоин</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -921,6 +921,198 @@
   .skin-bonus { font-size: 11px; color: var(--tier); margin-top: 4px; font-weight: 500; }
   .skin-actions { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
 
+  /* ===== SHOP: 3 category containers ===== */
+  .shop-cats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 4px;
+  }
+  .shop-cat-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    background: var(--tg-card);
+    border-radius: var(--radius);
+    border: none;
+    padding: 12px 14px;
+    text-align: left;
+    font-family: inherit;
+    color: var(--tg-text);
+    cursor: pointer;
+  }
+  .shop-cat-card:active { opacity: .85; transform: scale(.99); }
+  .shop-cat-thumbs {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--tg-secondary);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 2px;
+  }
+  .shop-cat-thumbs img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .shop-cat-thumbs-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--tg-hint);
+  }
+  .shop-cat-thumbs-empty svg { width: 26px; height: 26px; }
+  .shop-cat-thumb-icon {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--tier);
+  }
+  .shop-cat-thumb-icon svg { width: 20px; height: 20px; }
+  .shop-cat-label { flex: 1; min-width: 0; }
+  .shop-cat-name {
+    display: block;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .shop-cat-count {
+    display: block;
+    font-size: 12px;
+    color: var(--tg-hint);
+    margin-top: 3px;
+  }
+  .shop-cat-arrow {
+    width: 18px; height: 18px;
+    color: var(--tg-hint);
+    flex-shrink: 0;
+  }
+
+  /* ===== SHOP: fullscreen category grid (3 cards per row) ===== */
+  .shop-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 4px 0 20px;
+    align-items: stretch;
+  }
+  .shop-item-card {
+    background: var(--tg-card);
+    border-radius: 16px;
+    border: none;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: inherit;
+    color: var(--tg-text);
+    text-align: left;
+    cursor: pointer;
+    width: 100%;
+    min-width: 0;
+  }
+  .shop-item-card.equipped { outline: 2px solid var(--tier); outline-offset: 0; }
+  .shop-item-img {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 12px;
+    background: var(--tg-secondary);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .shop-item-img img { width: 100%; height: 100%; object-fit: cover; }
+  .shop-item-img svg { width: 26px; height: 26px; color: var(--tg-hint); }
+  .shop-item-name {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .shop-item-bonus {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--tier);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .shop-item-level {
+    font-size: 10px;
+    color: var(--tg-hint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .shop-item-card .buy-btn {
+    width: 100%;
+    margin-top: 2px;
+    padding: 8px 4px;
+    min-width: 0;
+    font-size: 11px;
+    white-space: nowrap;
+    display: block;
+  }
+
+  /* ===== SKIN DETAIL SCREEN ===== */
+  .skin-detail-img {
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 320px;
+    margin: 4px auto 16px;
+    border-radius: 20px;
+    background: var(--tg-secondary);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .skin-detail-img img { width: 100%; height: 100%; object-fit: cover; }
+  .skin-detail-img svg { width: 40px; height: 40px; color: var(--tg-hint); }
+  .skin-detail-name {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .skin-detail-bonus {
+    font-size: 13px;
+    color: var(--tier);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .skin-detail-desc {
+    font-size: 14px;
+    color: var(--tg-hint);
+    line-height: 1.5;
+    margin-bottom: 22px;
+  }
+  .skin-detail-buybtn {
+    width: 100%;
+    padding: 15px;
+    border-radius: 16px;
+    font-size: 15px;
+  }
+  .shop-empty {
+    grid-column: 1 / -1;
+    padding: 30px 0;
+    text-align: center;
+    color: var(--tg-hint);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
   .nav-avatar {
     width: 22px;
     height: 22px;
@@ -1159,6 +1351,12 @@
     flex: 0 0 auto;
     overflow: visible;
     padding: 0 14px 24px;
+  }
+  /* search: let the screen itself scroll so the sticky transparent
+     header truly overlays content (matches admin panel behaviour) */
+  #screenSearch .panel-body {
+    flex: 0 0 auto;
+    overflow: visible;
   }
 
   /* admin tabs — light translucent, no solid cut */
@@ -2133,19 +2331,58 @@
       <div class="panel-header">
         <div class="panel-title">Шоп</div>
       </div>
-      <div class="shop-tabs">
-        <button type="button" class="shop-tab active" data-shop="upgrades">Улучшения</button>
-        <button type="button" class="shop-tab" data-shop="skins">Скины</button>
-      </div>
       <div class="panel-body">
-        <div class="shop-section active" id="shopUpgrades">
-          <div class="market-list" id="marketList"></div>
-        </div>
-        <div class="shop-section" id="shopSkins">
-          <div id="skinsList"></div>
+        <div class="shop-cats" id="shopCats">
+          <button type="button" class="shop-cat-card" data-cat="upgrades">
+            <div class="shop-cat-thumbs" id="shopCatThumbsUpgrades"></div>
+            <div class="shop-cat-label">
+              <span class="shop-cat-name">Улучшения</span>
+              <span class="shop-cat-count" id="shopCatCountUpgrades"></span>
+            </div>
+            <svg class="shop-cat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+          </button>
+          <button type="button" class="shop-cat-card" data-cat="skins">
+            <div class="shop-cat-thumbs" id="shopCatThumbsSkins"></div>
+            <div class="shop-cat-label">
+              <span class="shop-cat-name">Скины</span>
+              <span class="shop-cat-count" id="shopCatCountSkins"></span>
+            </div>
+            <svg class="shop-cat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+          </button>
+          <button type="button" class="shop-cat-card" data-cat="food">
+            <div class="shop-cat-thumbs shop-cat-thumbs-empty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6M8 2v6M16 2v6M6 8h12l-1 13a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 8z"/></svg>
+            </div>
+            <div class="shop-cat-label">
+              <span class="shop-cat-name">Питание</span>
+              <span class="shop-cat-count">скоро</span>
+            </div>
+            <svg class="shop-cat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+          </button>
         </div>
       </div>
     </div>
+
+    <!-- SHOP CATEGORY (fullscreen grid of item cards) -->
+    <div class="screen" id="screenShopCategory">
+      <div class="panel-header">
+        <div class="panel-title" id="shopCategoryTitle">Улучшения</div>
+      </div>
+      <div class="panel-body">
+        <div class="shop-grid" id="shopCategoryGrid"></div>
+      </div>
+    </div>
+
+    <!-- SKIN DETAIL (fullscreen) -->
+    <div class="screen" id="screenSkinDetail">
+      <div class="panel-header">
+        <div class="panel-title">Скин</div>
+      </div>
+      <div class="panel-body">
+        <div id="skinDetailBody"></div>
+      </div>
+    </div>
+
 
 
     <!-- PROFILE -->
@@ -3123,6 +3360,8 @@
     rating: $('screenRating'),
     ach: $('screenAch'),
     market: $('screenMarket'),
+    shopCategory: $('screenShopCategory'),
+    skinDetail: $('screenSkinDetail'),
     profile: $('screenProfile'),
     user: $('screenUser'),
     search: $('screenSearch'),
@@ -3144,11 +3383,12 @@
     // nav highlights main tabs; rating/ach keep profile active
     let navActive = name;
     if (name === 'rating' || name === 'ach' || name === 'user' || name === 'search' || name === 'clan' || name === 'settings' || name === 'appearance') navActive = 'profile';
+    if (name === 'shopCategory' || name === 'skinDetail') navActive = 'market';
     if (name === 'admin') navActive = null;
     document.querySelectorAll('.nav-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.screen === navActive);
     });
-    const isSub = ['rating','ach','user','search','clan','admin','settings','appearance'].includes(name);
+    const isSub = ['rating','ach','user','search','clan','admin','settings','appearance','shopCategory','skinDetail'].includes(name);
     if (tg && tg.BackButton) {
       try { isSub ? tg.BackButton.show() : tg.BackButton.hide(); } catch(e){}
     }
@@ -3161,10 +3401,9 @@
     }
     if (name === 'rating') { pushLeaderboard(true); renderRating(); }
     if (name === 'ach') renderAch();
-    if (name === 'market') {
-      renderMarket();
-      renderSkins();
-    }
+    if (name === 'market') renderShopCats();
+    if (name === 'shopCategory') renderShopCategoryGrid();
+    if (name === 'skinDetail') renderSkinDetail();
     if (name === 'profile') renderProfile();
     if (name === 'search') renderSearch('');
     if (name === 'clan') renderClanScreen();
@@ -3287,6 +3526,7 @@
             state.activeSkin = sid;
             recomputePassive();
             saveState();
+            pushLeaderboard(true);
             render();
             renderProfile();
           });
@@ -4317,6 +4557,8 @@
   function closeSettings() { showScreen('profile'); }
   function closeAppearance() { showScreen('settings'); }
   function closeAdmin() { showScreen('tap'); }
+  function closeShopCategory() { showScreen('market'); }
+  function closeSkinDetail() { showScreen('shopCategory'); }
   function closeClan() {
     if (clanWizardStep === 'manage' || clanWizardStep === 'edit' || clanWizardStep === 'members') {
       clanWizardStep = 0;
@@ -4356,7 +4598,7 @@
       goBackFromUser();
       return;
     }
-    const closeFnMap = { rating: closeRating, ach: closeAch, search: closeSearch, clan: closeClan, admin: closeAdmin, settings: closeSettings, appearance: closeAppearance };
+    const closeFnMap = { rating: closeRating, ach: closeAch, search: closeSearch, clan: closeClan, admin: closeAdmin, settings: closeSettings, appearance: closeAppearance, shopCategory: closeShopCategory, skinDetail: closeSkinDetail };
     const fn = closeFnMap[activeKey];
     if (fn) fn();
   }
@@ -4495,27 +4737,88 @@
     });
   }
 
-  /* ===== MARKET ===== */
-  function renderMarket() {
-    const wrap = $('marketList');
-    if (!wrap) return;
-    wrap.innerHTML = '';
+  /* ===== SHOP (3 category containers -> fullscreen grid -> skin detail) ===== */
+  let currentShopCat = 'upgrades';
+  const SHOP_CAT_NAMES = { upgrades: 'Улучшения', skins: 'Скины', food: 'Питание' };
+
+  function renderShopCats() {
+    const upList = allUpgrades();
+    const skList = allSkins();
+
+    const upThumbs = $('shopCatThumbsUpgrades');
+    if (upThumbs) {
+      upThumbs.innerHTML = '';
+      upList.slice(0, 4).forEach(it => {
+        const d = document.createElement('div');
+        d.className = 'shop-cat-thumb-icon';
+        d.innerHTML = iconSvg(it.icon || 'gift');
+        upThumbs.appendChild(d);
+      });
+    }
+    const upCount = $('shopCatCountUpgrades');
+    if (upCount) upCount.textContent = upList.length ? (upList.length + ' шт.') : 'пока пусто';
+
+    const skThumbs = $('shopCatThumbsSkins');
+    if (skThumbs) {
+      skThumbs.innerHTML = '';
+      if (!skList.length) {
+        skThumbs.innerHTML = '<div class="shop-cat-thumb-icon" style="grid-column:1/-1;grid-row:1/-1">' + iconSvg('gift') + '</div>';
+      } else {
+        skList.slice(0, 4).forEach(sk => {
+          const d = document.createElement('div');
+          d.innerHTML = sk.image
+            ? '<img loading="lazy" decoding="async" src="' + sk.image + '" alt="">'
+            : '<div class="shop-cat-thumb-icon">' + iconSvg('gift') + '</div>';
+          skThumbs.appendChild(d.firstElementChild);
+        });
+      }
+    }
+    const skCount = $('shopCatCountSkins');
+    if (skCount) skCount.textContent = skList.length ? (skList.length + ' шт.') : 'пока пусто';
+  }
+
+  document.querySelectorAll('.shop-cat-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const cat = card.dataset.cat;
+      currentShopCat = cat;
+      const titleEl = $('shopCategoryTitle');
+      if (titleEl) titleEl.textContent = SHOP_CAT_NAMES[cat] || 'Шоп';
+      showScreen('shopCategory');
+    });
+  });
+
+  function renderShopCategoryGrid() {
+    const grid = $('shopCategoryGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    if (currentShopCat === 'upgrades') renderUpgradesGrid(grid);
+    else if (currentShopCat === 'skins') renderSkinsGrid(grid);
+    else {
+      grid.innerHTML = '<div class="shop-empty">Раздел «Питание» скоро появится.<br>Создатель ещё готовит товары.</div>';
+    }
+  }
+
+  function renderUpgradesGrid(grid) {
     const list = allUpgrades();
+    if (!list.length) {
+      grid.innerHTML = '<div class="shop-empty">Пока нет улучшений.</div>';
+      return;
+    }
     list.forEach(item => {
       const lv = ownedLevel(item.id);
       const maxLv = itemMaxLevel(item);
       const nextCost = upgradeCost(item, lv);
       const can = lv < maxLv && state.balance >= nextCost;
       const card = document.createElement('div');
-      card.className = 'market-card';
+      card.className = 'shop-item-card';
       const media = iconSvg(item.icon || 'gift');
       const effects = [];
-      if ((item.income || 0) > 0) effects.push('+' + (lv > 0 ? itemIncome(item, lv) : item.income) + '/сек');
-      if ((item.tapBonus || 0) > 0) effects.push('+' + (lv > 0 ? itemTapBonus(item, lv) : item.tapBonus) + ' к тапу');
+      if ((item.income || 0) > 0) effects.push('+' + (lv > 0 ? itemIncome(item, lv) : item.income) + '/с');
+      if ((item.tapBonus || 0) > 0) effects.push('+' + (lv > 0 ? itemTapBonus(item, lv) : item.tapBonus) + ' тап');
 
       let btnHtml;
       if (lv >= maxLv) {
-        btnHtml = '<button class="buy-btn maxed" disabled>Макс. ур. ' + maxLv + '</button>';
+        btnHtml = '<button class="buy-btn maxed" disabled>Макс. ' + maxLv + '</button>';
       } else if (lv === 0) {
         btnHtml = '<button class="buy-btn' + (can ? ' can' : '') + '" data-id="' + item.id + '"' + (can ? '' : ' disabled') + '>' +
           'Купить<span class="buy-price-line">' + fmt(nextCost) + '</span></button>';
@@ -4525,17 +4828,14 @@
       }
 
       card.innerHTML =
-        '<div class="market-media">' + media + '</div>' +
-        '<div class="market-info">' +
-          '<div class="market-name">' + item.name + '</div>' +
-          '<div class="market-desc">' + (item.desc || '') + '</div>' +
-          (effects.length ? '<div class="market-effects">' + effects.join(' · ') + '</div>' : '') +
-          (lv > 0 ? '<div class="market-level">Уровень ' + lv + ' / ' + maxLv + '</div>' : '') +
-        '</div>' +
-        '<div style="text-align:center">' + btnHtml + '</div>';
-      wrap.appendChild(card);
+        '<div class="shop-item-img">' + media + '</div>' +
+        '<div class="shop-item-name">' + escapeHtml(item.name) + '</div>' +
+        (effects.length ? '<div class="shop-item-bonus">' + effects.join(' · ') + '</div>' : '') +
+        (lv > 0 ? '<div class="shop-item-level">Уровень ' + lv + ' / ' + maxLv + '</div>' : '') +
+        btnHtml;
+      grid.appendChild(card);
     });
-    wrap.querySelectorAll('.buy-btn.can').forEach(btn => {
+    grid.querySelectorAll('.buy-btn.can').forEach(btn => {
       btn.addEventListener('click', () => {
         const item = allUpgrades().find(i => i.id === btn.dataset.id);
         if (!item) return;
@@ -4549,28 +4849,23 @@
         recomputePassive();
         saveState();
         render();
-        renderMarket();
+        renderUpgradesGrid(grid);
       });
     });
   }
 
-  function renderSkins() {
-    const wrap = $('skinsList');
-    if (!wrap) return;
-    wrap.innerHTML = '';
+  function renderSkinsGrid(grid) {
     const list = allSkins();
     if (!list.length) {
-      wrap.innerHTML = '<div class="market-empty" style="padding:24px;text-align:center;color:var(--tg-hint)">Пока нет скинов.<br>Создатель ещё не добавил.</div>';
+      grid.innerHTML = '<div class="shop-empty">Пока нет скинов.<br>Создатель ещё не добавил.</div>';
       return;
     }
-    const grid = document.createElement('div');
-    grid.className = 'skins-grid';
     list.forEach(skin => {
       const owned = !!state.ownedSkins[skin.id];
       const equipped = state.activeSkin === skin.id;
-      const can = !owned && state.balance >= (skin.price || 0);
-      const card = document.createElement('div');
-      card.className = 'skin-card-grid' + (equipped ? ' equipped' : '');
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'shop-item-card' + (equipped ? ' equipped' : '');
       const imgInner = skin.image
         ? '<img loading="lazy" decoding="async" src="' + skin.image + '" alt="">'
         : iconSvg('gift');
@@ -4578,48 +4873,85 @@
       if (skin.tapBonus) bonuses.push('+' + skin.tapBonus + ' тап');
       if (skin.income) bonuses.push('+' + skin.income + '/с');
 
-      let btn;
-      if (equipped) {
-        btn = '<button class="buy-btn maxed" disabled>Надето</button>';
-      } else if (owned) {
-        btn = '<button class="buy-btn can" data-equip="' + skin.id + '">Надеть</button>';
+      let btnHtml;
+      if (owned) {
+        btnHtml = '<span class="buy-btn maxed">Куплен</span>';
       } else {
-        btn = '<button class="buy-btn' + (can ? ' can' : '') + '" data-buy="' + skin.id + '"' + (can ? '' : ' disabled') + '>' +
-          'Купить<span class="buy-price-line">' + fmt(skin.price || 0) + '</span></button>';
+        const can = state.balance >= (skin.price || 0);
+        btnHtml = '<span class="buy-btn' + (can ? ' can' : '') + '">Купить<span class="buy-price-line">' + fmt(skin.price || 0) + '</span></span>';
       }
 
       card.innerHTML =
-        '<div class="skin-card-img">' + imgInner + '</div>' +
-        '<div class="skin-card-name">' + skin.name + '</div>' +
-        (bonuses.length ? '<div class="skin-card-bonus">' + bonuses.join(' · ') + '</div>' : '') +
-        btn;
+        '<div class="shop-item-img">' + imgInner + '</div>' +
+        '<div class="shop-item-name">' + escapeHtml(skin.name) + '</div>' +
+        (bonuses.length ? '<div class="shop-item-bonus">' + bonuses.join(' · ') + '</div>' : '') +
+        btnHtml;
+      card.addEventListener('click', () => openSkinDetail(skin.id));
       grid.appendChild(card);
     });
-    wrap.appendChild(grid);
+  }
 
-    grid.querySelectorAll('[data-buy]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const skin = allSkins().find(s => s.id === btn.dataset.buy);
-        if (!skin || state.ownedSkins[skin.id]) return;
+  function openSkinDetail(id) {
+    state._skinDetailId = id;
+    showScreen('skinDetail');
+  }
+
+  function renderSkinDetail() {
+    const skin = allSkins().find(s => s.id === state._skinDetailId);
+    const body = $('skinDetailBody');
+    const titleEl = document.querySelector('#screenSkinDetail .panel-title');
+    if (!body) return;
+    if (!skin) {
+      if (titleEl) titleEl.textContent = 'Скин';
+      body.innerHTML = '<div class="shop-empty">Скин не найден.</div>';
+      return;
+    }
+    if (titleEl) titleEl.textContent = skin.name;
+    const owned = !!state.ownedSkins[skin.id];
+    const can = !owned && state.balance >= (skin.price || 0);
+    const bonuses = [];
+    if (skin.tapBonus) bonuses.push('+' + skin.tapBonus + ' к тапу');
+    if (skin.income) bonuses.push('+' + skin.income + '/сек');
+    const imgInner = skin.image
+      ? '<img loading="lazy" decoding="async" src="' + skin.image + '" alt="">'
+      : iconSvg('gift');
+
+    let btnHtml;
+    if (owned) {
+      btnHtml = '<button class="buy-btn maxed skin-detail-buybtn" disabled>Куплен</button>';
+    } else {
+      btnHtml = '<button class="buy-btn skin-detail-buybtn' + (can ? ' can' : '') + '" id="skinDetailBuyBtn"' + (can ? '' : ' disabled') + '>' +
+        'Купить<span class="buy-price-line">' + fmt(skin.price || 0) + '</span></button>';
+    }
+
+    body.innerHTML =
+      '<div class="skin-detail-img">' + imgInner + '</div>' +
+      (bonuses.length ? '<div class="skin-detail-bonus">' + bonuses.join(' · ') + '</div>' : '') +
+      '<div class="skin-detail-desc">' + escapeHtml(skin.desc || '') + '</div>' +
+      btnHtml;
+
+    const buyBtn = $('skinDetailBuyBtn');
+    if (buyBtn) {
+      buyBtn.addEventListener('click', () => {
+        if (state.ownedSkins[skin.id]) return;
         if (state.balance < (skin.price || 0)) return;
         state.balance -= (skin.price || 0);
         state.ownedSkins[skin.id] = true;
-        state.activeSkin = skin.id;
         recomputePassive();
         saveState();
+        pushLeaderboard(true);
         render();
-        renderSkins();
+        renderSkinDetail();
+        renderShopCats();
       });
-    });
-    grid.querySelectorAll('[data-equip]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        state.activeSkin = btn.dataset.equip;
-        recomputePassive();
-        saveState();
-        render();
-        renderSkins();
-      });
-    });
+    }
+  }
+
+  // back-compat: admin add/remove skin refreshes whichever shop view is open
+  function renderSkins() {
+    renderShopCats();
+    renderShopCategoryGrid();
+    renderSkinDetail();
   }
 
   /* ===== ADMIN ===== */
@@ -4633,19 +4965,6 @@
       const map = { users: 'adminUsers', skins: 'adminSkins', achs: 'adminAchs' };
       const el = $(map[tab.dataset.tab]);
       if (el) el.classList.add('active');
-    });
-  });
-
-  document.querySelectorAll('.shop-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      document.querySelectorAll('.shop-section').forEach(s => s.classList.remove('active'));
-      const id = tab.dataset.shop === 'skins' ? 'shopSkins' : 'shopUpgrades';
-      const el = $(id);
-      if (el) el.classList.add('active');
-      if (tab.dataset.shop === 'skins') renderSkins();
-      else renderMarket();
     });
   });
 
