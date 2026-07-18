@@ -429,17 +429,12 @@
   }
   .buy-btn:active.can { transform: scale(.96); }
   .buy-btn .buy-price-line {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
+    display: inline;
     font-size: 11px;
     font-weight: 500;
     opacity: 0.9;
     margin-left: 4px;
-    white-space: nowrap;
-    vertical-align: middle;
   }
-  .buy-price-line svg { width: 11px; height: 11px; flex-shrink: 0; }
   .market-level {
     font-size: 11px;
     color: var(--tg-hint);
@@ -1001,105 +996,60 @@
     flex-shrink: 0;
   }
 
-  /* ===== SHOP: fullscreen category grid (2 cards per row) ===== */
+  /* ===== SHOP: fullscreen category grid (3 cards per row) ===== */
   .shop-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
     padding: 4px 0 20px;
     align-items: stretch;
   }
   .shop-item-card {
     background: var(--tg-card);
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,.05);
-    padding: 10px;
+    border-radius: 16px;
+    border: none;
+    padding: 8px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     font-family: inherit;
     color: var(--tg-text);
     text-align: left;
     cursor: pointer;
     width: 100%;
     min-width: 0;
-    height: 100%;
-    box-sizing: border-box;
-    position: relative;
-    transition: transform .12s ease, background .12s ease;
   }
-  .shop-item-card:active { transform: scale(.97); background: var(--tg-secondary); }
-  .shop-item-card.equipped { outline: 2px solid var(--tier); outline-offset: -1px; }
+  .shop-item-card.equipped { outline: 2px solid var(--tier); outline-offset: 0; }
   .shop-item-img {
     width: 100%;
     aspect-ratio: 1;
-    border-radius: 14px;
+    border-radius: 12px;
     background: var(--tg-secondary);
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
   }
   .shop-item-img img { width: 100%; height: 100%; object-fit: cover; }
-  .shop-item-img svg { width: 34px; height: 34px; color: var(--tg-hint); }
-  .shop-item-card.equipped .shop-item-img::after {
-    content: '✓ Активен';
-    position: absolute;
-    left: 6px; bottom: 6px;
-    background: var(--tier);
-    color: #fff;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 7px;
-    border-radius: 20px;
-    line-height: 1.2;
-  }
-  .shop-item-limited-badge {
-    position: absolute;
-    top: 6px; right: 6px;
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    background: linear-gradient(135deg, #ffd76a, #ff9f43);
-    color: #3a2200;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 7px;
-    border-radius: 20px;
-    line-height: 1.2;
-    box-shadow: 0 2px 6px rgba(0,0,0,.35);
-  }
-  .shop-item-limited-badge svg { width: 10px; height: 10px; }
-  .shop-item-limited-badge.soldout {
-    background: var(--tg-secondary);
-    color: var(--tg-hint);
-    box-shadow: none;
-  }
+  .shop-item-img svg { width: 26px; height: 26px; color: var(--tg-hint); }
   .shop-item-name {
     font-family: 'Fredoka', sans-serif;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .shop-item-bonus {
-    font-size: 11.5px;
+    font-size: 10px;
     font-weight: 600;
     color: var(--tier);
-    background: var(--tier-soft);
-    display: inline-flex;
-    align-items: center;
-    padding: 3px 8px;
-    border-radius: 20px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%;
   }
   .shop-item-level {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--tg-hint);
     white-space: nowrap;
     overflow: hidden;
@@ -1107,34 +1057,13 @@
   }
   .shop-item-card .buy-btn {
     width: 100%;
-    margin-top: auto;
-    padding: 9px 6px;
+    margin-top: 2px;
+    padding: 8px 4px;
     min-width: 0;
-    font-size: 12.5px;
-    line-height: 1.2;
-    text-align: center;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-  }
-  .shop-item-card .buy-btn .buy-price-line {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    margin-left: 0;
     font-size: 11px;
-    font-weight: 700;
-    background: rgba(255,255,255,.16);
-    padding: 2px 8px;
-    border-radius: 20px;
     white-space: nowrap;
+    display: block;
   }
-  .shop-item-card .buy-btn:disabled .buy-price-line,
-  .shop-item-card .buy-btn.maxed .buy-price-line { background: rgba(255,255,255,.06); }
-  .shop-item-card .buy-btn .buy-price-line svg { width: 11px; height: 11px; }
 
   /* ===== SKIN DETAIL SCREEN ===== */
   .skin-detail-img {
@@ -1156,7 +1085,6 @@
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 6px;
-    text-align: center;
   }
   .skin-detail-bonus {
     font-size: 13px;
@@ -1164,61 +1092,18 @@
     font-weight: 600;
     margin-bottom: 10px;
   }
-  .skin-detail-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    margin-bottom: 18px;
-  }
-  .pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 12.5px;
-    font-weight: 600;
-    padding: 7px 12px;
-    border-radius: 20px;
-    line-height: 1.2;
-  }
-  .pill svg { width: 14px; height: 14px; flex-shrink: 0; }
-  .pill-bonus { background: var(--tier-soft); color: var(--tier); }
-  .pill-limited {
-    background: linear-gradient(135deg, rgba(255,215,106,.18), rgba(255,159,67,.18));
-    color: #ffb746;
-    border: 1px solid rgba(255,183,70,.35);
-  }
-  .pill-limited.soldout {
-    background: var(--tg-secondary);
-    color: var(--tg-hint);
-    border-color: transparent;
-  }
-  .pill-owned { background: rgba(255,255,255,.08); color: var(--tg-hint); }
   .skin-detail-desc {
     font-size: 14px;
     color: var(--tg-hint);
     line-height: 1.5;
     margin-bottom: 22px;
-    text-align: center;
   }
   .skin-detail-buybtn {
     width: 100%;
     padding: 15px;
     border-radius: 16px;
     font-size: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
   }
-  .skin-detail-buybtn .buy-price-line {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 14px;
-    margin-left: 2px;
-  }
-  .skin-detail-buybtn .buy-price-line svg { width: 14px; height: 14px; }
   .shop-empty {
     grid-column: 1 / -1;
     padding: 30px 0;
@@ -2660,10 +2545,7 @@
               <div class="field"><label>Бонус к тапу (экип.)</label><input type="number" id="skTapBonus" placeholder="1"></div>
             </div>
             <div class="field"><label>Пассив / сек (экип.)</label><input type="number" id="skIncome" placeholder="0"></div>
-            <div class="check-row"><input type="checkbox" id="skLimited"><label for="skLimited">Коллекционный (ограниченный тираж)</label></div>
-            <div class="field" id="skSupplyField" style="display:none"><label>Тираж (сколько всего доступно)</label><input type="number" id="skSupply" placeholder="10" min="1"></div>
             <div class="field"><label>Картинка PNG</label>
-
               <div class="img-row">
                 <div class="img-preview" id="skImgPreview">нет</div>
                 <div class="file-btn">Выбрать файл<input type="file" accept="image/png,image/webp" id="skImgInput"></div>
@@ -3317,7 +3199,6 @@
     /* ===== HELPERS ===== */
   const $ = id => document.getElementById(id);
   function fmt(n) { return Math.floor(n).toLocaleString('ru-RU'); }
-  function priceChip(n) { return '<span class="buy-price-line">' + iconSvg('coin') + fmt(n) + '</span>'; }
 
   function achMetricValue(a, s) {
     switch (a.metric) {
@@ -4819,9 +4700,7 @@
       medal: '<path fill="currentColor" d="M12 2a5 5 0 0 1 5 5c0 1.5-.7 2.9-1.8 3.8L16.5 21 12 18.5 7.5 21l1.3-10.2A5 5 0 0 1 12 2z"/>',
       crown: '<path fill="currentColor" d="M5 16 3 7l5 4 4-6 4 6 5-4-2 9H5zm0 2h14v2H5v-2z"/>',
       gift: '<path fill="currentColor" d="M12 2a3 3 0 0 1 2.8 2H20a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h5.2A3 3 0 0 1 12 2zm0 2a1 1 0 0 0-1 1v1h2V5a1 1 0 0 0-1-1zM5 9v10h6V9H5zm8 0v10h6V9h-6z"/>',
-      trophy: '<path fill="currentColor" d="M7 4V2h10v2h3a1 1 0 0 1 1 1v2a4 4 0 0 1-3.5 4 6 6 0 0 1-4.5 3.9V17h2a2 2 0 0 1 2 2v1H6v-1a2 2 0 0 1 2-2h2v-2.1A6 6 0 0 1 5.5 11 4 4 0 0 1 2 7V5a1 1 0 0 1 1-1h4zm0 2H4v1a2 2 0 0 0 2 2V6zm10 3a2 2 0 0 0 2-2V6h-2v3z"/>',
-      coin: '<circle cx="12" cy="12" r="9" fill="currentColor"/><circle cx="12" cy="12" r="9" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1.4"/><path fill="rgba(0,0,0,.28)" d="M12.7 6.6c1.9.25 3.2 1.3 3.4 2.85h-1.9c-.12-.65-.7-1.05-1.5-1.15v2.2c1.7.42 3 .95 3 2.7 0 1.5-1.2 2.55-3 2.75V17h-1.4v-1.05c-1.95-.22-3.25-1.3-3.4-2.95h1.9c.13.7.72 1.13 1.5 1.24v-2.3c-1.62-.4-2.9-.95-2.9-2.63 0-1.45 1.15-2.5 2.9-2.7V5.6h1.4v1zm-1.4 1.55c-.72.13-1.15.55-1.15 1.1 0 .55.4.85 1.15 1.08V8.15zm1.4 4.1v2.3c.8-.13 1.32-.55 1.32-1.18 0-.6-.45-.95-1.32-1.12z"/>',
-      gem: '<path fill="currentColor" d="M6.5 3h11l3.5 5-10 13L1 8l5.5-5zM8.5 9h7l-3.5 8-3.5-8zM4.4 8h4l-1.7-3.8L4.4 8zm11.2 0h4l-2.3-3.8L15.6 8zM9.6 5l1.4 2.6L12 5.1 13.5 7.6 14.9 5H9.6z"/>'
+      trophy: '<path fill="currentColor" d="M7 4V2h10v2h3a1 1 0 0 1 1 1v2a4 4 0 0 1-3.5 4 6 6 0 0 1-4.5 3.9V17h2a2 2 0 0 1 2 2v1H6v-1a2 2 0 0 1 2-2h2v-2.1A6 6 0 0 1 5.5 11 4 4 0 0 1 2 7V5a1 1 0 0 1 1-1h4zm0 2H4v1a2 2 0 0 0 2 2V6zm10 3a2 2 0 0 0 2-2V6h-2v3z"/>'
     };
     return '<svg viewBox="0 0 24 24">' + (icons[name] || icons.trophy) + '</svg>';
   }
@@ -4942,10 +4821,10 @@
         btnHtml = '<button class="buy-btn maxed" disabled>Макс. ' + maxLv + '</button>';
       } else if (lv === 0) {
         btnHtml = '<button class="buy-btn' + (can ? ' can' : '') + '" data-id="' + item.id + '"' + (can ? '' : ' disabled') + '>' +
-          'Купить' + priceChip(nextCost) + '</button>';
+          'Купить<span class="buy-price-line">' + fmt(nextCost) + '</span></button>';
       } else {
         btnHtml = '<button class="buy-btn' + (can ? ' can' : '') + '" data-id="' + item.id + '"' + (can ? '' : ' disabled') + '>' +
-          'Прокачать' + priceChip(nextCost) + '</button>';
+          'Прокачать<span class="buy-price-line">' + fmt(nextCost) + '</span></button>';
       }
 
       card.innerHTML =
@@ -4984,7 +4863,6 @@
     list.forEach(skin => {
       const owned = !!state.ownedSkins[skin.id];
       const equipped = state.activeSkin === skin.id;
-      const soldOut = !!skin.limited && (skin.sold || 0) >= (skin.supply || 0);
       const card = document.createElement('button');
       card.type = 'button';
       card.className = 'shop-item-card' + (equipped ? ' equipped' : '');
@@ -4998,20 +4876,13 @@
       let btnHtml;
       if (owned) {
         btnHtml = '<span class="buy-btn maxed">Куплен</span>';
-      } else if (soldOut) {
-        btnHtml = '<span class="buy-btn maxed">Раскуплено</span>';
       } else {
         const can = state.balance >= (skin.price || 0);
-        btnHtml = '<span class="buy-btn' + (can ? ' can' : '') + '">Купить' + priceChip(skin.price || 0) + '</span>';
+        btnHtml = '<span class="buy-btn' + (can ? ' can' : '') + '">Купить<span class="buy-price-line">' + fmt(skin.price || 0) + '</span></span>';
       }
 
-      const limitedBadge = skin.limited
-        ? '<div class="shop-item-limited-badge' + (soldOut ? ' soldout' : '') + '">' + iconSvg('gem') +
-          (soldOut ? 'Всё' : (skin.sold || 0) + '/' + skin.supply) + '</div>'
-        : '';
-
       card.innerHTML =
-        '<div class="shop-item-img">' + imgInner + limitedBadge + '</div>' +
+        '<div class="shop-item-img">' + imgInner + '</div>' +
         '<div class="shop-item-name">' + escapeHtml(skin.name) + '</div>' +
         (bonuses.length ? '<div class="shop-item-bonus">' + bonuses.join(' · ') + '</div>' : '') +
         btnHtml;
@@ -5037,38 +4908,25 @@
     }
     if (titleEl) titleEl.textContent = skin.name;
     const owned = !!state.ownedSkins[skin.id];
-    const soldOut = !!skin.limited && (skin.sold || 0) >= (skin.supply || 0);
-    const can = !owned && !soldOut && state.balance >= (skin.price || 0);
+    const can = !owned && state.balance >= (skin.price || 0);
+    const bonuses = [];
+    if (skin.tapBonus) bonuses.push('+' + skin.tapBonus + ' к тапу');
+    if (skin.income) bonuses.push('+' + skin.income + '/сек');
     const imgInner = skin.image
       ? '<img loading="lazy" decoding="async" src="' + skin.image + '" alt="">'
       : iconSvg('gift');
 
-    // pills: what this skin actually gives you
-    const pills = [];
-    if (skin.tapBonus) pills.push('<div class="pill pill-bonus">' + iconSvg('bolt') + '+' + skin.tapBonus + ' к тапу</div>');
-    if (skin.income) pills.push('<div class="pill pill-bonus">' + iconSvg('fire') + '+' + fmt(skin.income) + '/сек</div>');
-    if (!skin.tapBonus && !skin.income) pills.push('<div class="pill pill-owned">' + iconSvg('gift') + 'Только внешний вид</div>');
-    if (skin.limited) {
-      const left = Math.max(0, (skin.supply || 0) - (skin.sold || 0));
-      pills.push(soldOut
-        ? '<div class="pill pill-limited soldout">' + iconSvg('gem') + 'Коллекционный · всё раскуплено</div>'
-        : '<div class="pill pill-limited">' + iconSvg('gem') + 'Коллекционный · осталось ' + left + ' из ' + skin.supply + '</div>');
-    }
-    if (owned) pills.push('<div class="pill pill-owned">' + iconSvg('medal') + 'У вас есть</div>');
-
     let btnHtml;
     if (owned) {
       btnHtml = '<button class="buy-btn maxed skin-detail-buybtn" disabled>Куплен</button>';
-    } else if (soldOut) {
-      btnHtml = '<button class="buy-btn maxed skin-detail-buybtn" disabled>Раскуплено</button>';
     } else {
       btnHtml = '<button class="buy-btn skin-detail-buybtn' + (can ? ' can' : '') + '" id="skinDetailBuyBtn"' + (can ? '' : ' disabled') + '>' +
-        'Купить' + priceChip(skin.price || 0) + '</button>';
+        'Купить<span class="buy-price-line">' + fmt(skin.price || 0) + '</span></button>';
     }
 
     body.innerHTML =
       '<div class="skin-detail-img">' + imgInner + '</div>' +
-      '<div class="skin-detail-pills">' + pills.join('') + '</div>' +
+      (bonuses.length ? '<div class="skin-detail-bonus">' + bonuses.join(' · ') + '</div>' : '') +
       '<div class="skin-detail-desc">' + escapeHtml(skin.desc || '') + '</div>' +
       btnHtml;
 
@@ -5076,14 +4934,9 @@
     if (buyBtn) {
       buyBtn.addEventListener('click', () => {
         if (state.ownedSkins[skin.id]) return;
-        if (skin.limited && (skin.sold || 0) >= (skin.supply || 0)) return;
         if (state.balance < (skin.price || 0)) return;
         state.balance -= (skin.price || 0);
         state.ownedSkins[skin.id] = true;
-        if (skin.limited) {
-          skin.sold = (skin.sold || 0) + 1;
-          persistCustomData();
-        }
         recomputePassive();
         saveState();
         pushLeaderboard(true);
@@ -5228,34 +5081,23 @@
     renderAch();
   });
 
-  if ($('skLimited')) $('skLimited').addEventListener('change', e => {
-    if ($('skSupplyField')) $('skSupplyField').style.display = e.target.checked ? '' : 'none';
-  });
-
   if ($('skSubmit')) $('skSubmit').addEventListener('click', () => {
     const name = $('skName').value.trim();
     const desc = $('skDesc').value.trim();
     const price = parseInt($('skPrice').value, 10) || 0;
     const income = parseInt(($('skIncome') && $('skIncome').value) || '0', 10) || 0;
     const tapBonus = parseInt(($('skTapBonus') && $('skTapBonus').value) || '0', 10) || 0;
-    const limited = !!($('skLimited') && $('skLimited').checked);
-    const supply = limited ? (parseInt(($('skSupply') && $('skSupply').value) || '0', 10) || 0) : 0;
     if (!name || price <= 0) { alert('Заполните название и цену'); return; }
     if (!skImage) { alert('Загрузите картинку скина'); return; }
-    if (limited && supply <= 0) { alert('Укажите тираж для коллекционного скина'); return; }
     customSkins.push({
       id: 's' + Date.now(),
       name, desc: desc || '-',
       price, income, tapBonus,
-      limited, supply: limited ? supply : null, sold: 0,
       image: skImage
     });
     $('skName').value = ''; $('skDesc').value = ''; $('skPrice').value = '';
     if ($('skIncome')) $('skIncome').value = '';
     if ($('skTapBonus')) $('skTapBonus').value = '';
-    if ($('skLimited')) $('skLimited').checked = false;
-    if ($('skSupply')) $('skSupply').value = '';
-    if ($('skSupplyField')) $('skSupplyField').style.display = 'none';
     skImage = null; $('skImgPreview').innerHTML = 'нет';
     persistCustomData();
     renderAdmin();
@@ -5328,8 +5170,7 @@
         row.className = 'admin-item';
         row.innerHTML =
           '<div class="thumb">' + (item.image ? '<img loading="lazy" decoding="async" src="' + item.image + '">' : iconSvg('gift')) + '</div>' +
-          '<div class="name">' + item.name + ' · ' + fmt(item.price) +
-            (item.limited ? ' · 🏆 ' + (item.sold || 0) + '/' + item.supply : '') + '</div>' +
+          '<div class="name">' + item.name + ' · ' + fmt(item.price) + '</div>' +
           '<button class="del-btn" data-id="' + item.id + '">Удалить</button>';
         skList.appendChild(row);
       });
