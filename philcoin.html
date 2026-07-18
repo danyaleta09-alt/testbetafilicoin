@@ -874,7 +874,7 @@
   .shop-tabs {
     display: flex;
     gap: 8px;
-    padding: 0 14px 12px;
+    padding: 4px 14px 12px;
   }
   .shop-tab {
     flex: 1;
@@ -892,6 +892,7 @@
     background: var(--tier-soft);
     color: var(--tier);
   }
+  .shop-tab:active { opacity: .85; }
   .shop-section { display: none; }
   .shop-section.active { display: block; }
   .skin-card {
@@ -921,85 +922,88 @@
   .skin-bonus { font-size: 11px; color: var(--tier); margin-top: 4px; font-weight: 500; }
   .skin-actions { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
 
-  /* ===== SHOP: 3 category containers ===== */
-  .shop-cats {
+  /* ===== SHOP: upgrades — single column list with level bar ===== */
+  .up-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding-top: 4px;
+    gap: 10px;
+    padding: 4px 0 20px;
   }
-  .shop-cat-card {
+  .up-card {
     display: flex;
     align-items: center;
-    gap: 14px;
-    width: 100%;
+    gap: 12px;
     background: var(--tg-card);
     border-radius: var(--radius);
-    border: none;
-    padding: 12px 14px;
-    text-align: left;
-    font-family: inherit;
-    color: var(--tg-text);
-    cursor: pointer;
+    padding: 14px;
   }
-  .shop-cat-card:active { opacity: .85; transform: scale(.99); }
-  .shop-cat-thumbs {
+  .up-card-icon {
     flex-shrink: 0;
-    width: 64px;
-    height: 64px;
+    width: 52px;
+    height: 52px;
     border-radius: 14px;
-    overflow: hidden;
     background: var(--tg-secondary);
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 2px;
-  }
-  .shop-cat-thumbs img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-  .shop-cat-thumbs-empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--tg-hint);
-  }
-  .shop-cat-thumbs-empty svg { width: 26px; height: 26px; }
-  .shop-cat-thumb-icon {
-    width: 100%;
-    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--tier);
   }
-  .shop-cat-thumb-icon svg { width: 20px; height: 20px; }
-  .shop-cat-label { flex: 1; min-width: 0; }
-  .shop-cat-name {
-    display: block;
+  .up-card-icon svg { width: 26px; height: 26px; }
+  .up-card-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; }
+  .up-card-body { flex: 1; min-width: 0; }
+  .up-card-name {
     font-family: 'Fredoka', sans-serif;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 15px;
   }
-  .shop-cat-count {
-    display: block;
+  .up-card-desc {
     font-size: 12px;
     color: var(--tg-hint);
-    margin-top: 3px;
+    margin-top: 2px;
+    line-height: 1.3;
   }
-  .shop-cat-arrow {
-    width: 18px; height: 18px;
-    color: var(--tg-hint);
+  .up-card-bonus {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--tier);
+    margin-top: 4px;
+  }
+  .up-card-levelbar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .up-card-levelbar {
+    flex: 1;
+    height: 6px;
+    border-radius: 4px;
+    background: var(--tg-secondary);
+    overflow: hidden;
+  }
+  .up-card-levelbar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--tier);
+    transition: width .3s ease;
+  }
+  .up-card-levelnum {
     flex-shrink: 0;
+    font-size: 11px;
+    color: var(--tg-hint);
+    white-space: nowrap;
   }
+  .up-card-action {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+  .up-card-action .buy-btn { min-width: 96px; }
 
-  /* ===== SHOP: fullscreen category grid (3 cards per row) ===== */
+  /* ===== SHOP: skins / food — grid, 2 cards per row ===== */
   .shop-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
     padding: 4px 0 20px;
     align-items: stretch;
@@ -1008,7 +1012,7 @@
     background: var(--tg-card);
     border-radius: 16px;
     border: none;
-    padding: 8px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -1031,17 +1035,17 @@
     justify-content: center;
   }
   .shop-item-img img { width: 100%; height: 100%; object-fit: cover; }
-  .shop-item-img svg { width: 26px; height: 26px; color: var(--tg-hint); }
+  .shop-item-img svg { width: 30px; height: 30px; color: var(--tg-hint); }
   .shop-item-name {
     font-family: 'Fredoka', sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .shop-item-bonus {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 600;
     color: var(--tier);
     white-space: nowrap;
@@ -1049,7 +1053,7 @@
     text-overflow: ellipsis;
   }
   .shop-item-level {
-    font-size: 10px;
+    font-size: 11px;
     color: var(--tg-hint);
     white-space: nowrap;
     overflow: hidden;
@@ -1058,9 +1062,9 @@
   .shop-item-card .buy-btn {
     width: 100%;
     margin-top: 2px;
-    padding: 8px 4px;
+    padding: 10px 4px;
     min-width: 0;
-    font-size: 11px;
+    font-size: 13px;
     white-space: nowrap;
     display: block;
   }
@@ -2332,44 +2336,23 @@
         <div class="panel-title">Шоп</div>
       </div>
       <div class="panel-body">
-        <div class="shop-cats" id="shopCats">
-          <button type="button" class="shop-cat-card" data-cat="upgrades">
-            <div class="shop-cat-thumbs" id="shopCatThumbsUpgrades"></div>
-            <div class="shop-cat-label">
-              <span class="shop-cat-name">Улучшения</span>
-              <span class="shop-cat-count" id="shopCatCountUpgrades"></span>
-            </div>
-            <svg class="shop-cat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
-          </button>
-          <button type="button" class="shop-cat-card" data-cat="skins">
-            <div class="shop-cat-thumbs" id="shopCatThumbsSkins"></div>
-            <div class="shop-cat-label">
-              <span class="shop-cat-name">Скины</span>
-              <span class="shop-cat-count" id="shopCatCountSkins"></span>
-            </div>
-            <svg class="shop-cat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
-          </button>
-          <button type="button" class="shop-cat-card" data-cat="food">
-            <div class="shop-cat-thumbs shop-cat-thumbs-empty">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6M8 2v6M16 2v6M6 8h12l-1 13a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 8z"/></svg>
-            </div>
-            <div class="shop-cat-label">
-              <span class="shop-cat-name">Питание</span>
-              <span class="shop-cat-count">скоро</span>
-            </div>
-            <svg class="shop-cat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
-          </button>
+        <div class="shop-tabs" id="shopTabs">
+          <button type="button" class="shop-tab active" data-cat="upgrades">Улучшения</button>
+          <button type="button" class="shop-tab" data-cat="skins">Скины</button>
+          <button type="button" class="shop-tab" data-cat="food">Питание</button>
         </div>
-      </div>
-    </div>
 
-    <!-- SHOP CATEGORY (fullscreen grid of item cards) -->
-    <div class="screen" id="screenShopCategory">
-      <div class="panel-header">
-        <div class="panel-title" id="shopCategoryTitle">Улучшения</div>
-      </div>
-      <div class="panel-body">
-        <div class="shop-grid" id="shopCategoryGrid"></div>
+        <div class="shop-section active" id="shopSectionUpgrades">
+          <div class="up-list" id="upgradesList"></div>
+        </div>
+
+        <div class="shop-section" id="shopSectionSkins">
+          <div class="shop-grid" id="skinsGrid"></div>
+        </div>
+
+        <div class="shop-section" id="shopSectionFood">
+          <div class="shop-empty">Раздел «Питание» скоро появится.<br>Создатель ещё готовит товары.</div>
+        </div>
       </div>
     </div>
 
@@ -3360,7 +3343,6 @@
     rating: $('screenRating'),
     ach: $('screenAch'),
     market: $('screenMarket'),
-    shopCategory: $('screenShopCategory'),
     skinDetail: $('screenSkinDetail'),
     profile: $('screenProfile'),
     user: $('screenUser'),
@@ -3383,12 +3365,12 @@
     // nav highlights main tabs; rating/ach keep profile active
     let navActive = name;
     if (name === 'rating' || name === 'ach' || name === 'user' || name === 'search' || name === 'clan' || name === 'settings' || name === 'appearance') navActive = 'profile';
-    if (name === 'shopCategory' || name === 'skinDetail') navActive = 'market';
+    if (name === 'skinDetail') navActive = 'market';
     if (name === 'admin') navActive = null;
     document.querySelectorAll('.nav-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.screen === navActive);
     });
-    const isSub = ['rating','ach','user','search','clan','admin','settings','appearance','shopCategory','skinDetail'].includes(name);
+    const isSub = ['rating','ach','user','search','clan','admin','settings','appearance','skinDetail'].includes(name);
     if (tg && tg.BackButton) {
       try { isSub ? tg.BackButton.show() : tg.BackButton.hide(); } catch(e){}
     }
@@ -3401,8 +3383,7 @@
     }
     if (name === 'rating') { pushLeaderboard(true); renderRating(); }
     if (name === 'ach') renderAch();
-    if (name === 'market') renderShopCats();
-    if (name === 'shopCategory') renderShopCategoryGrid();
+    if (name === 'market') renderShopScreen();
     if (name === 'skinDetail') renderSkinDetail();
     if (name === 'profile') renderProfile();
     if (name === 'search') renderSearch('');
@@ -4557,8 +4538,7 @@
   function closeSettings() { showScreen('profile'); }
   function closeAppearance() { showScreen('settings'); }
   function closeAdmin() { showScreen('tap'); }
-  function closeShopCategory() { showScreen('market'); }
-  function closeSkinDetail() { showScreen('shopCategory'); }
+  function closeSkinDetail() { showScreen('market'); }
   function closeClan() {
     if (clanWizardStep === 'manage' || clanWizardStep === 'edit' || clanWizardStep === 'members') {
       clanWizardStep = 0;
@@ -4598,7 +4578,7 @@
       goBackFromUser();
       return;
     }
-    const closeFnMap = { rating: closeRating, ach: closeAch, search: closeSearch, clan: closeClan, admin: closeAdmin, settings: closeSettings, appearance: closeAppearance, shopCategory: closeShopCategory, skinDetail: closeSkinDetail };
+    const closeFnMap = { rating: closeRating, ach: closeAch, search: closeSearch, clan: closeClan, admin: closeAdmin, settings: closeSettings, appearance: closeAppearance, skinDetail: closeSkinDetail };
     const fn = closeFnMap[activeKey];
     if (fn) fn();
   }
@@ -4739,69 +4719,32 @@
 
   /* ===== SHOP (3 category containers -> fullscreen grid -> skin detail) ===== */
   let currentShopCat = 'upgrades';
-  const SHOP_CAT_NAMES = { upgrades: 'Улучшения', skins: 'Скины', food: 'Питание' };
 
-  function renderShopCats() {
-    const upList = allUpgrades();
-    const skList = allSkins();
-
-    const upThumbs = $('shopCatThumbsUpgrades');
-    if (upThumbs) {
-      upThumbs.innerHTML = '';
-      upList.slice(0, 4).forEach(it => {
-        const d = document.createElement('div');
-        d.className = 'shop-cat-thumb-icon';
-        d.innerHTML = iconSvg(it.icon || 'gift');
-        upThumbs.appendChild(d);
-      });
-    }
-    const upCount = $('shopCatCountUpgrades');
-    if (upCount) upCount.textContent = upList.length ? (upList.length + ' шт.') : 'пока пусто';
-
-    const skThumbs = $('shopCatThumbsSkins');
-    if (skThumbs) {
-      skThumbs.innerHTML = '';
-      if (!skList.length) {
-        skThumbs.innerHTML = '<div class="shop-cat-thumb-icon" style="grid-column:1/-1;grid-row:1/-1">' + iconSvg('gift') + '</div>';
-      } else {
-        skList.slice(0, 4).forEach(sk => {
-          const d = document.createElement('div');
-          d.innerHTML = sk.image
-            ? '<img loading="lazy" decoding="async" src="' + sk.image + '" alt="">'
-            : '<div class="shop-cat-thumb-icon">' + iconSvg('gift') + '</div>';
-          skThumbs.appendChild(d.firstElementChild);
-        });
-      }
-    }
-    const skCount = $('shopCatCountSkins');
-    if (skCount) skCount.textContent = skList.length ? (skList.length + ' шт.') : 'пока пусто';
-  }
-
-  document.querySelectorAll('.shop-cat-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const cat = card.dataset.cat;
-      currentShopCat = cat;
-      const titleEl = $('shopCategoryTitle');
-      if (titleEl) titleEl.textContent = SHOP_CAT_NAMES[cat] || 'Шоп';
-      showScreen('shopCategory');
+  document.querySelectorAll('#shopTabs .shop-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      if (tab.classList.contains('active')) return;
+      document.querySelectorAll('#shopTabs .shop-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentShopCat = tab.dataset.cat;
+      const map = { upgrades: 'shopSectionUpgrades', skins: 'shopSectionSkins', food: 'shopSectionFood' };
+      document.querySelectorAll('#screenMarket .shop-section').forEach(s => s.classList.remove('active'));
+      const sec = $(map[currentShopCat]);
+      if (sec) sec.classList.add('active');
     });
   });
 
-  function renderShopCategoryGrid() {
-    const grid = $('shopCategoryGrid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    if (currentShopCat === 'upgrades') renderUpgradesGrid(grid);
-    else if (currentShopCat === 'skins') renderSkinsGrid(grid);
-    else {
-      grid.innerHTML = '<div class="shop-empty">Раздел «Питание» скоро появится.<br>Создатель ещё готовит товары.</div>';
-    }
+  function renderShopScreen() {
+    renderUpgradesList();
+    renderSkinsGrid();
   }
 
-  function renderUpgradesGrid(grid) {
+  function renderUpgradesList() {
+    const wrap = $('upgradesList');
+    if (!wrap) return;
     const list = allUpgrades();
+    wrap.innerHTML = '';
     if (!list.length) {
-      grid.innerHTML = '<div class="shop-empty">Пока нет улучшений.</div>';
+      wrap.innerHTML = '<div class="shop-empty">Пока нет улучшений.</div>';
       return;
     }
     list.forEach(item => {
@@ -4809,8 +4752,7 @@
       const maxLv = itemMaxLevel(item);
       const nextCost = upgradeCost(item, lv);
       const can = lv < maxLv && state.balance >= nextCost;
-      const card = document.createElement('div');
-      card.className = 'shop-item-card';
+      const pct = maxLv > 0 ? Math.min(100, Math.round((lv / maxLv) * 100)) : 0;
       const media = iconSvg(item.icon || 'gift');
       const effects = [];
       if ((item.income || 0) > 0) effects.push('+' + (lv > 0 ? itemIncome(item, lv) : item.income) + '/с');
@@ -4818,7 +4760,7 @@
 
       let btnHtml;
       if (lv >= maxLv) {
-        btnHtml = '<button class="buy-btn maxed" disabled>Макс. ' + maxLv + '</button>';
+        btnHtml = '<button class="buy-btn maxed" disabled>Макс.</button>';
       } else if (lv === 0) {
         btnHtml = '<button class="buy-btn' + (can ? ' can' : '') + '" data-id="' + item.id + '"' + (can ? '' : ' disabled') + '>' +
           'Купить<span class="buy-price-line">' + fmt(nextCost) + '</span></button>';
@@ -4827,15 +4769,23 @@
           'Прокачать<span class="buy-price-line">' + fmt(nextCost) + '</span></button>';
       }
 
+      const card = document.createElement('div');
+      card.className = 'up-card';
       card.innerHTML =
-        '<div class="shop-item-img">' + media + '</div>' +
-        '<div class="shop-item-name">' + escapeHtml(item.name) + '</div>' +
-        (effects.length ? '<div class="shop-item-bonus">' + effects.join(' · ') + '</div>' : '') +
-        (lv > 0 ? '<div class="shop-item-level">Уровень ' + lv + ' / ' + maxLv + '</div>' : '') +
-        btnHtml;
-      grid.appendChild(card);
+        '<div class="up-card-icon">' + media + '</div>' +
+        '<div class="up-card-body">' +
+          '<div class="up-card-name">' + escapeHtml(item.name) + '</div>' +
+          (item.desc ? '<div class="up-card-desc">' + escapeHtml(item.desc) + '</div>' : '') +
+          (effects.length ? '<div class="up-card-bonus">' + effects.join(' · ') + '</div>' : '') +
+          '<div class="up-card-levelbar-row">' +
+            '<div class="up-card-levelbar"><div class="up-card-levelbar-fill" style="width:' + pct + '%"></div></div>' +
+            '<div class="up-card-levelnum">' + lv + '/' + maxLv + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="up-card-action">' + btnHtml + '</div>';
+      wrap.appendChild(card);
     });
-    grid.querySelectorAll('.buy-btn.can').forEach(btn => {
+    wrap.querySelectorAll('.buy-btn.can').forEach(btn => {
       btn.addEventListener('click', () => {
         const item = allUpgrades().find(i => i.id === btn.dataset.id);
         if (!item) return;
@@ -4849,13 +4799,16 @@
         recomputePassive();
         saveState();
         render();
-        renderUpgradesGrid(grid);
+        renderUpgradesList();
       });
     });
   }
 
-  function renderSkinsGrid(grid) {
+  function renderSkinsGrid() {
+    const grid = $('skinsGrid');
+    if (!grid) return;
     const list = allSkins();
+    grid.innerHTML = '';
     if (!list.length) {
       grid.innerHTML = '<div class="shop-empty">Пока нет скинов.<br>Создатель ещё не добавил.</div>';
       return;
@@ -4942,15 +4895,14 @@
         pushLeaderboard(true);
         render();
         renderSkinDetail();
-        renderShopCats();
+        renderSkinsGrid();
       });
     }
   }
 
   // back-compat: admin add/remove skin refreshes whichever shop view is open
   function renderSkins() {
-    renderShopCats();
-    renderShopCategoryGrid();
+    renderShopScreen();
     renderSkinDetail();
   }
 
