@@ -1401,7 +1401,8 @@
     transition: transform .1s ease;
   }
   .verified-badge:active {
-    transform: scale(0.88);
+    transform: scale(0.92) rotate(-7deg);
+    transition: transform .12s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   .verified-badge svg { width: 100%; height: 100%; display: block; }
 
@@ -2119,14 +2120,6 @@
             </div>
             <div class="profile-card-chevron">›</div>
           </button>
-          <button type="button" class="profile-card" id="profileClanStaticCard" style="display:none">
-            <div class="profile-card-icon clan-static-icon" id="profileClanStaticIcon"></div>
-            <div class="profile-card-text">
-              <div class="profile-card-title" id="profileClanStaticTitle">Клан</div>
-              <div class="profile-card-sub" id="profileClanStaticSub">Создать клан</div>
-            </div>
-            <div class="profile-card-chevron">›</div>
-          </button>
           <button type="button" class="profile-card profile-withdraw" id="profileSettingsBtn">
             <div class="profile-card-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -2426,9 +2419,6 @@
   /* ===== Supporter tooltip (click on pig badge) ===== */
   let currentTooltip = null;
   function showSupporterTooltip(badgeEl, username) {
-    // only show in Profile screen
-    if (!badgeEl.closest('#screenProfile')) return;
-
     if (currentTooltip) currentTooltip.remove();
     if (!username) username = 'Игрок';
 
@@ -2482,7 +2472,7 @@
   // Global click handler — only for profile verified badge
   document.addEventListener('click', (e) => {
     const badge = e.target.closest('.verified-badge');
-    if (!badge || !badge.closest('#screenProfile')) return;
+    if (!badge) return;
 
     let username = 'Игрок';
     const parent = badge.parentElement;
@@ -3175,12 +3165,6 @@
       }
     }
 
-    // Hide old duplicate clan card from the list (we now use the pill instead)
-    const scCard = $('profileClanStaticCard');
-    if (scCard) {
-      scCard.style.display = 'none';
-    }
-
     // skins
     const grid = $('mySkinsGrid');
     if (grid) {
@@ -3466,8 +3450,6 @@
   function applyClanSwipeMode() {
     const wrap = $('profileCarouselWrap');
     if (wrap) wrap.classList.toggle('static-clan', !state.clanSwipeMode);
-    const card = $('profileClanStaticCard');
-    if (card) card.style.display = state.clanSwipeMode ? 'none' : '';
     const car = $('profileCarousel');
     if (car && !state.clanSwipeMode && car._lastIdx === 1) {
       car.scrollLeft = 0;
