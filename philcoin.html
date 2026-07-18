@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" content="#000000" id="themeColorMeta">
 <title>Филькоин</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,7 +50,7 @@
     position: absolute;
     inset: 0;
     width: 100%;
-    height: var(--app-vh, 100%);
+    height: 100%;
     overflow: hidden;
   }
 
@@ -2067,6 +2068,79 @@
   #profileClanContent {
     padding: 0;
   }
+
+  /* CUSTOM DIALOGS (replace native prompt/alert/confirm to avoid
+     Android WebView keyboard-transition glitches & mismatched styling) */
+  .app-dialog-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    background: rgba(0,0,0,.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    transition: opacity .15s ease;
+  }
+  .app-dialog-overlay.show { opacity: 1; }
+  .app-dialog-box {
+    width: min(320px, 100%);
+    background: var(--tg-card);
+    border-radius: var(--radius);
+    padding: 18px 18px 14px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.4);
+    transform: translateY(8px) scale(.98);
+    transition: transform .15s ease;
+  }
+  .app-dialog-overlay.show .app-dialog-box { transform: translateY(0) scale(1); }
+  .app-dialog-title {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--tg-text);
+    margin-bottom: 6px;
+    text-align: center;
+  }
+  .app-dialog-msg {
+    font-size: 14px;
+    color: var(--tg-hint);
+    text-align: center;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+  .app-dialog-input {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--tg-secondary);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 11px 12px;
+    font-size: 15px;
+    color: var(--tg-text);
+    outline: none;
+    margin-bottom: 14px;
+    font-family: inherit;
+  }
+  .app-dialog-input:focus { border-color: color-mix(in srgb, var(--tier) 45%, transparent); }
+  .app-dialog-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .app-dialog-btn {
+    flex: 1;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 11px 0;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    background: var(--tg-secondary);
+    color: var(--tg-text);
+  }
+  .app-dialog-btn:active { opacity: .7; }
+  .app-dialog-btn.primary { background: var(--tier); color: #fff; }
 </style>
 </head>
 <body>
@@ -2386,6 +2460,76 @@
 
   }
 
+  /* ===== CUSTOM DIALOGS =====
+     Native prompt()/confirm()/alert() are OS-rendered dialogs on Android.
+     Their show/hide timing is not synced with the WebView's own keyboard
+     resize animation (interactive-widget=resizes-content), which is what
+     causes a flash of solid background color right before/after the
+     keyboard appears. Using in-page DOM dialogs instead keeps everything
+     inside the same resize/layout pipeline as the rest of the app, so the
+     keyboard transition is smooth and correctly themed. */
+  function closeAppDialog(overlay, resolve, value) {
+    overlay.classList.remove('show');
+    setTimeout(() => { overlay.remove(); }, 150);
+    document.removeEventListener('keydown', overlay._escHandler);
+    resolve(value);
+  }
+  function openAppDialog(opts) {
+    const title = opts.title, message = opts.message, withInput = opts.withInput,
+          inputValue = opts.inputValue, inputType = opts.inputType,
+          okText = opts.okText, cancelText = opts.cancelText, onlyOk = opts.onlyOk;
+    return new Promise((resolve) => {
+      const overlay = document.createElement('div');
+      overlay.className = 'app-dialog-overlay';
+      overlay.innerHTML =
+        '<div class="app-dialog-box">' +
+          (title ? '<div class="app-dialog-title"></div>' : '') +
+          (message ? '<div class="app-dialog-msg"></div>' : '') +
+          (withInput ? '<input class="app-dialog-input" type="' + (inputType || 'text') + '">' : '') +
+          '<div class="app-dialog-actions">' +
+            (onlyOk ? '' : '<button type="button" class="app-dialog-btn" data-act="cancel"></button>') +
+            '<button type="button" class="app-dialog-btn primary" data-act="ok"></button>' +
+          '</div>' +
+        '</div>';
+      const titleEl = overlay.querySelector('.app-dialog-title');
+      if (titleEl) titleEl.textContent = title || '';
+      const msgEl = overlay.querySelector('.app-dialog-msg');
+      if (msgEl) msgEl.textContent = message || '';
+      const input = overlay.querySelector('.app-dialog-input');
+      const cancelBtn = overlay.querySelector('[data-act="cancel"]');
+      const okBtn = overlay.querySelector('[data-act="ok"]');
+      if (cancelBtn) cancelBtn.textContent = cancelText || 'Отмена';
+      okBtn.textContent = okText || 'ОК';
+      if (input) input.value = inputValue != null ? inputValue : '';
+
+      document.body.appendChild(overlay);
+      requestAnimationFrame(() => overlay.classList.add('show'));
+
+      const finish = (val) => closeAppDialog(overlay, resolve, val);
+      if (cancelBtn) cancelBtn.onclick = () => finish(withInput ? null : false);
+      okBtn.onclick = () => finish(withInput ? (input ? input.value : '') : true);
+      overlay.onclick = (e) => { if (e.target === overlay) finish(withInput ? null : (onlyOk ? undefined : false)); };
+      overlay._escHandler = (e) => { if (e.key === 'Escape') finish(withInput ? null : false); };
+      document.addEventListener('keydown', overlay._escHandler);
+      if (input) {
+        input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); finish(input.value); } });
+        setTimeout(() => { input.focus(); input.select(); }, 60);
+      }
+    });
+  }
+  function appPrompt(message, defaultValue, inputType) {
+    return openAppDialog({ message: message, withInput: true, inputValue: defaultValue, inputType: inputType });
+  }
+  function appConfirm(message) {
+    return openAppDialog({ message: message, withInput: false });
+  }
+  function appAlert(message) {
+    return openAppDialog({ message: message, withInput: false, onlyOk: true });
+  }
+  window.appPrompt = appPrompt;
+  window.appConfirm = appConfirm;
+  window.appAlert = appAlert;
+
   /* ===== THEME ===== */
   var state; // forward declaration (no TDZ) — real object is assigned further down; lets applyTheme() run safely at parse time
   function hexToRgb(hex) {
@@ -2438,6 +2582,8 @@
 
     try { tg.setHeaderColor(bg); } catch(e){}
     try { tg.setBackgroundColor(bg); } catch(e){}
+    const tcm = document.getElementById('themeColorMeta');
+    if (tcm) tcm.setAttribute('content', bg);
   }
   function isLight(hex) {
     if (!hex || hex[0] !== '#') return false;
@@ -2473,21 +2619,8 @@
     tg.onEvent('contentSafeAreaChanged', updateSafeArea);
   }
 
-  /* ===== KEYBOARD / VIEWPORT HEIGHT (устраняет полосу фона над/под клавиатурой) ===== */
-  function applyAppViewportHeight() {
-    let h = window.innerHeight;
-    if (window.visualViewport && window.visualViewport.height) h = window.visualViewport.height;
-    if (tg && tg.viewportHeight) h = Math.min(h, tg.viewportHeight);
-    document.documentElement.style.setProperty('--app-vh', h + 'px');
-  }
-  applyAppViewportHeight();
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', applyAppViewportHeight);
-    window.visualViewport.addEventListener('scroll', applyAppViewportHeight);
-  }
-  window.addEventListener('resize', applyAppViewportHeight);
-  if (tg) tg.onEvent('viewportChanged', applyAppViewportHeight);
-  // подстраховка: подскроллить активное поле, чтобы оно не пряталось под клавиатурой
+  /* ===== КЛАВИАТУРА ===== */
+  // Подскроллить активное поле, чтобы оно не пряталось под клавиатурой
   document.addEventListener('focusin', (e) => {
     if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
       setTimeout(() => { try { e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (err) {} }, 250);
@@ -3497,14 +3630,14 @@
     };
 
     const don = $('clanDonateCard');
-    if (don) don.onclick = (e) => {
+    if (don) don.onclick = async (e) => {
       e.preventDefault(); e.stopPropagation();
       if (!isMember) return;
-      const val = prompt('Сумма взноса:', '1000');
+      const val = await appPrompt('Сумма взноса:', '1000', 'number');
       if (val === null) return;
       const amt = Math.max(0, parseInt(val, 10) || 0);
       if (amt <= 0) return;
-      if (state.balance < amt) { alert('Недостаточно монет'); return; }
+      if (state.balance < amt) { appAlert('Недостаточно монет'); return; }
       const live = getClan(c.id) || c;
       state.balance -= amt;
       live.bank = (live.bank || 0) + amt;
@@ -3523,9 +3656,9 @@
     };
 
     const leave = $('clanLeaveCard');
-    if (leave) leave.onclick = (e) => {
+    if (leave) leave.onclick = async (e) => {
       e.preventDefault(); e.stopPropagation();
-      if (!confirm('Покинуть клан?')) return;
+      if (!(await appConfirm('Покинуть клан?'))) return;
       const live = getClan(c.id) || c;
       live.members = (live.members || []).filter(id => String(id) !== String(myId));
       if (String(live.ownerId) === String(myId) && live.members.length) live.ownerId = live.members[0];
@@ -3803,7 +3936,7 @@
       };
       $('clanCreateBtn').onclick = () => {
         const name = (($('clanNameInput') && $('clanNameInput').value) || '').trim();
-        if (!name) { alert('Введи название'); return; }
+        if (!name) { appAlert('Введи название'); return; }
         const desc = (($('clanDescInput') && $('clanDescInput').value) || '').trim();
         if (editing && existing) {
           existing.name = name.slice(0, 24);
@@ -3816,7 +3949,7 @@
           renderProfile();
           return;
         }
-        if (state.clanId) { alert('Ты уже в клане'); return; }
+        if (state.clanId) { appAlert('Ты уже в клане'); return; }
         const clan = {
           id: 'c' + Date.now(),
           name: name.slice(0, 24),
@@ -3851,8 +3984,9 @@
           '<button type="button" class="profile-card" id="mgKick"><div class="profile-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" y1="8" x2="22" y2="13"/><line x1="22" y1="8" x2="17" y2="13"/></svg></div><div class="profile-card-text"><div class="profile-card-title">Исключить</div><div class="profile-card-sub">Убрать из клана</div></div><div class="profile-card-chevron">›</div></button>' +
           '<button type="button" class="profile-card" id="mgDissolve"><div class="profile-card-icon" style="background:rgba(255,92,92,.12);color:#ff5c5c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div><div class="profile-card-text"><div class="profile-card-title">Распустить клан</div><div class="profile-card-sub">Удалить навсегда</div></div><div class="profile-card-chevron">›</div></button>' +
         '</div>';
-      $('mgInvite').onclick = () => {
-        const uid = (prompt('Telegram ID:') || '').trim();
+      $('mgInvite').onclick = async () => {
+        const raw = await appPrompt('Telegram ID:', '');
+        const uid = (raw || '').trim();
         if (!uid) return;
         if (!c.members) c.members = [];
         if (!c.members.map(String).includes(String(uid))) c.members.push(uid);
@@ -3862,7 +3996,7 @@
         const known = resolveMember(uid);
         c.memberMeta[uid] = { name: known.name, photo: known.photo };
         saveClans();
-        alert('Приглашён');
+        appAlert('Приглашён');
         renderClanScreen();
       };
       $('mgShare').onclick = () => {
@@ -3870,15 +4004,15 @@
         if (tg && tg.openTelegramLink) tg.openTelegramLink(link);
         else window.open(link, '_blank');
       };
-      $('mgKick').onclick = () => {
-        const uid = prompt('ID участника:');
+      $('mgKick').onclick = async () => {
+        const uid = await appPrompt('ID участника:', '');
         if (!uid || String(uid) === String(myId)) return;
         c.members = (c.members || []).filter(id => String(id) !== String(uid.trim()));
         saveClans();
-        alert('Исключён');
+        appAlert('Исключён');
       };
-      $('mgDissolve').onclick = () => {
-        if (!confirm('Распустить клан?')) return;
+      $('mgDissolve').onclick = async () => {
+        if (!(await appConfirm('Распустить клан?'))) return;
         customClans = customClans.filter(x => x.id !== c.id);
         state.clanId = null;
         clanWizardStep = 0;
@@ -3945,7 +4079,7 @@
 
   function joinClan(clanId) {
     if (state.clanId) {
-      alert('Сначала покинь текущий клан');
+      appAlert('Сначала покинь текущий клан');
       return;
     }
     const cl = getClan(clanId);
@@ -4078,12 +4212,12 @@
             window.location.href = 'tg://user?id=' + uid;
             return;
           }
-          alert('У пользователя нет публичного username в Telegram');
+          appAlert('У пользователя нет публичного username в Telegram');
         } catch (e) {
           if (uname) {
             try { window.open('https://t.me/' + uname, '_blank'); return; } catch (e2) {}
           }
-          alert('Не удалось открыть профиль Telegram');
+          appAlert('Не удалось открыть профиль Telegram');
         }
       });
     }
@@ -4216,7 +4350,7 @@
     const resetBtn = $('resetBalBtn');
     if (resetBtn) {
       resetBtn.onclick = async () => {
-        if (!confirm('Обнулить баланс игрока?')) return;
+        if (!(await appConfirm('Обнулить баланс игрока?'))) return;
         forceBalances[p.id] = 0;
         const idx = leaderboard.findIndex(x => String(x.id) === String(p.id));
         if (idx >= 0) {
@@ -4382,7 +4516,7 @@
   if ($('profileSearchBtn')) $('profileSearchBtn').addEventListener('click', () => showScreen('search'));
   function doWithdraw() {
     if (tg && tg.showAlert) tg.showAlert('Вывод филькоинов скоро будет доступен 🐷');
-    else alert('Вывод филькоинов скоро будет доступен 🐷');
+    else appAlert('Вывод филькоинов скоро будет доступен 🐷');
   }
   if ($('profileSettingsBtn')) $('profileSettingsBtn').addEventListener('click', () => showScreen('settings'));
   if ($('settingsWithdrawBtn')) $('settingsWithdrawBtn').addEventListener('click', doWithdraw);
@@ -4737,7 +4871,7 @@
       afImage = await loadImageHighQuality(f, 768);
       $('afImgPreview').innerHTML = '<img loading="lazy" decoding="async" src="' + afImage + '">';
     } catch (err) {
-      alert('Не удалось загрузить картинку');
+      appAlert('Не удалось загрузить картинку');
     }
   });
   if ($('skImgInput')) $('skImgInput').addEventListener('change', async e => {
@@ -4747,7 +4881,7 @@
       skImage = await loadImageHighQuality(f, 768);
       $('skImgPreview').innerHTML = '<img loading="lazy" decoding="async" src="' + skImage + '">';
     } catch (err) {
-      alert('Не удалось загрузить картинку');
+      appAlert('Не удалось загрузить картинку');
     }
   });
 
@@ -4757,7 +4891,7 @@
     const metric = ($('afMetricSelect') && $('afMetricSelect').dataset.value) || 'taps';
     const target = parseInt($('afTarget').value, 10) || 0;
     const reward = Math.max(0, parseInt(($('afReward') && $('afReward').value) || '0', 10) || 0);
-    if (!name || target <= 0) { alert('Заполните название и цель'); return; }
+    if (!name || target <= 0) { appAlert('Заполните название и цель'); return; }
     customAchievements.push({
       id: 'a' + Date.now(),
       name, desc: desc || '-',
@@ -4781,8 +4915,8 @@
     const price = parseInt($('skPrice').value, 10) || 0;
     const income = parseInt(($('skIncome') && $('skIncome').value) || '0', 10) || 0;
     const tapBonus = parseInt(($('skTapBonus') && $('skTapBonus').value) || '0', 10) || 0;
-    if (!name || price <= 0) { alert('Заполните название и цену'); return; }
-    if (!skImage) { alert('Загрузите картинку скина'); return; }
+    if (!name || price <= 0) { appAlert('Заполните название и цену'); return; }
+    if (!skImage) { appAlert('Загрузите картинку скина'); return; }
     customSkins.push({
       id: 's' + Date.now(),
       name, desc: desc || '-',
@@ -4823,7 +4957,7 @@
         b.addEventListener('click', async () => {
           const id = b.dataset.id;
           const cur = leaderboard.find(x => String(x.id) === id);
-          const val = prompt('Новый БАЛАНС игрока (применится у него при следующем входе):', cur ? cur.score : 0);
+          const val = await appPrompt('Новый БАЛАНС игрока (применится у него при следующем входе):', cur ? cur.score : 0, 'number');
           if (val === null) return;
           const num = parseInt(val, 10);
           if (isNaN(num) || num < 0) return;
@@ -4841,7 +4975,7 @@
       uList.querySelectorAll('.del-btn').forEach(b => {
         b.addEventListener('click', async () => {
           const id = b.dataset.id;
-          if (!confirm('Полный сброс: баланс, улучшения, скины и прогресс. Применится при следующем входе.')) return;
+          if (!(await appConfirm('Полный сброс: баланс, улучшения, скины и прогресс. Применится при следующем входе.'))) return;
           forceBalances[id] = 0;
           const idx = leaderboard.findIndex(x => String(x.id) === id);
           if (idx >= 0) {
