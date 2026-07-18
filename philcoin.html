@@ -52,8 +52,6 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    padding-bottom: 0px;
-    transition: padding-bottom .18s ease-out;
   }
 
   .app {
@@ -2475,31 +2473,11 @@
     tg.onEvent('contentSafeAreaChanged', updateSafeArea);
   }
 
-  /* ===== КЛАВИАТУРА =====
-     Раньше viewport был interactive-widget=resizes-content: браузер сам
-     резко ужимал layout под клавиатуру, а системная анимация появления
-     клавиатуры отставала от этого мгновенного ужатия — на долю секунды
-     было видно пустое место цвета фона приложения ровно по размеру
-     клавиатуры. Теперь используется interactive-widget=overlays-content
-     (клавиатура просто накладывается сверху, layout не резервирует под
-     неё место сам), а нужный отступ снизу мы считаем сами через
-     visualViewport и двигаем его плавным CSS-transition — без рывков. */
-  (function setupKeyboardInset() {
-    const appEl = document.getElementById('app');
-    if (!appEl || !window.visualViewport) return;
-    const vv = window.visualViewport;
-    function update() {
-      const inset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
-      appEl.style.paddingBottom = (inset > 2 ? inset : 0) + 'px';
-    }
-    vv.addEventListener('resize', update);
-    vv.addEventListener('scroll', update);
-    update();
-  })();
+  /* ===== КЛАВИАТУРА ===== */
   // Подскроллить активное поле, чтобы оно не пряталось под клавиатурой
   document.addEventListener('focusin', (e) => {
     if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
-      setTimeout(() => { try { e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (err) {} }, 220);
+      setTimeout(() => { try { e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (err) {} }, 250);
     }
   });
 
