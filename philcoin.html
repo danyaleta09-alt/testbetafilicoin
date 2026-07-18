@@ -996,19 +996,19 @@
     flex-shrink: 0;
   }
 
-  /* ===== SHOP: fullscreen category grid (3 cards per row) ===== */
+  /* ===== SHOP: fullscreen category grid (2 cards per row) ===== */
   .shop-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
     padding: 4px 0 20px;
     align-items: stretch;
   }
   .shop-item-card {
     background: var(--tg-card);
-    border-radius: 16px;
+    border-radius: 18px;
     border: none;
-    padding: 8px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -1018,12 +1018,14 @@
     cursor: pointer;
     width: 100%;
     min-width: 0;
+    height: 100%;
+    box-sizing: border-box;
   }
   .shop-item-card.equipped { outline: 2px solid var(--tier); outline-offset: 0; }
   .shop-item-img {
     width: 100%;
     aspect-ratio: 1;
-    border-radius: 12px;
+    border-radius: 14px;
     background: var(--tg-secondary);
     overflow: hidden;
     display: flex;
@@ -1031,17 +1033,17 @@
     justify-content: center;
   }
   .shop-item-img img { width: 100%; height: 100%; object-fit: cover; }
-  .shop-item-img svg { width: 26px; height: 26px; color: var(--tg-hint); }
+  .shop-item-img svg { width: 34px; height: 34px; color: var(--tg-hint); }
   .shop-item-name {
     font-family: 'Fredoka', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .shop-item-bonus {
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 600;
     color: var(--tier);
     white-space: nowrap;
@@ -1049,7 +1051,7 @@
     text-overflow: ellipsis;
   }
   .shop-item-level {
-    font-size: 10px;
+    font-size: 11px;
     color: var(--tg-hint);
     white-space: nowrap;
     overflow: hidden;
@@ -1057,12 +1059,20 @@
   }
   .shop-item-card .buy-btn {
     width: 100%;
-    margin-top: 2px;
-    padding: 8px 4px;
+    margin-top: auto;
+    padding: 10px 6px;
     min-width: 0;
-    font-size: 11px;
-    white-space: nowrap;
+    font-size: 13px;
+    white-space: normal;
+    line-height: 1.3;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .shop-item-card .buy-btn .buy-price-line {
     display: block;
+    margin-left: 0;
+    margin-top: 1px;
+    font-size: 11.5px;
   }
 
   /* ===== SKIN DETAIL SCREEN ===== */
