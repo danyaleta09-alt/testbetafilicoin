@@ -2424,7 +2424,10 @@
     // Дополнительная защита — только в профильных экранах
     if (!badgeEl.closest('#screenProfile') && !badgeEl.closest('#screenUser')) return;
 
-    // Чистим предыдущую плашку и таймер (защита от быстрого многократного клика и мигания)
+    // Если плашка уже видна — ничего не делаем (повторный клик игнорируем)
+    if (currentTooltip) return;
+
+    // Чистим предыдущую плашку и таймер (на всякий случай)
     if (currentTooltip) {
       currentTooltip.remove();
       currentTooltip = null;
@@ -2442,7 +2445,6 @@
     tip.innerHTML = text + '<div class="arrow"></div>';
     document.body.appendChild(tip);
     currentTooltip = tip;
-    tooltipCloseTimer = setTimeout(close, 2000);
 
     // position below the badge
     const rect = badgeEl.getBoundingClientRect();
@@ -2482,6 +2484,8 @@
         tooltipCloseTimer = null;
       }, 220);
     };
+
+    tooltipCloseTimer = setTimeout(close, 2000);
   }
 
   // Global click handler — only for profile verified badge
