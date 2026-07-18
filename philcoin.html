@@ -1439,6 +1439,11 @@
     to   { opacity: 1; transform: translateY(0) scale(1); }
   }
 
+  @keyframes supporterPopReverse {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to   { opacity: 0; transform: translateY(6px) scale(.96); }
+  }
+
   .profile-carousel-wrap.static-clan .profile-slide[data-slide="clan"],
   .profile-carousel-wrap.static-clan .profile-dots { display: none; }
   .profile-carousel-wrap.static-clan .profile-carousel { overflow: hidden; }
@@ -2471,13 +2476,15 @@
       arrow.style.transform = 'translateX(-50%) rotate(225deg)';
     }
 
-    // auto close after exactly 2 seconds + smooth fade out
+    // auto close after exactly 2 seconds + smooth fade out (точно так же красиво, как появление)
     const close = () => {
       if (!tip.parentNode) return;
-      // Плавное исчезновение в стиле pop-анимации появления (зеркально)
-      tip.style.transition = 'opacity .22s ease, transform .22s ease';
-      tip.style.opacity = '0';
-      tip.style.transform = 'translateY(6px) scale(.96)';
+
+      // Отключаем исходную анимацию появления и запускаем точную обратную
+      tip.style.animation = 'none';
+      tip.offsetHeight; // force reflow
+      tip.style.animation = 'supporterPopReverse .22s ease forwards';
+
       setTimeout(() => {
         if (tip.parentNode) tip.parentNode.removeChild(tip);
         if (currentTooltip === tip) currentTooltip = null;
