@@ -1401,11 +1401,7 @@
     transition: transform .1s ease;
   }
   .verified-badge:active {
-    transform: scale(0.82);
-    transition: transform .08s ease;
-  }
-  .verified-badge {
-    transition: transform .12s ease;
+    transform: scale(0.88);
   }
   .verified-badge svg { width: 100%; height: 100%; display: block; }
 
@@ -2123,7 +2119,14 @@
             </div>
             <div class="profile-card-chevron">›</div>
           </button>
-          <!-- Клан теперь только в виде пилюли под именем. Старая карточка удалена. -->
+          <button type="button" class="profile-card" id="profileClanStaticCard" style="display:none">
+            <div class="profile-card-icon clan-static-icon" id="profileClanStaticIcon"></div>
+            <div class="profile-card-text">
+              <div class="profile-card-title" id="profileClanStaticTitle">Клан</div>
+              <div class="profile-card-sub" id="profileClanStaticSub">Создать клан</div>
+            </div>
+            <div class="profile-card-chevron">›</div>
+          </button>
           <button type="button" class="profile-card profile-withdraw" id="profileSettingsBtn">
             <div class="profile-card-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -2226,19 +2229,52 @@
         <div class="panel-title">Панель создателя</div>
         <button class="close-btn" id="adminClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
       </div>
-      <div class="panel-body" style="padding: 24px 16px; text-align: center;">
-        <div style="max-width: 300px; margin: 0 auto;">
-          <div style="font-size: 17px; font-weight: 600; margin-bottom: 16px;">Админ-функции встроены в приложение</div>
-          <div style="font-size: 14px; color: var(--tg-hint); line-height: 1.6;">
-            Просто используй обычные экраны:<br><br>
-            • В Поиске найди человека<br>
-            • Открой его профиль<br>
-            • Нажми ✏️ рядом с именем<br><br>
-            Там ты сможешь менять баланс или обнулять его.
-          </div>
-        </div>
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="users">Пользователи</button>
+        <button class="admin-tab" data-tab="skins">Скины</button>
+        <button class="admin-tab" data-tab="achs">Достижения</button>
       </div>
-    </div> <!-- end screenAdmin -->
+      <div class="panel-body">
+        <!-- USERS -->
+        <div class="admin-section active" id="adminUsers">
+          <div class="admin-list" id="usersList"></div>
+        </div>
+        <!-- SKINS -->
+        <div class="admin-section" id="adminSkins">
+          <div class="admin-form">
+            <h3>Новый скин</h3>
+            <div class="field"><label>Название</label><input type="text" id="skName" placeholder="Золотая свинка"></div>
+            <div class="field"><label>Описание</label><textarea id="skDesc" placeholder="Как выглядит / зачем"></textarea></div>
+            <div class="field-row">
+              <div class="field"><label>Цена</label><input type="number" id="skPrice" placeholder="25000"></div>
+              <div class="field"><label>Бонус к тапу (экип.)</label><input type="number" id="skTapBonus" placeholder="1"></div>
+            </div>
+            <div class="field"><label>Пассив / сек (экип.)</label><input type="number" id="skIncome" placeholder="0"></div>
+            <div class="field"><label>Картинка PNG</label>
+              <div class="img-row">
+                <div class="img-preview" id="skImgPreview">нет</div>
+                <div class="file-btn">Выбрать файл<input type="file" accept="image/png,image/webp" id="skImgInput"></div>
+              </div>
+            </div>
+            <button class="submit-btn" id="skSubmit">Создать скин</button>
+          </div>
+          <div class="admin-list" id="skList"></div>
+        </div>
+        <!-- ACHIEVEMENTS -->
+        <div class="admin-section" id="adminAchs">
+          <div class="admin-form">
+            <h3>Новое достижение</h3>
+            <div class="field"><label>Название</label><input type="text" id="afName" placeholder="Король тапов"></div>
+            <div class="field"><label>Описание</label><textarea id="afDesc" placeholder="Что нужно сделать"></textarea></div>
+            <div class="field-row">
+              <div class="field"><label>Условие</label>
+                <div class="cselect" id="afMetricSelect" data-value="taps">
+                  <button type="button" class="cselect-btn" id="afMetricBtn">Число тапов</button>
+                  <div class="cselect-list">
+                    <div class="cselect-item selected" data-value="taps">Число тапов</div>
+                    <div class="cselect-item" data-value="totalEarned">Заработано монет</div>
+                    <div class="cselect-item" data-value="level">Уровень</div>
+                    <div class="cselect-item" data-value="balance">Баланс монет</div>
                   </div>
                 </div>
               </div>
@@ -2429,47 +2465,24 @@
       arrow.style.transform = 'translateX(-50%) rotate(225deg)';
     }
 
-    // auto close after exactly 2 seconds with smooth disappear (matching appear)
+    // auto close after exactly 2 seconds + smooth fade out
     const close = () => {
       if (!tip.parentNode) return;
-      tip.style.transition = 'opacity .25s ease, transform .25s ease';
+      tip.style.transition = 'opacity .2s ease';
       tip.style.opacity = '0';
-      tip.style.transform = 'translateY(4px) scale(0.96)';
       setTimeout(() => {
         if (tip.parentNode) tip.parentNode.removeChild(tip);
         if (currentTooltip === tip) currentTooltip = null;
-      }, 250);
+      }, 200);
     };
 
     setTimeout(close, 2000);
   }
 
-  // Global click handler for verified badge (tooltip)
+  // Global click handler — only for profile verified badge
   document.addEventListener('click', (e) => {
     const badge = e.target.closest('.verified-badge');
-    if (!badge) return;
-
-    // Allow in main profile OR in other-user profile view
-    const inMainProfile = !!badge.closest('#screenProfile');
-    const inOtherProfile = !!badge.closest('#userProfile') || !!badge.closest('.up-head');
-    if (!inMainProfile && !inOtherProfile) return;
-  });
-
-  // Global handler for admin pencil in other-user profiles
-  document.addEventListener('click', (e) => {
-    const pencil = e.target.closest('.admin-pencil');
-    if (!pencil) return;
-
-    const userId = pencil.dataset.userId;
-    if (!userId) return;
-
-    // Find the user object from leaderboard or shared data
-    const user = (shared.leaderboard || []).find(u => String(u.id) === String(userId));
-    if (user) {
-      e.stopImmediatePropagation();
-      openAdminBalanceEditor(user);
-    }
-  });
+    if (!badge || !badge.closest('#screenProfile')) return;
 
     let username = 'Игрок';
     const parent = badge.parentElement;
@@ -3849,12 +3862,6 @@
     const photo = p.photo
       ? '<img src="' + p.photo + '" alt="">'
       : init;
-
-    // Admin pencil for balance editing (safe version)
-    let adminEditHtml = '';
-    if (isCreatorId(myId) && String(p.id) !== String(myId)) {
-      adminEditHtml = `<button class="admin-pencil" data-user-id="${p.id}">✏️</button>`;
-    }
     const skinIds = Array.isArray(p.skins) ? p.skins : [];
     const achIds = Array.isArray(p.achievements) ? p.achievements : [];
 
@@ -3916,7 +3923,7 @@
     body.innerHTML =
       '<div class="up-head">' +
         '<div class="up-avatar">' + photo + '</div>' +
-        '<div class="up-name">' + (p.name || 'Игрок') + nameBadge(p.id) + adminEditHtml + '</div>' +
+        '<div class="up-name">' + (p.name || 'Игрок') + nameBadge(p.id) + '</div>' +
         '<div class="up-score">' + fmt(p.score || 0) + ' очков</div>' +
         clanBadge +
       '</div>' +
@@ -4431,158 +4438,35 @@
   });
 
   function renderAdmin() {
-    // New admin dashboard
-    const dash = $('adminDashboard');
-    const userSearch = $('adminUserSearch');
-    const balanceEditor = $('adminBalanceEditor');
-
-    if (dash) dash.style.display = '';
-    if (userSearch) userSearch.style.display = 'none';
-    if (balanceEditor) balanceEditor.style.display = 'none';
-
-    // Setup dashboard buttons
-    const searchBtn = $('adminSearchUsers');
-    const achBtn = $('adminCreateAch');
-    const skinBtn = $('adminCreateSkin');
-
-    if (searchBtn) searchBtn.onclick = () => showAdminUserSearch();
-    if (achBtn) achBtn.onclick = () => alert('Поэтапное создание достижений будет добавлено в следующем обновлении');
-    if (skinBtn) skinBtn.onclick = () => alert('Поэтапное создание скинов будет добавлено в следующем обновлении');
-
-    // Back buttons
-    const backSearch = $('adminUserSearchBack');
-    if (backSearch) backSearch.onclick = () => {
-      if (userSearch) userSearch.style.display = 'none';
-      if (dash) dash.style.display = '';
-    };
-
-    const backBalance = $('adminBalanceBack');
-    if (backBalance) backBalance.onclick = () => {
-      if (balanceEditor) balanceEditor.style.display = 'none';
-      if (userSearch) userSearch.style.display = '';
-    };
-  }
-
-  function showAdminUserSearch() {
-    const dash = $('adminDashboard');
-    const userSearch = $('adminUserSearch');
-    if (dash) dash.style.display = 'none';
-    if (userSearch) userSearch.style.display = '';
-
-    const input = $('adminUserSearchInput');
-    const results = $('adminUserSearchResults');
-    if (!input || !results) return;
-
-    input.oninput = () => {
-      const q = input.value.toLowerCase().trim();
-      results.innerHTML = '';
-
-      const filtered = (shared.leaderboard || []).filter(u => 
-        (u.name || '').toLowerCase().includes(q) || 
-        String(u.id).includes(q)
-      ).slice(0, 30);
-
-      if (!filtered.length) {
-        results.innerHTML = '<div style="padding:12px; color:var(--tg-hint)">Ничего не найдено</div>';
-        return;
-      }
-
-      filtered.forEach(u => {
+    // users
+    const uList = $('usersList');
+    uList.innerHTML = '';
+    const list = leaderboard.slice().sort((a,b) => b.score - a.score);
+    if (!list.length) {
+      uList.innerHTML = '<div class="rating-empty">Пока нет игроков в рейтинге</div>';
+    } else {
+      list.forEach(u => {
         const row = document.createElement('div');
         row.className = 'admin-item';
-        row.style.cursor = 'pointer';
-        row.innerHTML = `
-          <div class="thumb" style="background:var(--tier);color:#fff;font-weight:700;font-size:14px">${(u.name||'?')[0].toUpperCase()}</div>
-          <div class="name">${escapeHtml(u.name || 'Игрок')}<br><span style="font-size:11px;color:var(--tg-hint)">ID ${u.id}</span></div>
-          <div class="score">${fmt(u.score || 0)}</div>
-          <div class="edit-btn" style="margin-left:auto">✏️</div>
-        `;
-        row.onclick = (e) => {
-          if (e.target.closest('.edit-btn')) {
-            openAdminBalanceEditor(u);
-          } else {
-            // open user profile (simple view)
-            alert('Профиль пользователя (в будущем здесь будет полный просмотр)');
-          }
-        };
-        results.appendChild(row);
+        const forced = forceBalances[u.id];
+        const scoreTxt = fmt(u.score) + (forced !== undefined ? ' → ' + fmt(forced) : '');
+        row.innerHTML =
+          '<div class="thumb" style="background:var(--tier);color:#fff;font-weight:700;font-size:14px">' + (u.name||'?')[0].toUpperCase() + '</div>' +
+          '<div class="name">' + (u.name || 'Игрок') + '<br><span style="font-size:11px;color:var(--tg-hint)">' + u.id + '</span></div>' +
+          '<div class="score">' + scoreTxt + '</div>' +
+          '<button class="edit-btn" data-id="' + u.id + '">Баланс</button>' +
+          '<button class="del-btn" data-id="' + u.id + '">Обнулить</button>';
+        uList.appendChild(row);
       });
-    };
-
-    // initial empty state
-    results.innerHTML = '<div style="padding:12px; color:var(--tg-hint)">Начните вводить имя или ID</div>';
-  }
-
-  let currentAdminEditUser = null;
-
-  function openAdminBalanceEditorFromProfile(user) {
-    // Close current user profile if open
-    const up = $('userProfile');
-    if (up) up.style.display = 'none';
-    openAdminBalanceEditor(user);
-  }
-
-  function openAdminBalanceEditor(user) {
-    const userSearch = $('adminUserSearch');
-    const balanceEditor = $('adminBalanceEditor');
-    if (userSearch) userSearch.style.display = 'none';
-    if (balanceEditor) balanceEditor.style.display = '';
-
-    currentAdminEditUser = user;
-
-    const info = $('adminBalanceUserInfo');
-    if (info) {
-      info.innerHTML = `
-        <div style="font-size:18px; font-weight:600;">${escapeHtml(user.name || 'Игрок')}</div>
-        <div style="font-size:12px; color:var(--tg-hint);">ID ${user.id} • Текущий баланс: ${fmt(user.score || 0)}</div>
-      `;
-    }
-
-    const input = $('adminNewBalance');
-    if (input) input.value = user.score || 0;
-
-    // Save balance
-    const saveBtn = $('adminSaveBalance');
-    if (saveBtn) saveBtn.onclick = () => {
-      const newBal = parseInt(input.value, 10);
-      if (isNaN(newBal) || newBal < 0) return alert('Некорректное значение');
-      
-      // Use force balance API
-      fetch('/api/force-balance', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ id: user.id, balance: newBal })
-      }).then(r => r.json()).then(data => {
-        if (data.ok) {
-          alert('Баланс обновлён');
-          // refresh
-          fetchShared().then(() => {
-            if (balanceEditor) balanceEditor.style.display = 'none';
-            showAdminUserSearch();
-          });
-        }
-      });
-    };
-
-    // Reset balance
-    const resetBtn = $('adminResetBalance');
-    if (resetBtn) resetBtn.onclick = () => {
-      if (!confirm('Обнулить баланс игрока?')) return;
-      fetch('/api/force-balance', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ id: user.id, balance: 0 })
-      }).then(r => r.json()).then(data => {
-        if (data.ok) {
-          alert('Баланс обнулён');
-          fetchShared().then(() => {
-            if (balanceEditor) balanceEditor.style.display = 'none';
-            showAdminUserSearch();
-          });
-        }
-      });
-    };
-  }
+      uList.querySelectorAll('.edit-btn').forEach(b => {
+        b.addEventListener('click', async () => {
+          const id = b.dataset.id;
+          const cur = leaderboard.find(x => String(x.id) === id);
+          const val = prompt('Новый БАЛАНС игрока (применится у него при следующем входе):', cur ? cur.score : 0);
+          if (val === null) return;
+          const num = parseInt(val, 10);
+          if (isNaN(num) || num < 0) return;
+          forceBalances[id] = num;
           const idx = leaderboard.findIndex(x => String(x.id) === id);
           if (idx >= 0) {
             leaderboard[idx].score = num;
