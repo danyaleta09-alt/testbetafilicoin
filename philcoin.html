@@ -415,6 +415,7 @@
     cursor: pointer;
     text-align: center;
     line-height: 1.25;
+    white-space: nowrap;
   }
   .buy-btn.can {
     background: var(--tier);
@@ -427,11 +428,11 @@
   }
   .buy-btn:active.can { transform: scale(.96); }
   .buy-btn .buy-price-line {
-    display: block;
+    display: inline;
     font-size: 11px;
     font-weight: 500;
     opacity: 0.9;
-    margin-top: 2px;
+    margin-left: 4px;
   }
   .market-level {
     font-size: 11px;
@@ -837,9 +838,6 @@
     color: var(--tg-hint);
     font-size: 18px;
   }
-  .profile-withdraw {
-    margin-top: 6px;
-  }
   .profile-withdraw .profile-card-icon {
     background: color-mix(in srgb, #57cf9d 18%, var(--tg-card));
     color: #57cf9d;
@@ -1157,19 +1155,19 @@
   }
   .skins-carousel::-webkit-scrollbar { display: none; }
   .skin-slide {
-    flex: 0 0 min(78%, 280px);
+    flex: 0 0 min(60%, 210px);
     scroll-snap-align: center;
     background: var(--tg-card);
-    border-radius: 20px;
-    padding: 16px;
+    border-radius: 18px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
   .skin-slide-img {
     width: 100%;
     aspect-ratio: 1;
-    border-radius: 16px;
+    border-radius: 14px;
     background: var(--tg-secondary);
     overflow: hidden;
     display: flex;
@@ -1181,25 +1179,31 @@
     height: 100%;
     object-fit: cover;
   }
-  .skin-slide-img svg { width: 48px; height: 48px; color: var(--tg-hint); }
+  .skin-slide-img svg { width: 40px; height: 40px; color: var(--tg-hint); }
   .skin-slide-name {
     font-family: 'Fredoka', sans-serif;
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 600;
   }
   .skin-slide-desc {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--tg-hint);
-    line-height: 1.35;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
   .skin-slide-bonus {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     color: var(--tier);
   }
   .skin-slide .buy-btn {
     width: 100%;
-    margin-top: 4px;
+    margin-top: 2px;
+    white-space: nowrap;
   }
   .skin-slide.equipped {
     outline: 2px solid var(--tier);
@@ -1242,8 +1246,10 @@
     position: absolute;
     inset: 0;
     background: var(--tg-secondary);
+    border: 1px solid rgba(128,128,128,.4);
+    box-sizing: border-box;
     border-radius: 99px;
-    transition: background .25s ease;
+    transition: background .25s ease, border-color .25s ease;
     cursor: pointer;
   }
   .ios-switch .slider::before {
@@ -1260,6 +1266,7 @@
   }
   .ios-switch input:checked + .slider {
     background: var(--tier);
+    border-color: var(--tier);
   }
   .ios-switch input:checked + .slider::before {
     transform: translateX(20px);
@@ -1356,6 +1363,42 @@
     font-weight: 700;
     color: var(--tier);
   }
+  .clan-search-carousel {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 4px 0 8px;
+    margin: 0 -14px;
+    padding-left: 14px;
+    padding-right: 14px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .clan-search-carousel::-webkit-scrollbar { display: none; }
+  .clan-search-card {
+    flex: 0 0 116px;
+    scroll-snap-align: start;
+    background: var(--tg-card);
+    border-radius: 16px;
+    padding: 12px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+  .clan-search-card .clan-avatar-sm { width: 46px; height: 46px; border-radius: 14px; font-size: 17px; }
+  .clan-search-card-name {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .clan-search-card-sub { font-size: 11px; color: var(--tg-hint); }
 
   .clan-avatar-lg {
     width: 100px;
@@ -2057,7 +2100,6 @@
     <div class="screen" id="screenRating">
       <div class="panel-header">
         <div class="panel-title">Рейтинг игроков</div>
-        <button class="close-btn" id="ratingClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
       </div>
       <div class="panel-body" id="ratingList"></div>
     </div>
@@ -2066,7 +2108,6 @@
     <div class="screen" id="screenAch">
       <div class="panel-header">
         <div class="panel-title">Достижения</div>
-        <button class="close-btn" id="achClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
       </div>
       <div class="panel-body">
         <div class="ach-grid" id="achList"></div>
@@ -2179,11 +2220,10 @@
     <div class="screen" id="screenSearch">
       <div class="panel-header">
         <div class="panel-title">Поиск</div>
-        <button class="close-btn" id="searchClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
       </div>
       <div class="panel-body">
         <div class="search-box">
-          <input type="text" id="searchInput" placeholder="Имя или ID игрока">
+          <input type="text" id="searchInput" placeholder="Имя, ID, или название клана">
         </div>
         <div class="search-results" id="searchResults"></div>
       </div>
@@ -2193,7 +2233,6 @@
     <div class="screen" id="screenSettings">
       <div class="panel-header">
         <div class="panel-title">Настройки</div>
-        <button class="close-btn" id="settingsClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
       </div>
       <div class="panel-body">
         <div class="clan-simple" style="padding:4px 0 0">
@@ -2225,7 +2264,6 @@
     <div class="screen" id="screenAppearance">
       <div class="panel-header">
         <div class="panel-title">Оформление</div>
-        <button class="close-btn" id="appearanceClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
       </div>
       <div class="panel-body" id="appearanceBody"></div>
     </div>
@@ -2234,7 +2272,6 @@
     <div class="screen" id="screenClan">
       <div class="panel-header">
         <div class="panel-title">Клан</div>
-        <button class="close-btn" id="clanClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
       </div>
       <div class="panel-body" id="clanBody"></div>
     </div>
@@ -2251,7 +2288,6 @@
     <div class="screen" id="screenAdmin">
       <div class="panel-header">
         <div class="panel-title">Панель создателя</div>
-        <button class="close-btn" id="adminClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
       </div>
       <div class="admin-tabs">
         <button class="admin-tab active" data-tab="users">Пользователи</button>
@@ -2581,18 +2617,6 @@
             '<span class="shade-dot" style="background:#181818;border:1px solid #333"></span>Тёмно-серый' +
           '</button>' +
         '</div>' +
-      '</div>' +
-      '<div class="appearance-section">' +
-        '<div class="profile-card" style="cursor:default">' +
-          '<div class="profile-card-text" style="flex:1">' +
-            '<div class="profile-card-title">Свайп клана в профиле</div>' +
-            '<div class="profile-card-sub">Как раньше — клан листается свайпом</div>' +
-          '</div>' +
-          '<label class="ios-switch">' +
-            '<input type="checkbox" id="clanSwipeSwitch"' + (state.clanSwipeMode ? ' checked' : '') + '>' +
-            '<span class="slider"></span>' +
-          '</label>' +
-        '</div>' +
       '</div>';
     wrap.querySelectorAll('.shade-opt').forEach(el => {
       el.onclick = () => {
@@ -2601,13 +2625,6 @@
         applyTheme();
         renderAppearanceScreen();
       };
-    });
-    const sw = $('clanSwipeSwitch');
-    if (sw) sw.addEventListener('change', () => {
-      state.clanSwipeMode = !!sw.checked;
-      saveState();
-      applyClanSwipeMode();
-      renderProfile();
     });
   }
   const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) || {};
@@ -3202,9 +3219,9 @@
       };
     }
 
-    // Clan pill under name — only when swipe mode is OFF (to avoid duplication with swipe)
+    // Clan pill under name — свайп клана в профиле убран, всегда используем статичный пилл
     const pill = $('profileClanPill');
-    const useSwipeClan = !!state.clanSwipeMode;
+    const useSwipeClan = false;
 
     if (pill) {
       if (useSwipeClan) {
@@ -3527,9 +3544,9 @@
 
   function applyClanSwipeMode() {
     const wrap = $('profileCarouselWrap');
-    if (wrap) wrap.classList.toggle('static-clan', !state.clanSwipeMode);
+    if (wrap) wrap.classList.add('static-clan');
     const car = $('profileCarousel');
-    if (car && !state.clanSwipeMode && car._lastIdx === 1) {
+    if (car && car._lastIdx === 1) {
       car.scrollLeft = 0;
       car._lastIdx = 0;
       setProfileSlide(0);
@@ -3662,17 +3679,19 @@
       h.className = 'my-skins-title';
       h.textContent = 'Кланы';
       wrap.appendChild(h);
+      const car = document.createElement('div');
+      car.className = 'clan-search-carousel';
       clans.slice(0, 20).forEach(cl => {
-        const row = document.createElement('div');
-        row.className = 'rank-row';
-        row.innerHTML =
+        const card = document.createElement('div');
+        card.className = 'clan-search-card';
+        card.innerHTML =
           clanAvatarHtml(cl, 'clan-avatar-sm') +
-          '<div class="rank-info"><div class="rank-name">' + cl.name + '</div>' +
-          '<div class="rank-sub">' + (cl.members || []).length + ' уч. · казна ' + fmt(cl.bank || 0) + '</div></div>' +
-          '<div class="rank-score">›</div>';
-        row.addEventListener('click', () => openClanView(cl.id, 'search'));
-        wrap.appendChild(row);
+          '<div class="clan-search-card-name">' + cl.name + '</div>' +
+          '<div class="clan-search-card-sub">' + (cl.members || []).length + ' уч.</div>';
+        card.addEventListener('click', () => openClanView(cl.id, 'search'));
+        car.appendChild(card);
       });
+      wrap.appendChild(car);
     }
 
     // users
@@ -4132,7 +4151,6 @@
         </div>
 
         <div class="admin-form" style="margin-top:18px">
-          <h3 style="margin-bottom:8px">Верификация</h3>
           <div class="profile-card" id="verifRow" style="align-items:center;gap:12px;cursor:pointer">
             <div class="profile-card-icon" style="background:rgba(87,207,157,.15);color:#57cf9d;flex-shrink:0">
               ${VERIFIED_CHECK_SVG}
@@ -4148,7 +4166,6 @@
               <span class="slider"></span>
             </label>
           </div>
-          <div style="font-size:11px;color:var(--tg-hint);margin:6px 4px 0">Нажми на строку — изменить текст бейджа (появляется при клике на галочку)</div>
         </div>
 
         <button class="submit-btn" id="backToProfileBtn" style="margin-top:24px;background:var(--tg-secondary);color:var(--tg-text)">← Назад к профилю</button>
@@ -4286,11 +4303,14 @@
     btn.addEventListener('click', () => showScreen(btn.dataset.screen));
   });
   if ($('adminBtn')) $('adminBtn').addEventListener('click', () => showScreen('admin'));
-  if ($('ratingClose')) $('ratingClose').addEventListener('click', () => showScreen('profile'));
-  if ($('achClose')) $('achClose').addEventListener('click', () => showScreen('profile'));
   function goBackFromUser() { showScreen(state._userFrom || 'rating'); }
-  if ($('searchClose')) $('searchClose').addEventListener('click', () => showScreen('profile'));
-  if ($('clanClose')) $('clanClose').addEventListener('click', () => {
+  function closeRating() { showScreen('profile'); }
+  function closeAch() { showScreen('profile'); }
+  function closeSearch() { showScreen('profile'); }
+  function closeSettings() { showScreen('profile'); }
+  function closeAppearance() { showScreen('settings'); }
+  function closeAdmin() { showScreen('tap'); }
+  function closeClan() {
     if (clanWizardStep === 'manage' || clanWizardStep === 'edit' || clanWizardStep === 'members') {
       clanWizardStep = 0;
       renderClanScreen();
@@ -4315,10 +4335,9 @@
         renderProfile();
       }, 30);
     }
-  });
-  if ($('adminClose')) $('adminClose').addEventListener('click', () => showScreen('tap'));
+  }
 
-  // Нативная кнопка "Назад" Telegram — дублирует поведение соответствующей кнопки закрытия/назад экрана
+  // Нативная кнопка "Назад" Telegram — единственный способ выйти с вложенных экранов
   function handleBack() {
     const activeKey = Object.keys(screens).find(k => screens[k] && screens[k].classList.contains('active'));
     if (!activeKey) return;
@@ -4330,9 +4349,9 @@
       goBackFromUser();
       return;
     }
-    const closeIdMap = { rating:'ratingClose', ach:'achClose', search:'searchClose', clan:'clanClose', admin:'adminClose', settings:'settingsClose', appearance:'appearanceClose' };
-    const id = closeIdMap[activeKey];
-    if (id && $(id)) $(id).click();
+    const closeFnMap = { rating: closeRating, ach: closeAch, search: closeSearch, clan: closeClan, admin: closeAdmin, settings: closeSettings, appearance: closeAppearance };
+    const fn = closeFnMap[activeKey];
+    if (fn) fn();
   }
   if (tg && tg.BackButton) {
     try { tg.BackButton.onClick(handleBack); } catch(e){}
@@ -4346,10 +4365,8 @@
     else alert('Вывод филькоинов скоро будет доступен 🐷');
   }
   if ($('profileSettingsBtn')) $('profileSettingsBtn').addEventListener('click', () => showScreen('settings'));
-  if ($('settingsClose')) $('settingsClose').addEventListener('click', () => showScreen('profile'));
   if ($('settingsWithdrawBtn')) $('settingsWithdrawBtn').addEventListener('click', doWithdraw);
   if ($('settingsAppearanceBtn')) $('settingsAppearanceBtn').addEventListener('click', () => showScreen('appearance'));
-  if ($('appearanceClose')) $('appearanceClose').addEventListener('click', () => showScreen('settings'));
   if ($('publicSwitch')) {
     $('publicSwitch').addEventListener('change', () => {
       state.publicProfile = !!$('publicSwitch').checked;
