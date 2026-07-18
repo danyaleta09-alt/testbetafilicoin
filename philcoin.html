@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=overlays-content">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Филькоин</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,7 +49,7 @@
     position: absolute;
     inset: 0;
     width: 100%;
-    height: 100%;
+    height: var(--app-vh, 100%);
     overflow: hidden;
   }
 
@@ -842,6 +842,33 @@
     background: color-mix(in srgb, #57cf9d 18%, var(--tg-card));
     color: #57cf9d;
   }
+  .profile-quick-row {
+    display: flex;
+    gap: 10px;
+  }
+  .profile-quick-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px 6px;
+    background: var(--tg-card);
+    border-radius: 16px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--tg-text);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .profile-quick-btn:active { opacity: 0.85; }
+  .profile-quick-btn svg { width: 20px; height: 20px; color: var(--tier); }
+  .profile-quick-btn span {
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
 
   .shop-tabs {
     display: flex;
@@ -942,6 +969,8 @@
     text-align: center;
     cursor: pointer;
     border: 2px solid transparent;
+    content-visibility: auto;
+    contain-intrinsic-size: 0 120px;
   }
   .my-skin-item.equipped {
     border-color: var(--tier);
@@ -1141,71 +1170,61 @@
   }
 
   /* skins carousel */
-  .skins-carousel {
-    display: flex;
-    gap: 14px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    padding: 8px 0 28px;
-    margin: 0 -14px;
-    padding-left: 14px;
-    padding-right: 14px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+  .skins-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 8px 0 20px;
   }
-  .skins-carousel::-webkit-scrollbar { display: none; }
-  .skin-slide {
-    flex: 0 0 min(60%, 210px);
-    scroll-snap-align: center;
+  .skin-card-grid {
     background: var(--tg-card);
-    border-radius: 18px;
-    padding: 12px;
+    border-radius: 16px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
-  .skin-slide-img {
+  .skin-card-img {
     width: 100%;
     aspect-ratio: 1;
-    border-radius: 14px;
+    border-radius: 12px;
     background: var(--tg-secondary);
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .skin-slide-img img {
+  .skin-card-img img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  .skin-slide-img svg { width: 40px; height: 40px; color: var(--tg-hint); }
-  .skin-slide-name {
+  .skin-card-img svg { width: 28px; height: 28px; color: var(--tg-hint); }
+  .skin-card-name {
     font-family: 'Fredoka', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-  }
-  .skin-slide-desc {
     font-size: 12px;
-    color: var(--tg-hint);
-    line-height: 1.3;
+    font-weight: 600;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
   }
-  .skin-slide-bonus {
-    font-size: 11px;
+  .skin-card-bonus {
+    font-size: 10px;
     font-weight: 600;
     color: var(--tier);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .skin-slide .buy-btn {
+  .skin-card-grid .buy-btn {
     width: 100%;
     margin-top: 2px;
+    padding: 8px 4px;
+    min-width: 0;
+    font-size: 11px;
     white-space: nowrap;
   }
-  .skin-slide.equipped {
+  .skin-card-grid.equipped {
     outline: 2px solid var(--tier);
     outline-offset: 0;
   }
@@ -2173,36 +2192,20 @@
               <span class="slider"></span>
             </label>
           </div>
-          <button type="button" class="profile-card" id="profileRatingBtn">
-            <div class="profile-card-icon">
+          <div class="profile-quick-row">
+            <button type="button" class="profile-quick-btn" id="profileRatingBtn">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2H22l-6 4.8 2.3 7L12 16.8 5.7 21l2.3-7-6-4.8h7.6z"/></svg>
-            </div>
-            <div class="profile-card-text">
-              <div class="profile-card-title">Рейтинг</div>
-              <div class="profile-card-sub">Таблица лидеров</div>
-            </div>
-            <div class="profile-card-chevron">›</div>
-          </button>
-          <button type="button" class="profile-card" id="profileAchsBtn">
-            <div class="profile-card-icon">
+              <span>Рейтинг</span>
+            </button>
+            <button type="button" class="profile-quick-btn" id="profileAchsBtn">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a3 3 0 0 1 3 3v1h2a2 2 0 0 1 2 2v2c0 1.5-.7 2.8-1.8 3.6A6 6 0 0 1 13 17.9V20h2a1 1 0 1 1 0 2H9a1 1 0 1 1 0-2h2v-2.1A6 6 0 0 1 6.8 13.6 4.5 4.5 0 0 1 5 10V8a2 2 0 0 1 2-2h2V5a3 3 0 0 1 3-3zm0 2a1 1 0 0 0-1 1v1h2V5a1 1 0 0 0-1-1zM7 8v2c0 .9.4 1.7 1 2.2V10a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2.2c.6-.5 1-1.3 1-2.2V8H7z"/></svg>
-            </div>
-            <div class="profile-card-text">
-              <div class="profile-card-title">Награды</div>
-              <div class="profile-card-sub">Достижения</div>
-            </div>
-            <div class="profile-card-chevron">›</div>
-          </button>
-          <button type="button" class="profile-card profile-withdraw" id="profileSettingsBtn">
-            <div class="profile-card-icon">
+              <span>Награды</span>
+            </button>
+            <button type="button" class="profile-quick-btn" id="profileSettingsBtn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            </div>
-            <div class="profile-card-text">
-              <div class="profile-card-title">Настройки</div>
-              <div class="profile-card-sub">Вывод монет, оформление</div>
-            </div>
-            <div class="profile-card-chevron">›</div>
-          </button>
+              <span>Настройки</span>
+            </button>
+          </div>
         </div>
         <div class="my-skins">
           <div class="my-skins-title">Мои скины</div>
@@ -2471,8 +2474,28 @@
   if (tg) {
     tg.onEvent('safeAreaChanged', updateSafeArea);
     tg.onEvent('contentSafeAreaChanged', updateSafeArea);
-    // viewportChanged срабатывает и на клавиатуру — не трогаем layout
   }
+
+  /* ===== KEYBOARD / VIEWPORT HEIGHT (устраняет полосу фона над/под клавиатурой) ===== */
+  function applyAppViewportHeight() {
+    let h = window.innerHeight;
+    if (window.visualViewport && window.visualViewport.height) h = window.visualViewport.height;
+    if (tg && tg.viewportHeight) h = Math.min(h, tg.viewportHeight);
+    document.documentElement.style.setProperty('--app-vh', h + 'px');
+  }
+  applyAppViewportHeight();
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', applyAppViewportHeight);
+    window.visualViewport.addEventListener('scroll', applyAppViewportHeight);
+  }
+  window.addEventListener('resize', applyAppViewportHeight);
+  if (tg) tg.onEvent('viewportChanged', applyAppViewportHeight);
+  // подстраховка: подскроллить активное поле, чтобы оно не пряталось под клавиатурой
+  document.addEventListener('focusin', (e) => {
+    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+      setTimeout(() => { try { e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (err) {} }, 250);
+    }
+  });
 
   /* ===== SYNC — через свой Railway API (без jsonbin) ===== */
   const SYNC_ENABLED = true; // всегда через /api на том же домене
@@ -3187,7 +3210,7 @@
     if (idEl) idEl.textContent = myId ? ('ID ' + myId) : '';
     if (av) {
       const photo = user && user.photo_url;
-      if (photo) av.innerHTML = '<img src="' + photo + '" alt="">';
+      if (photo) av.innerHTML = '<img loading="lazy" decoding="async" src="' + photo + '" alt="">';
       else av.textContent = (myName || '?').trim().charAt(0).toUpperCase();
     }
     const sw = $('publicSwitch');
@@ -3201,7 +3224,7 @@
     if (c && cAv) {
       cAv.classList.add('has-clan');
       cAv.classList.remove('clan-create');
-      if (c.avatar) cAv.innerHTML = '<img src="' + c.avatar + '" alt="">';
+      if (c.avatar) cAv.innerHTML = '<img loading="lazy" decoding="async" src="' + c.avatar + '" alt="">';
       else cAv.innerHTML = '<span style="font-size:32px;font-weight:700;color:var(--tier)">' + (c.name || '?').charAt(0).toUpperCase() + '</span>';
       if (cNm) cNm.textContent = c.name || 'Клан';
       if (cSub) cSub.textContent = (c.members || []).length + ' уч. · казна ' + fmt(c.bank || 0);
@@ -3231,7 +3254,7 @@
         const memberCount = (c.members || []).length;
         pill.innerHTML = `
           <div class="clan-ico">
-            ${c.avatar ? `<img src="${c.avatar}" alt="">` : `<span>${(c.name || '?').charAt(0).toUpperCase()}</span>`}
+            ${c.avatar ? `<img loading="lazy" decoding="async" src="${c.avatar}" alt="">` : `<span>${(c.name || '?').charAt(0).toUpperCase()}</span>`}
           </div>
           <div class="clan-txt">
             ${escapeHtml(c.name || 'Клан')}
@@ -3274,7 +3297,7 @@
           const el = document.createElement('div');
           el.className = 'my-skin-item' + (state.activeSkin === sid ? ' equipped' : '');
           el.innerHTML =
-            (skin.image ? '<img src="' + skin.image + '" alt="">' : '<div style="aspect-ratio:1;background:var(--tg-secondary);border-radius:10px"></div>') +
+            (skin.image ? '<img loading="lazy" decoding="async" src="' + skin.image + '" alt="">' : '<div style="aspect-ratio:1;background:var(--tg-secondary);border-radius:10px"></div>') +
             '<div class="lbl">' + (state.activeSkin === sid ? '✓ ' : '') + skin.name + '</div>';
           el.addEventListener('click', () => {
             state.activeSkin = sid;
@@ -3331,7 +3354,7 @@
 
   function clanMemberAv(mid, cls) {
     const m = resolveMember(mid);
-    if (m.photo) return '<div class="' + cls + '"><img src="' + m.photo + '" alt=""></div>';
+    if (m.photo) return '<div class="' + cls + '"><img loading="lazy" decoding="async" src="' + m.photo + '" alt=""></div>';
     const ch = (m.name && m.name.indexOf('ID ') === 0) ? '?' : m.name.charAt(0).toUpperCase();
     return '<div class="' + cls + '">' + ch + '</div>';
   }
@@ -3355,7 +3378,7 @@
           '<div class="clan-cover-bal" id="clanCoverBal">' + fmt(c.bank || 0) + '</div>' +
         '</div>' +
         '<div class="clan-hero-av-wrap">' +
-          '<div class="clan-hero-av">' + (c.avatar ? '<img src="' + c.avatar + '" alt="" id="clanHeroImg">' : (c.name||'?').charAt(0).toUpperCase()) + '</div>' +
+          '<div class="clan-hero-av">' + (c.avatar ? '<img loading="lazy" decoding="async" src="' + c.avatar + '" alt="" id="clanHeroImg">' : (c.name||'?').charAt(0).toUpperCase()) + '</div>' +
           '<div class="clan-hero-name-row">' +
             '<div class="clan-hero-name">' + (c.name || 'Клан') + '</div>' +
             (isOwner ? '<button type="button" class="clan-edit-btn" id="clanEditBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>' : '') +
@@ -3630,7 +3653,7 @@
 
     if (cAv) {
       cAv.classList.add('has-clan');
-      if (c.avatar) cAv.innerHTML = '<img src="' + c.avatar + '" alt="">';
+      if (c.avatar) cAv.innerHTML = '<img loading="lazy" decoding="async" src="' + c.avatar + '" alt="">';
       else cAv.innerHTML = '<span style="font-size:36px;font-weight:700;color:var(--tier)">' + (c.name || '?').charAt(0).toUpperCase() + '</span>';
       cAv.onclick = () => openClanView(c.id, 'profile');
     }
@@ -3719,7 +3742,7 @@
       row.className = 'rank-row rating-row';
       const init = (p.name || '?').charAt(0).toUpperCase();
       const av = p.photo
-        ? '<div class="avatar" style="padding:0;overflow:hidden"><img src="' + p.photo + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></div>'
+        ? '<div class="avatar" style="padding:0;overflow:hidden"><img loading="lazy" decoding="async" src="' + p.photo + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></div>'
         : '<div class="avatar">' + init + '</div>';
       const clan = p.clanId ? getClan(p.clanId) : null;
       row.innerHTML = av +
@@ -3761,7 +3784,7 @@
       body.innerHTML =
         '<div class="clan-wizard">' +
           '<div class="clan-avatar-pick" id="clanAvatarPick">' +
-            (clanWizardImg ? '<img src="' + clanWizardImg + '">' : '<span>Фото<br>клана</span>') +
+            (clanWizardImg ? '<img loading="lazy" decoding="async" src="' + clanWizardImg + '">' : '<span>Фото<br>клана</span>') +
           '</div>' +
           '<input type="file" accept="image/*" id="clanImgInput" hidden>' +
           '<div class="field"><label>Название</label><input type="text" id="clanNameInput" placeholder="Свинский легион" maxlength="24" value="' + (existing ? (existing.name || '').replace(/"/g,'&quot;') : '') + '"></div>' +
@@ -3777,7 +3800,7 @@
         if (!f) return;
         try {
           clanWizardImg = await loadImageHighQuality(f, 512);
-          pick.innerHTML = '<img src="' + clanWizardImg + '">';
+          pick.innerHTML = '<img loading="lazy" decoding="async" src="' + clanWizardImg + '">';
           pick.style.border = 'none';
         } catch (err) {}
       };
@@ -3948,7 +3971,7 @@
     if (!body || !p) return;
     const init = (p.name || '?').trim().charAt(0).toUpperCase();
     const photo = p.photo
-      ? '<img src="' + p.photo + '" alt="">'
+      ? '<img loading="lazy" decoding="async" src="' + p.photo + '" alt="">'
       : init;
     const skinIds = Array.isArray(p.skins) ? p.skins : [];
     const achIds = Array.isArray(p.achievements) ? p.achievements : [];
@@ -3963,7 +3986,7 @@
         if (!skin) return;
         const eq = p.activeSkin === sid ? ' equipped' : '';
         skinsHtml += '<div class="my-skin-item' + eq + '">' +
-          (skin.image ? '<img src="' + skin.image + '">' : '') +
+          (skin.image ? '<img loading="lazy" decoding="async" src="' + skin.image + '">' : '') +
           '<div class="lbl">' + skin.name + '</div></div>';
       });
       skinsHtml += '</div>';
@@ -3981,7 +4004,7 @@
         const a = allAchievements().find(x => x.id === aid);
         if (!a) return;
         const media = a.image
-          ? '<img src="' + a.image + '" alt="">'
+          ? '<img loading="lazy" decoding="async" src="' + a.image + '" alt="">'
           : iconSvg(a.icon || 'trophy');
         awardsHtml +=
           '<div class="up-award">' +
@@ -4121,7 +4144,7 @@
 
     const init = (p.name || '?').trim().charAt(0).toUpperCase();
     const photo = p.photo
-      ? '<img src="' + p.photo + '" alt="">'
+      ? '<img loading="lazy" decoding="async" src="' + p.photo + '" alt="">'
       : init;
     const forced = forceBalances[p.id];
     const curScore = forced !== undefined ? forced : (p.score || 0);
@@ -4425,7 +4448,7 @@
       const col = COLORS[i % COLORS.length];
       const init = (p.name || '?').trim().charAt(0).toUpperCase();
       const avHtml = p.photo
-        ? '<div class="avatar" style="background:transparent;padding:0;overflow:hidden"><img src="' + p.photo + '" style="width:100%;height:100%;object-fit:cover"></div>'
+        ? '<div class="avatar" style="background:transparent;padding:0;overflow:hidden"><img loading="lazy" decoding="async" src="' + p.photo + '" style="width:100%;height:100%;object-fit:cover"></div>'
         : '<div class="avatar" style="background:' + (isMe ? 'var(--tier)' : col) + '">' + init + '</div>';
       row.innerHTML =
         (med ? '<div class="rank-medal">' + med + '</div>' : '<div class="rank-num">' + (i + 1) + '</div>') +
@@ -4471,7 +4494,7 @@
       const card = document.createElement('div');
       card.className = 'ach-card' + (ok ? ' unlocked' : '');
       let media = '';
-      if (a.image) media = '<img src="' + a.image + '" alt="">';
+      if (a.image) media = '<img loading="lazy" decoding="async" src="' + a.image + '" alt="">';
       else if (hide) media = '<div style="font-size:22px;color:var(--tg-hint)">?</div>';
       else media = iconSvg(a.icon || 'trophy');
 
@@ -4556,20 +4579,20 @@
       wrap.innerHTML = '<div class="market-empty" style="padding:24px;text-align:center;color:var(--tg-hint)">Пока нет скинов.<br>Создатель ещё не добавил.</div>';
       return;
     }
-    const car = document.createElement('div');
-    car.className = 'skins-carousel';
+    const grid = document.createElement('div');
+    grid.className = 'skins-grid';
     list.forEach(skin => {
       const owned = !!state.ownedSkins[skin.id];
       const equipped = state.activeSkin === skin.id;
       const can = !owned && state.balance >= (skin.price || 0);
-      const slide = document.createElement('div');
-      slide.className = 'skin-slide' + (equipped ? ' equipped' : '');
+      const card = document.createElement('div');
+      card.className = 'skin-card-grid' + (equipped ? ' equipped' : '');
       const imgInner = skin.image
-        ? '<img src="' + skin.image + '" alt="">'
+        ? '<img loading="lazy" decoding="async" src="' + skin.image + '" alt="">'
         : iconSvg('gift');
       const bonuses = [];
-      if (skin.tapBonus) bonuses.push('+' + skin.tapBonus + ' к тапу');
-      if (skin.income) bonuses.push('+' + skin.income + '/сек');
+      if (skin.tapBonus) bonuses.push('+' + skin.tapBonus + ' тап');
+      if (skin.income) bonuses.push('+' + skin.income + '/с');
 
       let btn;
       if (equipped) {
@@ -4581,17 +4604,16 @@
           'Купить<span class="buy-price-line">' + fmt(skin.price || 0) + '</span></button>';
       }
 
-      slide.innerHTML =
-        '<div class="skin-slide-img">' + imgInner + '</div>' +
-        '<div class="skin-slide-name">' + skin.name + '</div>' +
-        '<div class="skin-slide-desc">' + (skin.desc || '') + '</div>' +
-        (bonuses.length ? '<div class="skin-slide-bonus">' + bonuses.join(' · ') + '</div>' : '') +
+      card.innerHTML =
+        '<div class="skin-card-img">' + imgInner + '</div>' +
+        '<div class="skin-card-name">' + skin.name + '</div>' +
+        (bonuses.length ? '<div class="skin-card-bonus">' + bonuses.join(' · ') + '</div>' : '') +
         btn;
-      car.appendChild(slide);
+      grid.appendChild(card);
     });
-    wrap.appendChild(car);
+    wrap.appendChild(grid);
 
-    car.querySelectorAll('[data-buy]').forEach(btn => {
+    grid.querySelectorAll('[data-buy]').forEach(btn => {
       btn.addEventListener('click', () => {
         const skin = allSkins().find(s => s.id === btn.dataset.buy);
         if (!skin || state.ownedSkins[skin.id]) return;
@@ -4605,7 +4627,7 @@
         renderSkins();
       });
     });
-    car.querySelectorAll('[data-equip]').forEach(btn => {
+    grid.querySelectorAll('[data-equip]').forEach(btn => {
       btn.addEventListener('click', () => {
         state.activeSkin = btn.dataset.equip;
         recomputePassive();
@@ -4716,7 +4738,7 @@
     if (!f) return;
     try {
       afImage = await loadImageHighQuality(f, 768);
-      $('afImgPreview').innerHTML = '<img src="' + afImage + '">';
+      $('afImgPreview').innerHTML = '<img loading="lazy" decoding="async" src="' + afImage + '">';
     } catch (err) {
       alert('Не удалось загрузить картинку');
     }
@@ -4726,7 +4748,7 @@
     if (!f) return;
     try {
       skImage = await loadImageHighQuality(f, 768);
-      $('skImgPreview').innerHTML = '<img src="' + skImage + '">';
+      $('skImgPreview').innerHTML = '<img loading="lazy" decoding="async" src="' + skImage + '">';
     } catch (err) {
       alert('Не удалось загрузить картинку');
     }
@@ -4844,7 +4866,7 @@
         const row = document.createElement('div');
         row.className = 'admin-item';
         row.innerHTML =
-          '<div class="thumb">' + (item.image ? '<img src="' + item.image + '">' : iconSvg('gift')) + '</div>' +
+          '<div class="thumb">' + (item.image ? '<img loading="lazy" decoding="async" src="' + item.image + '">' : iconSvg('gift')) + '</div>' +
           '<div class="name">' + item.name + ' · ' + fmt(item.price) + '</div>' +
           '<button class="del-btn" data-id="' + item.id + '">Удалить</button>';
         skList.appendChild(row);
@@ -4866,7 +4888,7 @@
       const row = document.createElement('div');
       row.className = 'admin-item';
       row.innerHTML =
-        '<div class="thumb">' + (a.image ? '<img src="' + a.image + '">' : iconSvg('trophy')) + '</div>' +
+        '<div class="thumb">' + (a.image ? '<img loading="lazy" decoding="async" src="' + a.image + '">' : iconSvg('trophy')) + '</div>' +
         '<div class="name">' + a.name + (a.reward ? ' · +' + fmt(a.reward) : '') + '</div>' +
         '<button class="del-btn" data-id="' + a.id + '">Удалить</button>';
       aList.appendChild(row);
