@@ -32,8 +32,7 @@ function defaultShared() {
     skins: [],
     clans: [],
     leaderboard: [],
-    forceBalances: {},
-    verifiedUsers: {}   // { userId: { verified: true, badgeText: "текст бейджа" } }
+    forceBalances: {}
   };
 }
 
@@ -51,9 +50,7 @@ function loadData() {
         clans: Array.isArray(parsed.clans) ? parsed.clans : [],
         leaderboard: Array.isArray(parsed.leaderboard) ? parsed.leaderboard : [],
         forceBalances: (parsed.forceBalances && typeof parsed.forceBalances === 'object')
-          ? parsed.forceBalances : {},
-        verifiedUsers: (parsed.verifiedUsers && typeof parsed.verifiedUsers === 'object')
-          ? parsed.verifiedUsers : {}
+          ? parsed.forceBalances : {}
       };
       console.log('data.json загружен:', {
         ach: shared.achievements.length,
@@ -139,9 +136,6 @@ const server = http.createServer(async (req, res) => {
       if (body.forceBalances && typeof body.forceBalances === 'object') {
         shared.forceBalances = body.forceBalances;
       }
-      if (body.verifiedUsers && typeof body.verifiedUsers === 'object') {
-        shared.verifiedUsers = body.verifiedUsers;
-      }
       saveData();
       sendJson(res, 200, { ok: true, shared });
       return;
@@ -170,7 +164,9 @@ const server = http.createServer(async (req, res) => {
         activeSkin: body.activeSkin || prev.activeSkin || null,
         achievements: Array.isArray(body.achievements) ? body.achievements : (prev.achievements || []),
         public: body.public === true || body.public === false ? !!body.public : (prev.public !== false),
-        clanId: body.clanId !== undefined ? body.clanId : (prev.clanId || null)
+        clanId: body.clanId !== undefined ? body.clanId : (prev.clanId || null),
+        verified: body.verified === true || body.verified === false ? !!body.verified : (prev.verified || false),
+        verifiedText: typeof body.verifiedText === 'string' ? body.verifiedText.slice(0, 100) : (prev.verifiedText || '')
       };
       if (idx >= 0) shared.leaderboard[idx] = entry;
       else shared.leaderboard.push(entry);
