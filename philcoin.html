@@ -1942,10 +1942,7 @@
     gap: 10px;
   }
   .clan-members-block {
-    margin: 0 14px 16px;
-    background: var(--tg-card);
-    border-radius: 18px;
-    padding: 14px;
+    margin: 0 0 16px;
   }
   .clan-members-title {
     font-size: 12px;
@@ -3677,7 +3674,7 @@
           '<div class="profile-card-text"><div class="profile-card-title">Открыть клан</div><div class="profile-card-sub">' + (c.members||[]).length + ' уч. · казна ' + fmt(c.bank||0) + '</div></div>' +
           '<div class="profile-card-chevron">›</div>' +
         '</button>' +
-        '<button type="button" class="profile-card" id="clanMembersCard">' +
+        '<button type="button" class="profile-card" id="profileClanMembersCard">' +
           '<div class="profile-card-text" style="flex:1">' +
             '<div class="profile-card-title">Участники</div>' +
             '<div style="margin-top:8px">' + clanStackHtml(c.members || []) + '</div>' +
@@ -3687,7 +3684,7 @@
       '</div>';
     const openBtn = $('clanOpenFull');
     if (openBtn) openBtn.onclick = () => openClanView(c.id, 'profile');
-    const mc = $('clanMembersCard');
+    const mc = $('profileClanMembersCard');
     if (mc) mc.onclick = () => {
       state._clanFrom = 'profile';
       state._membersClanId = c.id;
