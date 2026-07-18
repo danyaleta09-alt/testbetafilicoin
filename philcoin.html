@@ -2418,8 +2418,21 @@
 
   /* ===== Supporter tooltip (click on pig badge) ===== */
   let currentTooltip = null;
+  let tooltipCloseTimer = null;
+
   function showSupporterTooltip(badgeEl, username) {
-    if (currentTooltip) currentTooltip.remove();
+    // Дополнительная защита — только в профильных экранах
+    if (!badgeEl.closest('#screenProfile') && !badgeEl.closest('#screenUser')) return;
+
+    // Чистим предыдущую плашку и таймер (защита от быстрого многократного клика и мигания)
+    if (currentTooltip) {
+      currentTooltip.remove();
+      currentTooltip = null;
+    }
+    if (tooltipCloseTimer) {
+      clearTimeout(tooltipCloseTimer);
+      tooltipCloseTimer = null;
+    }
     if (!username) username = 'Игрок';
 
     const text = `этот ${username} поддерживает разработку филькоина`;
@@ -2429,6 +2442,7 @@
     tip.innerHTML = text + '<div class="arrow"></div>';
     document.body.appendChild(tip);
     currentTooltip = tip;
+    tooltipCloseTimer = setTimeout(close, 2000);
 
     // position below the badge
     const rect = badgeEl.getBoundingClientRect();
@@ -2458,21 +2472,24 @@
     // auto close after exactly 2 seconds + smooth fade out
     const close = () => {
       if (!tip.parentNode) return;
-      tip.style.transition = 'opacity .2s ease';
+      // Плавное исчезновение в стиле pop-анимации появления (зеркально)
+      tip.style.transition = 'opacity .22s ease, transform .22s ease';
       tip.style.opacity = '0';
+      tip.style.transform = 'translateY(6px) scale(.96)';
       setTimeout(() => {
         if (tip.parentNode) tip.parentNode.removeChild(tip);
         if (currentTooltip === tip) currentTooltip = null;
-      }, 200);
+        tooltipCloseTimer = null;
+      }, 220);
     };
-
-    setTimeout(close, 2000);
   }
 
   // Global click handler — only for profile verified badge
   document.addEventListener('click', (e) => {
     const badge = e.target.closest('.verified-badge');
-    if (!badge) return;
+    // Показываем плашку только в своём профиле или в открытом чужом профиле (из рейтинга/поиска)
+    // Не показываем при клике на галочку прямо в списках рейтинга или поиска
+    if (!badge || (!badge.closest('#screenProfile') && !badge.closest('#screenUser'))) return;
 
     let username = 'Игрок';
     const parent = badge.parentElement;
